@@ -21,6 +21,7 @@ nav.tabs button{background:none;border:0;color:var(--muted);font-weight:bold;fon
 nav.tabs button.active{color:var(--text);border-bottom-color:#E10600}
 main{max-width:680px;margin:0 auto;padding:12px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.card[id^="blog-"]{scroll-margin-top:130px}
 .composer{display:flex;gap:10px;align-items:center}
 .avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex:none;border:2px solid #fff}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -150,7 +151,7 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   <div class="card"><h3>Photos</h3><p>Party Vault photos and DAOS galleries live here.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
 </section>
 <section id="blog" class="tabpane">
-  <div class="card"><h3>I Play Rocky: The Fight Before the Fight</h3><p class="meta">DAOS Magazine &middot; November 3, 2026</p><p>Long before the bell ever rang for Rocky Balboa, Sylvester Stallone was already in the fight of his life &mdash; and it was not in a ring. It was in a room full of studio executives who wanted his script and did not want him in it.</p><p>That is the story Peter Farrelly's <em>I Play Rocky</em> tells. A broke, unknown actor writes a script about a Philly club fighter, then refuses a fortune to hand it over unless he gets to play the lead himself. Anthony Ippolito &mdash; who taped his audition in his grandmother's basement after playing Al Pacino in <em>The Offer</em> &mdash; plays the young Stallone, alongside Stephan James as Carl Weathers and Matt Dillon as Stallone's father.</p><p>The film opens in select theaters November 6 and everywhere November 20, nearly 50 years after the original <em>Rocky</em> debuted. And the spirit is already in the gym: RDX's #MyFirstRound campaign, shared with DAOS by Karen Apablaza of Hudson West PR, is built around <em>I Play Rocky</em>-inspired gear for your first round.</p><p>Stallone did not win by knocking anybody out in that meeting. He won by refusing to move. That is the lesson.</p><a class="btn" href="https://deadlyartofsurvival.com/blogs/news/i-play-rocky-the-underdog-story-behind-the-underdog-story">Read the full story</a></div>
+  <div class="card" id="blog-i-play-rocky-the-underdog-story-behind-the-underdog-story"><h3>I Play Rocky: The Fight Before the Fight</h3><p class="meta">DAOS Magazine &middot; November 3, 2026</p><p>Long before the bell ever rang for Rocky Balboa, Sylvester Stallone was already in the fight of his life &mdash; and it was not in a ring. It was in a room full of studio executives who wanted his script and did not want him in it.</p><p>That is the story Peter Farrelly's <em>I Play Rocky</em> tells. A broke, unknown actor writes a script about a Philly club fighter, then refuses a fortune to hand it over unless he gets to play the lead himself. Anthony Ippolito &mdash; who taped his audition in his grandmother's basement after playing Al Pacino in <em>The Offer</em> &mdash; plays the young Stallone, alongside Stephan James as Carl Weathers and Matt Dillon as Stallone's father.</p><p>The film opens in select theaters November 6 and everywhere November 20, nearly 50 years after the original <em>Rocky</em> debuted. And the spirit is already in the gym: RDX's #MyFirstRound campaign, shared with DAOS by Karen Apablaza of Hudson West PR, is built around <em>I Play Rocky</em>-inspired gear for your first round.</p><p>Stallone did not win by knocking anybody out in that meeting. He won by refusing to move. That is the lesson.</p><a class="btn" href="https://deadlyartofsurvival.com/blogs/news/i-play-rocky-the-underdog-story-behind-the-underdog-story">Read the full story</a><button class="btn dark" onclick="sharePost('i-play-rocky-the-underdog-story-behind-the-underdog-story',this)">&#128279; Share</button></div>
   <div class="card"><h3>Blog</h3><p>The latest DAOS Magazine stories &mdash; fight game, music and culture.</p><a class="btn" href="https://muse.ai/s/daos-foundation-media-sxn6xzxdxfxfxn3pxy">Read the blog</a></div>
 </section>
 <section id="music" class="tabpane">
@@ -253,6 +254,44 @@ function toggleGroup(el){
   el.parentElement.classList.toggle('open');
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
+function postUrl(slug){
+  return 'https://daosmedia.com/#blog/' + slug;
+}
+function fallbackCopy(text){
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }catch(e){}
+}
+function sharePost(slug,btn){
+  var url=postUrl(slug);
+  var done=function(){
+    if(!btn)return;
+    var old=btn.textContent;
+    btn.textContent='Link copied \u2713';
+    setTimeout(function(){btn.textContent=old;},2000);
+  };
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done,function(){fallbackCopy(url);done();});
+    }else{fallbackCopy(url);done();}
+  }catch(e){fallbackCopy(url);done();}
+}
+function openDeepLink(){
+  var h=window.location.hash||'';
+  var blogBtn=document.querySelectorAll('#tabs button')[6];
+  if(h==='#blog'){showTab('blog',blogBtn);return;}
+  var m=h.match(/^#blog\/([A-Za-z0-9\-_]+)$/);
+  if(!m)return;
+  var el=document.getElementById('blog-'+m[1]);
+  showTab('blog',blogBtn);
+  if(el){setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+}
+window.addEventListener('hashchange',openDeepLink);
+openDeepLink();
 </script>
 </body>
 </html>
