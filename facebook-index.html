@@ -244,8 +244,8 @@ section.tabpane{display:none}section.tabpane.active{display:block}
    site stays public and the login button explains setup is pending.
    The anon key is a public client key by design (row-level security
    protects the tables); never put the service_role key in this file. */
-var SUPABASE_URL = '';
-var SUPABASE_ANON_KEY = '';
+var SUPABASE_URL = 'https://hsgbmrtpwnyqkmfnveaz.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzZ2JtcnRwd255cWttZm52ZWF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4NDQ4NTcsImV4cCI6MjEwOTQyMDg1N30.UMb6rqV35IM16_Tu8HLDrrct0DNaDZdtIi29FsMe6fA';
 var supabaseClient = null;
 if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
