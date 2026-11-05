@@ -98,6 +98,7 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   <button class="iconbtn" aria-label="Search">&#128269;</button>
   <button class="iconbtn" aria-label="Notifications">&#128276;<span class="badge">3</span></button>
   <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">&#9790;</button>
+  <button class="btn" id="authBtn" type="button" onclick="openAuthModal()" style="margin:0;padding:9px 14px">Log in</button>
   <div class="avatar" style="width:38px;height:38px;font-size:18px"><img src="__CIRCLED__" alt="DAOS"></div>
 </header>
 <nav class="tabs" id="tabs">
@@ -122,7 +123,10 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 </aside>
 <main>
 <section id="feed" class="tabpane active">
-  <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="showMembersBubble()">What's on your mind?</button></div>
+  <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">What's on your mind?</button></div>
+  <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Public front page — posting is for signed-in members.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
+  <div class="card" id="composerForm" style="display:none"><h3>New post</h3><textarea id="postText" rows="3" placeholder="What's on your mind?" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Post</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
+  <div id="memberFeed"></div>
   <div class="members-bubble-overlay" id="membersBubble" onclick="hideMembersBubble()"><div class="members-bubble" onclick="event.stopPropagation()">This section is only for DAOS members.<br><button type="button" onclick="hideMembersBubble()">OK</button></div></div>
   <div class="card">
     <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>2h &middot; New York, NY</span></div><span class="follow">Follow</span></div>
@@ -234,6 +238,81 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   <button>&#128276;<span class="badge">1</span></button>
   <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* Supabase config — filled in once Jake's project exists. Until then the
+   site stays public and the login button explains setup is pending.
+   The anon key is a public client key by design (row-level security
+   protects the tables); never put the service_role key in this file. */
+var SUPABASE_URL = '';
+var SUPABASE_ANON_KEY = '';
+var supabaseClient = null;
+if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+function openAuthModal(){
+  if (!supabaseClient) {
+    document.getElementById('authMsg').textContent = 'Login is being connected — the Supabase project is not linked yet. The site stays public until then.';
+  }
+  document.getElementById('authModal').classList.add('open');
+}
+function closeAuthModal(){ document.getElementById('authModal').classList.remove('open'); }
+async function refreshAuth(){
+  if (!supabaseClient) return;
+  var res = await supabaseClient.auth.getSession();
+  var user = res.data && res.data.session && res.data.session.user;
+  var btn = document.getElementById('authBtn');
+  if (user) {
+    btn.textContent = 'Log out';
+    btn.onclick = authSignOut;
+    document.getElementById('composerForm').style.display = 'block';
+    loadMemberPosts();
+  } else {
+    btn.textContent = 'Log in';
+    btn.onclick = openAuthModal;
+    document.getElementById('composerForm').style.display = 'none';
+  }
+}
+async function authSignIn(){
+  var em = document.getElementById('authEmail').value, pw = document.getElementById('authPass').value;
+  var res = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
+  document.getElementById('authMsg').textContent = res.error ? res.error.message : 'Logged in.';
+  if (!res.error) { closeAuthModal(); refreshAuth(); }
+}
+async function authSignUp(){
+  var em = document.getElementById('authEmail').value, pw = document.getElementById('authPass').value;
+  var res = await supabaseClient.auth.signUp({email: em, password: pw});
+  document.getElementById('authMsg').textContent = res.error ? res.error.message : 'Account created — check your email to confirm, then log in.';
+}
+async function authSignOut(){ if (supabaseClient) await supabaseClient.auth.signOut(); refreshAuth(); }
+async function openComposer(){
+  if (!supabaseClient) { openAuthModal(); return; }
+  var res = await supabaseClient.auth.getSession();
+  if (res.data && res.data.session) {
+    document.getElementById('composerForm').style.display = 'block';
+    document.getElementById('composerForm').scrollIntoView({behavior: 'smooth'});
+  } else { openAuthModal(); }
+}
+async function submitPost(){
+  var text = document.getElementById('postText').value.trim();
+  if (!text) return;
+  var res = await supabaseClient.from('posts').insert({content: text});
+  document.getElementById('postMsg').textContent = res.error ? res.error.message : 'Posted.';
+  if (!res.error) { document.getElementById('postText').value = ''; loadMemberPosts(); }
+}
+async function loadMemberPosts(){
+  var res = await supabaseClient.from('posts').select('content, created_at').order('created_at', {ascending: false}).limit(20);
+  if (res.error) return;
+  var box = document.getElementById('memberFeed'); if (!box) return;
+  box.innerHTML = res.data.map(function(p){
+    var d = document.createElement('div'); d.className = 'card';
+    var t = document.createElement('p'); t.textContent = p.content;
+    var m = document.createElement('p'); m.className = 'meta'; m.textContent = new Date(p.created_at).toLocaleString();
+    d.appendChild(t); d.appendChild(m); return d.outerHTML;
+  }).join('');
+}
+refreshAuth();
+</script>
 <script>
 function updatePartyCountdown(){
   var el=document.getElementById('partyCountdown'); if(!el) return;
