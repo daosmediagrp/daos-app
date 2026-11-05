@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAOS App — Deadly Art of Survival</title>
+<meta name="description" content="DAOS App — Community, Events, Tournaments, Magazine, Photos, Blog and Music from Deadly Art of Survival.">
+<style>
+*{box-sizing:border-box}:root{--bg:#000;--text:#fff;--card:#111;--card2:#1c1c1c;--border:#222;--muted:#bbb;--muted2:#999}
+body.light{--bg:#fff;--text:#000;--card:#fff;--card2:#f0f0f0;--border:#ddd;--muted:#555;--muted2:#777}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;padding-bottom:64px}
+a{color:var(--text)}.red{color:#E10600}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 12px;display:flex;align-items:center;gap:10px}
+header .logos{display:flex;align-items:center;gap:2px;flex:1}
+header .logos img{height:38px;width:auto;display:block}
+header .logos img.script{height:24px}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;position:relative;flex:none}
+.badge{position:absolute;top:-2px;right:-2px;background:#E10600;color:#fff;font-size:11px;font-weight:bold;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--border);padding:6px 8px;position:sticky;top:58px;z-index:19}
+nav.tabs button{background:none;border:0;color:var(--muted);font-weight:bold;font-size:14px;padding:8px 12px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button.active{color:var(--text);border-bottom-color:#E10600}
+main{max-width:680px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.card[id^="blog-"]{scroll-margin-top:130px}
+.adboard{border:2px solid #E10600}
+.adboard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.adboard-head h3{margin:0;color:#E10600}
+.adboard-tag{background:#E10600;color:#fff;font-size:11px;font-weight:bold;padding:4px 9px;border-radius:10px;letter-spacing:1px}
+.composer{display:flex;gap:10px;align-items:center}
+.avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex:none;border:2px solid #fff}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.pill{flex:1;background:var(--card2);border-radius:20px;padding:11px 14px;color:var(--muted);cursor:pointer;text-align:left;border:0;font-size:16px}
+.members-bubble-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:none;align-items:center;justify-content:center;padding:24px}
+.members-bubble-overlay.open{display:flex}
+.members-bubble{background:#fff;color:#000;border-radius:20px;padding:22px 24px;text-align:center;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.45);font-weight:bold;font-size:17px;line-height:1.4}
+.members-bubble button{margin-top:14px;background:#000;color:#fff;border:0;border-radius:20px;padding:10px 22px;font-weight:bold;cursor:pointer}
+.stories{display:flex;gap:10px;overflow-x:auto}
+.story{flex:0 0 110px;height:170px;border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;font-weight:bold;font-size:13px}
+.story.create{background:#E10600}.story.your{background:var(--card2)}.story.party{background:var(--card2)}
+.posthead{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.posthead b{display:block}.posthead span{color:var(--muted2);font-size:13px}
+.follow{margin-left:auto;color:#E10600;font-weight:bold;font-size:14px}
+h1,h2,h3{margin:0 0 8px;text-transform:uppercase;letter-spacing:.5px}
+h1{font-size:28px}h2{font-size:20px}h3{font-size:16px}
+p{line-height:1.55;color:var(--muted);margin:0 0 10px}
+.hero{background:#E10600;border-radius:12px;padding:18px;margin-bottom:12px}
+.hero h1{font-size:38px;line-height:1}.hero h1 span{background:#fff;color:#000;padding:0 6px}
+.btn{display:inline-block;background:#E10600;color:#fff;font-weight:bold;text-decoration:none;padding:11px 18px;border-radius:20px;margin:4px 6px 4px 0}
+.btn.white{background:#fff;color:#000}.btn.dark{background:var(--card2);color:var(--text)}
+.meta{color:var(--muted2);font-size:13px}
+ul{line-height:1.6;color:var(--muted)}
+section.tabpane{display:none}section.tabpane.active{display:block}
+.profilecover{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;margin-bottom:12px}
+.profilecover img{height:90px;width:auto}
+.profilecover img.script{height:70px}
+.detail{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border);color:var(--muted)}
+.sidebar{display:none}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 4px}
+.bottomnav button{background:none;border:0;color:var(--text);font-size:22px;cursor:pointer;position:relative}
+.bottomnav button.active{color:#E10600}
+@media(min-width:900px){
+  .layout{max-width:1100px;margin:0 auto;display:flex;gap:16px;align-items:flex-start}
+  .sidebar{display:block;flex:0 0 230px;position:sticky;top:118px}
+  .sidebar a{display:flex;gap:10px;padding:10px;color:var(--muted);text-decoration:none;border-radius:8px}
+  .sidebar a:hover{background:var(--card)}
+  main{flex:1;max-width:680px}
+}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:49;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;left:0;bottom:0;width:min(85vw,360px);background:var(--card2);z-index:50;transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:12px;box-shadow:2px 0 16px rgba(0,0,0,.4)}
+#drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px}
+.drawer-head img{height:40px;width:auto;flex:none}
+.drawer-head b{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+.drawer-close{width:36px;height:36px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;flex:none}
+.drawer-sec{font-weight:bold;margin:14px 4px 8px;text-transform:uppercase;letter-spacing:.5px;font-size:14px}
+.shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.shortcut{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 4px 10px;text-align:center;cursor:pointer;color:var(--text);font-size:12px;font-weight:bold}
+.shortcut span{display:block;font-size:22px;margin-bottom:6px}
+.drawer-row{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--text);font-size:16px;font-weight:bold;padding:12px 8px;cursor:pointer;text-align:left;text-decoration:none}
+.drawer-row span.ic{font-size:22px;width:30px;text-align:center;flex:none}
+.drawer-row:hover{background:var(--card);border-radius:8px}
+.seemore{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:bold;font-size:15px;padding:12px;border-radius:8px;cursor:pointer;margin:8px 0}
+.drawer-group{border-top:1px solid var(--border);margin-top:12px}
+.drawer-group button.ghead{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--text);font-size:16px;font-weight:bold;padding:14px 8px;cursor:pointer;text-align:left}
+.drawer-group button.ghead span.ic{font-size:22px;width:30px;text-align:center;flex:none}
+.drawer-group button.ghead .chev{margin-left:auto;display:inline-block;transition:transform .2s}
+.drawer-group .gbody{display:none;padding:0 8px 10px}
+.drawer-group.open .gbody{display:block}
+.drawer-group.open .chev{transform:rotate(180deg)}
+.gbody a,.gbody button.glink{display:block;color:var(--muted);text-decoration:none;padding:8px 0;background:none;border:0;font-size:15px;cursor:pointer;text-align:left}
+</style>
+</head>
+<body>
+<header>
+  <button class="iconbtn" onclick="openDrawer()" aria-label="Menu">&#9776;</button>
+  <div class="logos"><img class="script" src="__SCRIPT__" alt="daos"></div>
+  <button class="iconbtn" aria-label="Search">&#128269;</button>
+  <button class="iconbtn" aria-label="Notifications">&#128276;<span class="badge">3</span></button>
+  <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">&#9790;</button>
+  <div class="avatar" style="width:38px;height:38px;font-size:18px"><img src="__CIRCLED__" alt="DAOS"></div>
+</header>
+<nav class="tabs" id="tabs">
+  <button class="active" onclick="showTab('feed',this)">Feed</button>
+  <button onclick="showTab('events',this)">Events</button>
+  <button onclick="showTab('tournaments',this)">Tournaments</button>
+  <button onclick="showTab('community',this)">Community</button>
+  <button onclick="showTab('magazine',this)">Magazine</button>
+  <button onclick="showTab('photos',this)">Photos</button>
+  <button onclick="showTab('blog',this)">Blog</button>
+  <button onclick="showTab('music',this)">Music</button>
+  <button onclick="showTab('profile',this)">Profile</button>
+</nav>
+<div class="layout">
+<aside class="sidebar">
+  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#128202; Business Dashboard</a>
+  <a href="#" onclick="showTab('community',document.querySelectorAll('#tabs button')[3]);return false">&#128101; Groups</a>
+  <a href="#" onclick="showTab('events',document.querySelectorAll('#tabs button')[1]);return false">&#127915; Events</a>
+  <a href="#" onclick="showTab('photos',document.querySelectorAll('#tabs button')[5]);return false">&#128444; Saved</a>
+  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#10067; Help and support</a>
+  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#9881; Settings and privacy</a>
+</aside>
+<main>
+<section id="feed" class="tabpane active">
+  <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="showMembersBubble()">What's on your mind?</button></div>
+  <div class="members-bubble-overlay" id="membersBubble" onclick="hideMembersBubble()"><div class="members-bubble" onclick="event.stopPropagation()">This section is only for DAOS members.<br><button type="button" onclick="hideMembersBubble()">OK</button></div></div>
+  <div class="card">
+    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>2h &middot; New York, NY</span></div><span class="follow">Follow</span></div>
+    <div class="hero"><h1>DAOS <span>PARTY</span></h1><p style="color:#fff;font-weight:bold">Saturday, December 5, 2026 &middot; 5:00 PM &ndash; 10:00 PM<br>Row House, 2128 Frederick Douglass Blvd, Harlem, NYC</p><p style="color:#fff">The official pre-party to DAOS CON. Martial arts, music and culture &mdash; live, in Harlem.</p><a class="btn white" href="https://deadlyartofsurvival.com/products/daos-party">Tickets</a><a class="btn dark" href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">Bandsintown</a></div>
+    <p class="meta">After-party follows the 5&ndash;10 PM event.</p>
+  </div>
+  <div class="card adboard">
+    <div class="adboard-head"><h3>Ad Board</h3><span class="adboard-tag">SPONSORED</span></div>
+    <p><strong>Your brand here.</strong> Put your business in front of the DAOS community &mdash; 139K Instagram followers, a 14K-member private community, and roughly 30M views a month across platforms, plus DAOS Magazine, the site, and the Dec 5 Party in Harlem.</p>
+    <a class="btn" href="https://deadlyartofsurvival.com">Advertise with DAOS</a>
+    <p class="meta">Ad space on the DAOS feed &middot; Contact daosmediagrp@gmail.com</p>
+  </div>
+  <div class="card">
+    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>Tournaments</span></div><span class="follow">Follow</span></div>
+    <h3>KTOC Nationals &mdash; Nov 22, 2026</h3>
+    <p>Karate Tournament of Champions, Queens College Fitzgerald Gym, Flushing, Queens, NY. Traditional, Creative Extreme, Sync/Demo Teams, Point Fighting, 2 Person Tag Team, Open Weight and Open Rank. Sanctioned NASKA 3A / WKC. Promoters Rick Diaz &amp; Susan Diaz. Promo code KTOC26.</p>
+    <p class="meta">Contact: ktocnationals@gmail.com &middot; 718-607-6665</p>
+  </div>
+  <div class="card">
+    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>Tournaments</span></div><span class="follow">Follow</span></div>
+    <h3>Anthony Arango &mdash; Tournament Record</h3>
+    <p>Head instructor, The Martial Arts Institute, Massapequa, NY. Nationally ranked with the Arango Warriors National Karate Team; USA Fighting Team; USA World W.A.K.O. Fighting Team member, silver medal, World Championships Italy; Black Belt Fighting Champion, Ocean State National Karate Tournament, Rhode Island; Fighting Black Belt Grand Champion, Island Wide Open Championship, Long Island, NY. Runs the Arango Karate Championship.</p>
+  </div>
+</section>
+<section id="events" class="tabpane">
+  <div class="hero"><h1>DAOS <span>PARTY</span></h1><p style="color:#fff;font-weight:bold">Saturday, December 5, 2026 &middot; 5:00 PM &ndash; 10:00 PM<br>Row House, 2128 Frederick Douglass Blvd, Harlem, NYC</p><p id="partyCountdown" style="color:#fff;font-weight:bold;font-size:18px"></p><a class="btn white" href="https://deadlyartofsurvival.com/products/daos-party">Tickets</a><a class="btn dark" href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">Bandsintown</a> <button class="btn dark" type="button" onclick="downloadPartyICS()">Add to calendar</button></div>
+  <div class="card"><h3>RSVP — DAOS Party</h3><p>Going? Tell us you're in — tickets are still required via the link above, and this RSVP helps us plan the room.</p><form onsubmit="return submitRSVP(event)"><p><input id="rsvpName" type="text" placeholder="Your name" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpEmail" type="email" placeholder="Email" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpSize" type="number" min="1" max="20" value="1" aria-label="Party size" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"></p><button class="btn" type="submit">Send RSVP</button></form><p id="rsvpDone" class="meta" style="display:none">You're on the list — see you Dec 5 in Harlem. Don't forget your ticket above.</p></div>
+  <div class="card"><h3>DAOS CON</h3><p>The DAOS Party is the official pre-party to DAOS CON.</p></div>
+</section>
+<section id="tournaments" class="tabpane">
+  <div class="card"><h3>KTOC Nationals &mdash; Karate Tournament of Champions</h3><p>Sunday, November 22, 2026, Queens College Fitzgerald Gym, Flushing, Queens, NY. Divisions: Traditional, Creative Extreme, Sync/Demo Teams, Point Fighting, 2 Person Tag Team, Open Weight, Open Rank. Sanctioned NASKA 3A / WKC. Promoters Rick Diaz &amp; Susan Diaz. Contact ktocnationals@gmail.com, 718-607-6665. Promo code KTOC26.</p></div>
+  <div class="card"><h3>Anthony Arango &mdash; Tournament Record</h3><ul><li>Head instructor, The Martial Arts Institute, Massapequa, NY</li><li>Nationally ranked with the Arango Warriors National Karate Team</li><li>USA Fighting Team (USA vs Puerto Rico, USA vs South Africa)</li><li>USA World W.A.K.O. Fighting Team member, silver medal, World Championships Italy at age 48</li><li>Black Belt Fighting Champion, Ocean State National Karate Tournament, Rhode Island (also at age 55)</li><li>Fighting Black Belt Grand Champion, Island Wide Open Championship, Long Island, NY</li><li>Runs the Arango Karate Championship</li></ul></div>
+</section>
+<section id="community" class="tabpane">
+  <div class="card"><h3>Community</h3><p>Latest Magazine Updates &mdash; the DAOS community channel. Feed, groups and conversation around martial arts, music and culture.</p></div>
+  <div class="card"><h3>Party Vault</h3><p>Photos and videos from the DAOS Party.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
+</section>
+<section id="magazine" class="tabpane">
+  <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival Magazine &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
+  <div class="card"><h3>Apply to be featured — application</h3><p>Fill this in right here and it goes straight to DAOS. Your profile becomes your feature application.</p><iframe src="https://form.jotform.com/233268724006050" title="Apply to be in DAOS Magazine" style="width:100%;height:720px;border:0;border-radius:8px" loading="lazy"></iframe><p class="meta">Form not loading? <a href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application page</a> instead.</p></div>
+</section>
+<section id="photos" class="tabpane">
+  <div class="card"><h3>Photos</h3><p>Party Vault photos and DAOS galleries live here.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
+</section>
+<section id="blog" class="tabpane">
+  <div class="card" id="blog-i-play-rocky-the-underdog-story-behind-the-underdog-story"><h3>I Play Rocky: The Fight Before the Fight</h3><p class="meta">DAOS Magazine &middot; November 3, 2026</p><p>Long before the bell ever rang for Rocky Balboa, Sylvester Stallone was already in the fight of his life &mdash; and it was not in a ring. It was in a room full of studio executives who wanted his script and did not want him in it.</p><p>That is the story Peter Farrelly's <em>I Play Rocky</em> tells. A broke, unknown actor writes a script about a Philly club fighter, then refuses a fortune to hand it over unless he gets to play the lead himself. Anthony Ippolito &mdash; who taped his audition in his grandmother's basement after playing Al Pacino in <em>The Offer</em> &mdash; plays the young Stallone, alongside Stephan James as Carl Weathers and Matt Dillon as Stallone's father.</p><p>The film opens in select theaters November 6 and everywhere November 20, nearly 50 years after the original <em>Rocky</em> debuted. And the spirit is already in the gym: RDX's #MyFirstRound campaign, shared with DAOS by Karen Apablaza of Hudson West PR, is built around <em>I Play Rocky</em>-inspired gear for your first round.</p><p>Stallone did not win by knocking anybody out in that meeting. He won by refusing to move. That is the lesson.</p><a class="btn" href="https://deadlyartofsurvival.com/blogs/news/i-play-rocky-the-underdog-story-behind-the-underdog-story">Read the full story</a><button class="btn dark" onclick="sharePost('i-play-rocky-the-underdog-story-behind-the-underdog-story',this)">&#128279; Share</button></div>
+  <div class="card"><h3>Latest from the DAOS blog</h3><!-- BLOG-FEED-START --><p><strong><a href="https://deadlyartofsurvival.com/blogs/news/halloween-party-turns-violent-five-teens-hurt-in-chandlers-ford">Halloween Party Turns Violent: Five Teens Hurt in Chandler&#x27;s Ford</a></strong><br><span class="meta">2026-11-04</span><br>Police have arrested a fourth teenager after five teenagers were stabbed at a Halloween party in Chandler&#x27;s Ford, England, on Saturday night — a story that is a reminder of how fast a celebration can …</p>
+<p><strong><a href="https://deadlyartofsurvival.com/blogs/news/godzilla-minus-zero-smashes-franchise-record">Godzilla Minus Zero Smashes Franchise Record</a></strong><br><span class="meta">2026-11-04</span><br>Godzilla Minus Zero has delivered the biggest opening day in the franchise&#x27;s history in Japan, stomping past its Oscar-winning predecessor on day one.More</p>
+<p><strong><a href="https://deadlyartofsurvival.com/blogs/news/drake-named-apple-musics-top-rapper-of-2026">Drake Named Apple Music&#x27;s Top Rapper of 2026</a></strong><br><span class="meta">2026-11-04</span><br>Apple Music has named Drake its Best Rapper of 2026, front and center on its &quot;Rap Life: Best of 2026&quot; playlist, published November 3 — capping a year that the platform says was defined by massive stre…</p>
+<p><strong><a href="https://deadlyartofsurvival.com/blogs/news/mccall-61-still-knocking-them-out">Mccall, 61, Still Knocking Them Out</a></strong><br><span class="meta">2026-11-04</span><br>Oliver McCall is 61 years old, 77 fights into a professional career that started in 1985 — and on Tuesday night in Nashville, he won again.More</p>
+<p><strong><a href="https://deadlyartofsurvival.com/blogs/news/rosas-chokes-covington-in-40-seconds">Rosas Chokes Covington in 40 Seconds</a></strong><br><span class="meta">2026-11-04</span><br>Forty seconds. That is all Raul Rosas Jr. needed to make former UFC interim welterweight champion Colby Covington tap out in Rome.More</p><!-- BLOG-FEED-END --><p class="meta">Updated from deadlyartofsurvival.com at build time.</p></div>
+  <div class="card"><h3>Blog</h3><p>The latest DAOS Magazine stories &mdash; fight game, music and culture.</p><a class="btn" href="https://muse.ai/s/daos-foundation-media-sxn6xzxdxfxfxn3pxy">Read the blog</a></div>
+</section>
+<section id="music" class="tabpane">
+  <div class="card"><h3>Jake Northfa$e</h3><p><strong>&ldquo;The Apartheid - Remix&rdquo; ft. Killah Priest</strong></p><a class="btn" href="https://open.spotify.com/artist/6xDnOObztkl0OsrihKaP5C">Jake Northfa$e on Spotify</a><p class="meta">Instagram: @deadlyartofsurvival &middot; @jakethenorthfase</p></div>
+</section>
+<section id="profile" class="tabpane">
+  <div class="profilecover"><img class="script" src="__SCRIPT__" alt="daos"><h2>Deadly Art of Survival Magazine</h2><p>Local business &middot; New York, NY, United States &middot; Always open</p><a class="btn" href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a></div>
+  <div class="card"><h3>Details</h3><div class="detail">&#128205; New York, NY, United States</div><div class="detail">&#128222; +1 917-304-7517</div><div class="detail">&#9993; daosmediagrp@gmail.com</div><div class="detail">&#128279; deadlyartofsurvival.com</div></div>
+  <div class="card"><h3>Communities</h3><p>Latest Magazine Updates &mdash; Channel</p></div>
+  <div class="card"><h3>Links</h3><p><a href="https://deadlyartofsurvival.com/products/daos-party">DAOS Party tickets</a><br><a href="https://open.spotify.com/artist/6xDnOObztkl0OsrihKaP5C">Jake Northfa$e on Spotify</a><br><a href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">DAOS Party on Bandsintown</a></p></div>
+</section>
+</main>
+</div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="drawer-head"><img src="__CIRCLED__" alt="DAOS"><b>Deadly Art of Survival</b><button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">&#10005;</button></div>
+  <div class="drawer-sec">Your shortcuts</div>
+  <div class="shortcuts">
+    <button class="shortcut" onclick="goTab('feed',0)"><span>&#8962;</span>Feed</button>
+    <button class="shortcut" onclick="goTab('events',1)"><span>&#127915;</span>Events</button>
+    <button class="shortcut" onclick="goTab('music',7)"><span>&#127925;</span>Music</button>
+    <button class="shortcut" onclick="goTab('magazine',4)"><span>&#128214;</span>Magazine</button>
+  </div>
+  <div class="drawer-sec">Menu</div>
+  <button class="drawer-row" onclick="goTab('feed',0)"><span class="ic">&#8962;</span>Feed</button>
+  <button class="drawer-row" onclick="goTab('events',1)"><span class="ic">&#127915;</span>Events</button>
+  <button class="drawer-row" onclick="goTab('tournaments',2)"><span class="ic">&#127942;</span>Tournaments</button>
+  <button class="drawer-row" onclick="goTab('community',3)"><span class="ic">&#128101;</span>Community</button>
+  <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic">&#128214;</span>Magazine</button>
+  <button class="drawer-row" onclick="goTab('music',7)"><span class="ic">&#127925;</span>Music</button>
+  <div id="drawerMore" style="display:none">
+    <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic">&#128444;</span>Photos</button>
+    <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic">&#128240;</span>Blog</button>
+    <button class="drawer-row" onclick="goTab('profile',8)"><span class="ic">&#128100;</span>Profile</button>
+    <a class="drawer-row" href="https://deadlyartofsurvival.com/products/daos-party"><span class="ic">&#127881;</span>DAOS Party &mdash; Dec 5</a>
+    <button class="drawer-row" onclick="goTab('events',1)"><span class="ic">&#129354;</span>DAOS CON</button>
+  </div>
+  <button class="seemore" id="seeMoreBtn" onclick="toggleSeeMore()">See more</button>
+  <div class="drawer-group">
+    <button class="ghead" onclick="toggleGroup(this)"><span class="ic">&#10067;</span>Help and support<span class="chev">&#8964;</span></button>
+    <div class="gbody">
+      <a href="mailto:daosmediagrp@gmail.com">Contact DAOS</a>
+      <a href="https://deadlyartofsurvival.com/pages/book-a-call">Book a Call</a>
+      <a href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a>
+    </div>
+  </div>
+  <div class="drawer-group">
+    <button class="ghead" onclick="toggleGroup(this)"><span class="ic">&#9881;</span>Settings and privacy<span class="chev">&#8964;</span></button>
+    <div class="gbody">
+      <button class="glink" onclick="toggleTheme()">Toggle light / dark mode</button>
+    </div>
+  </div>
+</aside>
+<nav class="bottomnav">
+  <button class="active" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])">&#8962;</button>
+  <button onclick="showTab('events',document.querySelectorAll('#tabs button')[1])">&#127915;</button>
+  <button onclick="showTab('community',document.querySelectorAll('#tabs button')[3])">+</button>
+  <button>&#128276;<span class="badge">1</span></button>
+  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
+</nav>
+<script>
+function updatePartyCountdown(){
+  var el=document.getElementById('partyCountdown'); if(!el) return;
+  var target=new Date('2026-12-05T17:00:00-05:00').getTime();
+  var diff=target-Date.now();
+  if(diff<=0){el.textContent='The DAOS Party is on!';return;}
+  var d=Math.floor(diff/86400000),h=Math.floor(diff/3600000)%24,m=Math.floor(diff/60000)%60;
+  el.textContent=d+' days, '+h+' hours, '+m+' minutes to go';
+}
+updatePartyCountdown(); setInterval(updatePartyCountdown,60000);
+function downloadPartyICS(){
+  var ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DAOS//DAOS Party//EN','BEGIN:VEVENT','UID:daos-party-2026@daosmedia.com','DTSTAMP:20261104T000000Z','DTSTART:20261205T220000Z','DTEND:20261206T030000Z','SUMMARY:DAOS Party','LOCATION:Row House\\, 2128 Frederick Douglass Blvd\\, Harlem\\, NYC','DESCRIPTION:The official pre-party to DAOS CON. Tickets: https://deadlyartofsurvival.com/products/daos-party','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); a.download='daos-party-dec-5-2026.ics'; a.click();
+}
+function submitRSVP(e){
+  e.preventDefault();
+  var n=document.getElementById('rsvpName').value, em=document.getElementById('rsvpEmail').value, s=document.getElementById('rsvpSize').value;
+  window.location.href='mailto:daosmediagrp@gmail.com?subject='+encodeURIComponent('DAOS Party RSVP — '+n)+'&body='+encodeURIComponent('Name: '+n+'\nEmail: '+em+'\nParty size: '+s+'\nEvent: DAOS Party, Dec 5, 2026, Row House, Harlem');
+  document.getElementById('rsvpDone').style.display='block';
+  return false;
+}
+function showMembersBubble(){document.getElementById('membersBubble').classList.add('open')}
+function hideMembersBubble(){document.getElementById('membersBubble').classList.remove('open')}
+function toggleTheme(){
+  var light = document.body.classList.toggle('light');
+  document.getElementById('themeToggle').textContent = light ? '\u2600' : '\u263E';
+  try{ localStorage.setItem('daos-theme', light ? 'light' : 'dark'); }catch(e){}
+}
+(function(){
+  try{
+    if(localStorage.getItem('daos-theme')==='light'){
+      document.body.classList.add('light');
+      document.getElementById('themeToggle').textContent = '\u2600';
+    }
+  }catch(e){}
+})();
+function showTab(id,btn){
+  document.querySelectorAll('.tabpane').forEach(function(s){s.classList.toggle('active',s.id===id)});
+  document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b===btn)});
+  window.scrollTo(0,0);
+}
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+function goTab(id,i){
+  showTab(id,document.querySelectorAll('#tabs button')[i]);
+  closeDrawer();
+}
+function toggleSeeMore(){
+  var m=document.getElementById('drawerMore');
+  var b=document.getElementById('seeMoreBtn');
+  var open=m.style.display==='block';
+  m.style.display=open?'none':'block';
+  b.textContent=open?'See more':'See less';
+}
+function toggleGroup(el){
+  el.parentElement.classList.toggle('open');
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
+function postUrl(slug){
+  return 'https://daosmedia.com/#blog/' + slug;
+}
+function fallbackCopy(text){
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }catch(e){}
+}
+function sharePost(slug,btn){
+  var url=postUrl(slug);
+  var done=function(){
+    if(!btn)return;
+    var old=btn.textContent;
+    btn.textContent='Link copied \u2713';
+    setTimeout(function(){btn.textContent=old;},2000);
+  };
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done,function(){fallbackCopy(url);done();});
+    }else{fallbackCopy(url);done();}
+  }catch(e){fallbackCopy(url);done();}
+}
+function openDeepLink(){
+  var h=window.location.hash||'';
+  var blogBtn=document.querySelectorAll('#tabs button')[6];
+  if(h==='#blog'){showTab('blog',blogBtn);return;}
+  var m=h.match(/^#blog\/([A-Za-z0-9\-_]+)$/);
+  if(!m)return;
+  var el=document.getElementById('blog-'+m[1]);
+  showTab('blog',blogBtn);
+  if(el){setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+}
+window.addEventListener('hashchange',openDeepLink);
+openDeepLink();
+</script>
+</body>
+</html>
