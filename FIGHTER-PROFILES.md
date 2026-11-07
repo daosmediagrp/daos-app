@@ -13,7 +13,8 @@ only on Jake's go-ahead after review.
   Vote and Share buttons.
 - **Shareable profile page**: `https://daosmedia.com/#/fighter/<slug>`
   (e.g. `#/fighter/jorge-borjas`) — photo, bio, vote count, a vote box
-  (email address, one vote per email), and a share button that copies the link.
+  (email + phone number, one vote per email and one per phone number),
+  and a share button that copies the link.
 - **My Fighter Profile** (in the Fighters tab, login required): signed-in
   members create or edit their own profile — name, page name (slug),
   style/rank, bio, photo upload. Status is always shown:
@@ -21,10 +22,15 @@ only on Jake's go-ahead after review.
 - **Photo upload**: to the `profile-photos` storage bucket, into a folder
   named after the user's own id. Public can view photos; only the owner
   can upload/replace/delete their own.
-- **Voting**: public, no login needed — voter enters an email. One vote per
-  email per fighter, enforced by a unique constraint plus a
-  `cast_fighter_vote()` function (the only public write path; there are no
-  anonymous writes to the tables). Voter emails are never shown publicly.
+- **Voting**: public, no login needed — voter enters an email AND a phone
+  number. One vote per email and one vote per phone number, per fighter,
+  enforced by unique constraints plus a `cast_fighter_vote()` function
+  (the only public write path; there are no anonymous writes to the
+  tables). Voter emails and phone numbers are never shown publicly.
+  Phone numbers are stored digits-only; the 3 existing votes (Jorge 2,
+  Aker 1) have no phone on file and stay valid. Migration:
+  `supabase/fighter-votes-phone.sql` — run in Supabase BEFORE pushing the
+  site change that calls the 3-argument function.
 - **Editing a live profile**: the profile stays live, but it is flagged
   `needs_review = true` so DAOS can re-check the changes.
 - **Admin approval**: there is NO admin login in the app. Jake approves in
@@ -88,10 +94,12 @@ via the normal push path; GitHub Pages rebuilds daosmedia.com.
 
 ## Vote rule
 
-One vote per email, per fighter. Enforced in the database
-(`UNIQUE (fighter_id, voter_email)` on `fighter_votes`), not just in the
-page code — so it holds even if someone calls the function directly.
-Duplicate votes are rejected with an "already voted" message.
+One vote per email AND one vote per phone number, per fighter. Enforced
+in the database (`UNIQUE (fighter_id, voter_email)` and a partial unique
+index on `(fighter_id, voter_phone) WHERE voter_phone IS NOT NULL` on
+`fighter_votes`), not just in the page code — so it holds even if someone
+calls the function directly. Duplicate votes are rejected with an
+"already voted" message naming the email or the phone number.
 
 ## Two systems until cutover
 
@@ -111,7 +119,7 @@ Do not merge or delete the Shopify counts without Jake's call.
 - App users cannot change their own profile status — a database trigger
   blocks status changes from the app roles. Jake changes status from the
   dashboard (postgres role), which the trigger allows.
-- Voter emails are stored only in `fighter_votes`, which has no public
+- Voter emails and phone numbers are stored only in `fighter_votes`, which has no public
   read policy.
 - Photo uploads are capped at 5 MB in the page code; only image files are
   accepted by the file picker.

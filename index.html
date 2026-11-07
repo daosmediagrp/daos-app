@@ -321,7 +321,7 @@ select.finput{appearance:auto}
   <div id="fighterDetail" style="display:none"></div>
   <div id="fighterList" class="fighter-grid"><p class="meta">Loading fighters&hellip;</p></div>
   <div class="card" id="myProfileCard">
-    <h3>My Fighter Profile</h3>
+    <h3>My Profile</h3>
     <div id="myProfileLogin"><p>Log in to create your own fighter profile, upload your photo, and share your page to gather votes.</p><button class="btn" type="button" onclick="openAuthModal()">Log in / Sign up</button></div>
     <div id="myProfileForm" style="display:none">
       <p id="myProfileStatus" class="meta"></p>
@@ -913,8 +913,9 @@ function closeMember(){
 }
 /* ---- Martial Artist Profiles (Fighters) ----
    Tables live in Supabase (see supabase/fighter-profiles.sql).
-   Public: anyone reads LIVE profiles and votes by email via the
-   cast_fighter_vote() function (one vote per email, per fighter).
+   Public: anyone reads LIVE profiles and votes by email + phone via the
+   cast_fighter_vote() function (one vote per email and one per phone
+   number, per fighter).
    Members: signed-in users create/edit their OWN profile; it goes
    live only after DAOS approves it in the dashboard. */
 function escapeHtml(s){
@@ -962,6 +963,7 @@ async function openFighter(slug){
     '<p>' + escapeHtml(p.bio || '') + '</p>' +
     '<p><span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></p>' +
     '<input id="voteEmail" class="finput" type="email" placeholder="Your email — one vote per email">' +
+    '<input id="votePhone" class="finput" type="tel" placeholder="Your phone number — one vote per phone number">' +
     '<button class="btn" type="button" onclick="castVote(\'' + escapeHtml(p.id) + '\',\'' + escapeHtml(p.slug) + '\')">Vote for ' + escapeHtml(p.display_name) + '</button>' +
     '<button class="btn dark" type="button" onclick="shareFighter(\'' + escapeHtml(p.slug) + '\',this)">Share this page</button> ' +
     '<button class="btn dark" type="button" onclick="closeFighter()">Back to the leaderboard</button>' +
@@ -975,18 +977,21 @@ function closeFighter(){
 }
 async function castVote(fighterId, slug){
   var em = document.getElementById('voteEmail');
+  var ph = document.getElementById('votePhone');
   var msg = document.getElementById('voteMsg');
   var email = em ? em.value.trim() : '';
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter a valid email to vote.'; return; }
+  var phone = ph ? ph.value.replace(/\D/g, '') : '';
+  if (phone.length < 7 || phone.length > 15) { if (msg) msg.textContent = 'Enter a valid phone number to vote.'; return; }
   if (!supabaseClient) { if (msg) msg.textContent = 'Voting is not connected yet.'; return; }
-  var res = await supabaseClient.rpc('cast_fighter_vote', {p_fighter_id: fighterId, p_voter_email: email});
+  var res = await supabaseClient.rpc('cast_fighter_vote', {p_fighter_id: fighterId, p_voter_email: email, p_voter_phone: phone});
   if (res.error) {
-    var m = res.error.message || '';
-    if (msg) msg.textContent = (m.indexOf('duplicate') !== -1 || res.error.code === '23505') ? 'You already voted for this fighter with that email.' : m;
+    if (msg) msg.textContent = res.error.message || 'Could not count your vote — try again.';
     return;
   }
   if (msg) msg.textContent = 'Vote counted — thank you.';
   if (em) em.value = '';
+  if (ph) ph.value = '';
   loadFighters();
   await openFighter(slug);
   var fresh = document.getElementById('voteMsg');
