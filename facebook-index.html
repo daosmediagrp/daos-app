@@ -89,9 +89,74 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .drawer-group.open .gbody{display:block}
 .drawer-group.open .chev{transform:rotate(180deg)}
 .gbody a,.gbody button.glink{display:block;color:var(--muted);text-decoration:none;padding:8px 0;background:none;border:0;font-size:15px;cursor:pointer;text-align:left}
+.fighter-grid{display:flex;flex-direction:column;gap:12px}
+.fighter-card{display:flex;gap:12px;align-items:flex-start}
+.fighter-photo{width:72px;height:72px;border-radius:50%;overflow:hidden;background:#E10600;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;flex:none;border:2px solid #fff}
+.fighter-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.fighter-photo.big{width:120px;height:120px;font-size:52px}
+.fighter-rank{color:#E10600;font-weight:900;font-size:20px;flex:none;width:28px;text-align:center;padding-top:22px}
+.fighter-body{flex:1;min-width:0}
+.fighter-body h3{margin-bottom:2px}
+.fighter-body h3 a{color:var(--text);text-decoration:none}
+.fighter-votes{font-weight:bold;color:#E10600}
+.finput{width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px;font-size:16px}
+textarea.finput{resize:vertical;min-height:90px}
+.fstatus{font-weight:bold;color:#E10600}
+/* ---- Social layer: login gate, posts, network, rankings ---- */
+body.gated header,body.gated nav.tabs,body.gated .layout,body.gated .bottomnav,body.gated #drawer,body.gated .drawer-overlay{display:none}
+#loginGate{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:flex-start;justify-content:center;padding:48px 24px;overflow-y:auto}
+body.gated #loginGate{display:flex}
+.logingate-inner{max-width:360px;width:100%;text-align:center}
+.logingate-inner img{height:80px;width:auto;margin-bottom:8px}
+.logingate-inner .ginput{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px;font-size:16px}
+.postactions{display:flex;gap:4px;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+.pact{flex:1;background:none;border:0;color:var(--muted);font-size:14px;font-weight:bold;cursor:pointer;padding:6px 2px;border-radius:8px}
+.pact:hover{background:var(--card2)}
+.pact.liked{color:#E10600}
+.repost-inner{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0}
+.repost-label{color:var(--muted2);font-size:13px;margin-bottom:8px}
+.comments{border-top:1px solid var(--border);margin-top:10px;padding-top:10px}
+.comment{display:flex;gap:8px;margin-bottom:8px}
+.comment .avatar{width:32px;height:32px;font-size:14px}
+.comment-body{flex:1;background:var(--card2);border-radius:10px;padding:8px 10px}
+.comment-body b{font-size:14px}
+.comment-body p{margin:2px 0 0;color:var(--text);font-size:14px}
+.comment-form{display:flex;gap:8px;margin-top:8px}
+.comment-form input{flex:1;padding:10px;border-radius:18px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:15px}
+.followbtn{margin-left:auto;background:none;border:1px solid #E10600;color:#E10600;font-weight:bold;font-size:13px;padding:6px 12px;border-radius:16px;cursor:pointer;flex:none}
+.followbtn.following{background:#E10600;color:#fff}
+.post-highlight{outline:2px solid #E10600}
+.setupcard{border:2px solid #E10600}
+.suggest-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--border)}
+.suggest-row:first-of-type{border-top:0}
+.suggest-row .who{flex:1;min-width:0}
+.suggest-row .who b{display:block}
+.suggest-row .who span{color:var(--muted2);font-size:13px}
+.rank-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--border)}
+.rank-row:first-of-type{border-top:0}
+.rank-num{color:#E10600;font-weight:900;font-size:20px;width:28px;text-align:center;flex:none}
+.rank-row .who{flex:1;min-width:0}
+.rank-row .who b{display:block}
+.rank-row .who span{color:var(--muted2);font-size:13px}
+.member-stats{display:flex;gap:16px;justify-content:center;margin:10px 0}
+.member-stats b{display:block;font-size:18px}
+.member-stats span{color:var(--muted2);font-size:13px}
 </style>
 </head>
-<body>
+<body class="gated">
+<div id="loginGate">
+  <div class="logingate-inner">
+    <img src="__CIRCLED__" alt="DAOS">
+    <h1>Deadly Art of <span class="red">Survival</span></h1>
+    <p>Martial arts, music &amp; culture &mdash; members only. Log in or create your free account to join the community.</p>
+    <input id="gateEmail" class="ginput" type="email" placeholder="Email" autocomplete="email">
+    <input id="gatePass" class="ginput" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="btn" type="button" onclick="gateAuth('signin')" style="width:100%">Log in</button>
+    <button class="btn dark" type="button" onclick="gateAuth('signup')" style="width:100%">Create account</button>
+    <p id="gateMsg" class="meta"></p>
+    <p class="meta">Free to join. No paywall. Oss.</p>
+  </div>
+</div>
 <header>
   <button class="iconbtn" onclick="openDrawer()" aria-label="Menu">&#9776;</button>
   <div class="logos"><img class="script" src="__SCRIPT__" alt="daos"></div>
@@ -111,6 +176,9 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   <button onclick="showTab('blog',this)">Blog</button>
   <button onclick="showTab('music',this)">Music</button>
   <button onclick="showTab('profile',this)">Profile</button>
+  <button onclick="showTab('fighters',this)">Fighters</button>
+  <button onclick="showTab('network',this)">Network</button>
+  <button onclick="showTab('rankings',this)">Rankings</button>
 </nav>
 <div class="layout">
 <aside class="sidebar">
@@ -120,10 +188,12 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   <a href="#" onclick="showTab('photos',document.querySelectorAll('#tabs button')[5]);return false">&#128444; Saved</a>
   <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#10067; Help and support</a>
   <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#9881; Settings and privacy</a>
+  <div class="card" id="suggestSidebarCard" style="display:none;margin-top:12px"><h3>People to connect with</h3><div id="suggestSidebar"></div></div>
 </aside>
 <main>
 <section id="feed" class="tabpane active">
   <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">What's on your mind?</button></div>
+  <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',10)">Create my profile</button></div>
   <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Public front page — posting is for signed-in members.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
   <div class="card" id="composerForm" style="display:none"><h3>New post</h3><textarea id="postText" rows="3" placeholder="What's on your mind?" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Post</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
   <div id="memberFeed"></div>
@@ -167,6 +237,7 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 <section id="magazine" class="tabpane">
   <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival Magazine &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
   <div class="card"><h3>Apply to be featured — application</h3><p>The application lives on the DAOS site — tap below and it opens the correct application page. Your profile becomes your feature application.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application</a></div>
+  <div class="card"><h3>Martial Artist Vote</h3><p>See the fighters, vote for your favorite, or create your own fighter profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Fighters</button></div>
 </section>
 <section id="photos" class="tabpane">
   <div class="card"><h3>Photos</h3><p>Party Vault photos and DAOS galleries live here.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
@@ -182,6 +253,49 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 </section>
 <section id="music" class="tabpane">
   <div class="card"><h3>Jake Northfa$e</h3><p><strong>&ldquo;The Apartheid - Remix&rdquo; ft. Killah Priest</strong></p><a class="btn" href="https://open.spotify.com/artist/6xDnOObztkl0OsrihKaP5C">Jake Northfa$e on Spotify</a><p class="meta">Instagram: @deadlyartofsurvival &middot; @jakethenorthfase</p></div>
+</section>
+<section id="fighters" class="tabpane">
+  <div class="card"><h3>Martial Artist Vote</h3><p>Vote for the martial artists of DAOS Magazine. One vote per email, per fighter. Tap a fighter to open their page, vote, and share it.</p><p class="meta">New here? Log in below to create your own profile — it goes live after DAOS review. Nothing publishes automatically.</p></div>
+  <div id="fighterDetail" style="display:none"></div>
+  <div id="fighterList" class="fighter-grid"><p class="meta">Loading fighters&hellip;</p></div>
+  <div class="card" id="myProfileCard">
+    <h3>My Fighter Profile</h3>
+    <div id="myProfileLogin"><p>Log in to create your own fighter profile, upload your photo, and share your page to gather votes.</p><button class="btn" type="button" onclick="openAuthModal()">Log in / Sign up</button></div>
+    <div id="myProfileForm" style="display:none">
+      <p id="myProfileStatus" class="meta"></p>
+      <input id="fpName" class="finput" type="text" placeholder="Your name (as it appears on your page)" maxlength="100">
+      <input id="fpSlug" class="finput" type="text" placeholder="Page name, e.g. jorge-borjas (letters, numbers, hyphens)">
+      <input id="fpStyle" class="finput" type="text" placeholder="Style / rank, e.g. Shotokan Karate, 3rd Dan" maxlength="200">
+      <textarea id="fpBio" class="finput" placeholder="Short bio — who you are, what you teach, where you are based" maxlength="2000"></textarea>
+      <label class="meta" for="fpPhoto">Photo (jpg or png)</label>
+      <input id="fpPhoto" class="finput" type="file" accept="image/*">
+      <p id="fpPhotoNote" class="meta"></p>
+      <button class="btn" type="button" onclick="saveMyProfile()">Save &amp; submit for review</button>
+      <p id="fpMsg" class="meta"></p>
+    </div>
+  </div>
+</section>
+<section id="network" class="tabpane">
+  <div class="card"><h3>Network</h3><p>Connect with the DAOS community &mdash; follow members, find people to connect with, and build your network.</p></div>
+  <div id="memberDetail" style="display:none"></div>
+  <div class="card" id="myMemberCard">
+    <h3>My Profile</h3>
+    <p id="mpStatus" class="meta"></p>
+    <input id="mpName" class="finput" type="text" placeholder="Display name" maxlength="100">
+    <textarea id="mpBio" class="finput" placeholder="Short bio — who you are, what you do, where you train" maxlength="2000"></textarea>
+    <label class="meta" for="mpAvatar">Photo or logo (jpg or png)</label>
+    <input id="mpAvatar" class="finput" type="file" accept="image/*">
+    <p id="mpAvatarNote" class="meta"></p>
+    <button class="btn" type="button" onclick="saveMemberProfile()">Save my profile</button>
+    <p id="mpMsg" class="meta"></p>
+  </div>
+  <div class="card"><h3>People to connect with</h3><div id="suggestList"><p class="meta">Loading suggestions&hellip;</p></div></div>
+  <div class="card"><h3>Newest members</h3><div id="memberDirectory"><p class="meta">Loading members&hellip;</p></div></div>
+</section>
+<section id="rankings" class="tabpane">
+  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top fighters by votes, and top members by followers.</p></div>
+  <div class="card"><h3>Top Fighters</h3><div id="rankFighters"><p class="meta">Loading&hellip;</p></div></div>
+  <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
 </section>
 <section id="profile" class="tabpane">
   <div class="profilecover"><img class="script" src="__SCRIPT__" alt="daos"><h2>Deadly Art of Survival Magazine</h2><p>Local business &middot; New York, NY, United States &middot; Always open</p><a class="btn" href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a></div>
@@ -208,6 +322,9 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   <button class="drawer-row" onclick="goTab('community',3)"><span class="ic">&#128101;</span>Community</button>
   <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic">&#128214;</span>Magazine</button>
   <button class="drawer-row" onclick="goTab('music',7)"><span class="ic">&#127925;</span>Music</button>
+  <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Fighters</button>
+  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>Network</button>
+  <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
   <div id="drawerMore" style="display:none">
     <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic">&#128444;</span>Photos</button>
     <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic">&#128240;</span>Blog</button>
@@ -257,21 +374,58 @@ function openAuthModal(){
   document.getElementById('authModal').classList.add('open');
 }
 function closeAuthModal(){ document.getElementById('authModal').classList.remove('open'); }
+/* ---- Social layer: login gate, profiles, feed, network, rankings ----
+   The whole app is members-only: visitors see the login gate until they
+   sign in (Supabase email auth). After first login, members are prompted
+   to create a profile (display name, bio, photo/logo in the avatars
+   bucket) — posting and following need a profile. Tables live in
+   Supabase (see supabase/social-layer.sql). */
+var currentUser = null;
+var myProfile = null;
+var myFollowIds = {};
 async function refreshAuth(){
-  if (!supabaseClient) return;
+  var btn = document.getElementById('authBtn');
+  if (!supabaseClient) { document.body.classList.add('gated'); return; }
   var res = await supabaseClient.auth.getSession();
   var user = res.data && res.data.session && res.data.session.user;
-  var btn = document.getElementById('authBtn');
+  currentUser = user || null;
   if (user) {
+    document.body.classList.remove('gated');
     btn.textContent = 'Log out';
     btn.onclick = authSignOut;
     document.getElementById('composerForm').style.display = 'block';
+    await loadMyMemberProfile();
+    await loadMyFollows();
     loadMemberPosts();
+    loadSuggestions();
+    loadRankings();
+    loadMyProfile();
+    if (typeof openDeepLink === 'function') openDeepLink();
   } else {
+    document.body.classList.add('gated');
     btn.textContent = 'Log in';
     btn.onclick = openAuthModal;
     document.getElementById('composerForm').style.display = 'none';
+    myProfile = null; myFollowIds = {};
   }
+}
+async function gateAuth(mode){
+  var msg = document.getElementById('gateMsg');
+  var em = document.getElementById('gateEmail').value.trim();
+  var pw = document.getElementById('gatePass').value;
+  if (!em || !pw) { if (msg) msg.textContent = 'Enter your email and password.'; return; }
+  if (!supabaseClient) { if (msg) msg.textContent = 'Login is being connected — try again in a moment.'; return; }
+  if (msg) msg.textContent = 'Working…';
+  var res = mode === 'signup'
+    ? await supabaseClient.auth.signUp({email: em, password: pw})
+    : await supabaseClient.auth.signInWithPassword({email: em, password: pw});
+  if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  if (mode === 'signup') {
+    if (msg) msg.textContent = 'Account created — check your email to confirm, then log in.';
+    return;
+  }
+  if (msg) msg.textContent = '';
+  refreshAuth();
 }
 async function authSignIn(){
   var em = document.getElementById('authEmail').value, pw = document.getElementById('authPass').value;
@@ -285,32 +439,557 @@ async function authSignUp(){
   document.getElementById('authMsg').textContent = res.error ? res.error.message : 'Account created — check your email to confirm, then log in.';
 }
 async function authSignOut(){ if (supabaseClient) await supabaseClient.auth.signOut(); refreshAuth(); }
+function showProfileSetup(){
+  showTab('feed', document.querySelectorAll('#tabs button')[0]);
+  var card = document.getElementById('profileSetupCard');
+  if (card) { card.style.display = 'block'; card.scrollIntoView({behavior: 'smooth'}); }
+}
 async function openComposer(){
   if (!supabaseClient) { openAuthModal(); return; }
-  var res = await supabaseClient.auth.getSession();
-  if (res.data && res.data.session) {
-    document.getElementById('composerForm').style.display = 'block';
-    document.getElementById('composerForm').scrollIntoView({behavior: 'smooth'});
-  } else { openAuthModal(); }
+  if (!currentUser) { openAuthModal(); return; }
+  if (!myProfile) { showProfileSetup(); return; }
+  document.getElementById('composerForm').style.display = 'block';
+  document.getElementById('composerForm').scrollIntoView({behavior: 'smooth'});
 }
 async function submitPost(){
   var text = document.getElementById('postText').value.trim();
   if (!text) return;
-  var res = await supabaseClient.from('posts').insert({content: text});
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  if (!myProfile) {
+    document.getElementById('postMsg').textContent = 'Create your profile first — it takes a minute.';
+    showProfileSetup();
+    return;
+  }
+  var res = await supabaseClient.from('posts').insert({user_id: currentUser.id, content: text});
   document.getElementById('postMsg').textContent = res.error ? res.error.message : 'Posted.';
   if (!res.error) { document.getElementById('postText').value = ''; loadMemberPosts(); }
 }
-async function loadMemberPosts(){
-  var res = await supabaseClient.from('posts').select('content, created_at').order('created_at', {ascending: false}).limit(20);
-  if (res.error) return;
+function postAvatarHtml(profile, size){
+  var style = size ? 'width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size / 2) + 'px' : '';
+  if (profile && profile.avatar_url) return '<div class="avatar" style="' + style + '"><img src="' + escapeHtml(profile.avatar_url) + '" alt=""></div>';
+  var initial = profile && profile.display_name ? profile.display_name.charAt(0) : '?';
+  return '<div class="avatar" style="' + style + '">' + escapeHtml(initial) + '</div>';
+}
+function profileById(map, id){ return map[id] || {display_name: 'DAOS member', avatar_url: null}; }
+async function fetchProfilesByIds(ids){
+  var map = {};
+  if (!ids.length || !supabaseClient) return map;
+  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received,created_at').in('id', ids);
+  if (res.error || !res.data) return map;
+  res.data.forEach(function(p){ map[p.id] = p; });
+  return map;
+}
+function followButtonHtml(userId){
+  if (!currentUser || userId === currentUser.id) return '';
+  var following = !!myFollowIds[userId];
+  return '<button class="followbtn' + (following ? ' following' : '') + '" type="button" data-follow-user="' + escapeHtml(userId) + '" onclick="toggleFollow(\'' + escapeHtml(userId) + '\',this)">' + (following ? 'Following' : 'Follow') + '</button>';
+}
+function renderPostCard(p, pmap, origMap, liked, reposted, highlightId){
+  var author = profileById(pmap, p.user_id);
+  var d = document.createElement('div');
+  d.className = 'card' + (highlightId && String(p.id) === String(highlightId) ? ' post-highlight' : '');
+  d.id = 'post-' + p.id;
+  var inner = '<div class="posthead">' + postAvatarHtml(author) +
+    '<div><b><a href="#/member/' + escapeHtml(p.user_id) + '" onclick="openMember(\'' + escapeHtml(p.user_id) + '\');return false;">' + escapeHtml(author.display_name) + '</a></b><span>' + new Date(p.created_at).toLocaleString() + '</span></div>' + followButtonHtml(p.user_id) + '</div>';
+  if (p.repost_of) {
+    var op = origMap[p.repost_of];
+    if (op) {
+      var oauthor = profileById(pmap, op.user_id);
+      inner += '<p class="repost-label">&#128260; ' + escapeHtml(author.display_name) + ' reposted</p>' +
+        '<div class="repost-inner"><div class="posthead">' + postAvatarHtml(oauthor, 32) +
+        '<div><b>' + escapeHtml(oauthor.display_name) + '</b><span>' + new Date(op.created_at).toLocaleString() + '</span></div></div>' +
+        '<p>' + escapeHtml(op.content) + '</p></div>';
+    } else {
+      inner += '<p class="meta">Original post is no longer available.</p>';
+    }
+  } else {
+    inner += '<p>' + escapeHtml(p.content) + '</p>';
+  }
+  inner += '<div class="postactions">' +
+    '<button class="pact' + (liked[p.id] ? ' liked' : '') + '" type="button" onclick="toggleLike(' + p.id + ',this)">&#10084; Like' + (p.like_count ? ' (' + p.like_count + ')' : '') + '</button>' +
+    '<button class="pact" type="button" onclick="toggleComments(' + p.id + ',this)">&#128172; Comment' + (p.comment_count ? ' (' + p.comment_count + ')' : '') + '</button>' +
+    '<button class="pact" type="button" onclick="shareMemberPost(' + p.id + ',this)">&#128279; Share</button>' +
+    '<button class="pact' + (reposted[p.id] ? ' liked' : '') + '" type="button" onclick="toggleRepost(' + p.id + ',this)">&#128260; Repost' + (p.repost_count ? ' (' + p.repost_count + ')' : '') + '</button>' +
+    '</div>' +
+    '<div class="comments" id="comments-' + p.id + '" style="display:none"></div>';
+  d.innerHTML = inner;
+  return d.outerHTML;
+}
+async function loadMemberPosts(highlightId){
   var box = document.getElementById('memberFeed'); if (!box) return;
-  box.innerHTML = res.data.map(function(p){
-    var d = document.createElement('div'); d.className = 'card';
-    var t = document.createElement('p'); t.textContent = p.content;
-    var m = document.createElement('p'); m.className = 'meta'; m.textContent = new Date(p.created_at).toLocaleString();
-    d.appendChild(t); d.appendChild(m); return d.outerHTML;
+  if (!supabaseClient || !currentUser) { box.innerHTML = ''; return; }
+  var res = await supabaseClient.from('posts')
+    .select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of')
+    .order('created_at', {ascending: false}).limit(20);
+  if (res.error) { box.innerHTML = '<p class="meta">Could not load posts: ' + escapeHtml(res.error.message) + '</p>'; return; }
+  var posts = res.data || [];
+  if (highlightId) {
+    var hp = await supabaseClient.from('posts').select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of').eq('id', highlightId).maybeSingle();
+    if (hp.data && !posts.some(function(p){ return String(p.id) === String(hp.data.id); })) posts.unshift(hp.data);
+  }
+  var ids = [];
+  posts.forEach(function(p){ if (ids.indexOf(p.user_id) === -1) ids.push(p.user_id); });
+  var origIds = [];
+  posts.forEach(function(p){ if (p.repost_of && origIds.indexOf(p.repost_of) === -1) origIds.push(p.repost_of); });
+  var origMap = {};
+  if (origIds.length) {
+    var ores = await supabaseClient.from('posts').select('id,user_id,content,created_at').in('id', origIds);
+    (ores.data || []).forEach(function(p){ origMap[p.id] = p; if (ids.indexOf(p.user_id) === -1) ids.push(p.user_id); });
+  }
+  var pmap = await fetchProfilesByIds(ids);
+  var liked = {}, reposted = {};
+  var postIds = posts.map(function(p){ return p.id; });
+  if (postIds.length) {
+    var lr = await supabaseClient.from('post_likes').select('post_id').eq('user_id', currentUser.id).in('post_id', postIds);
+    (lr.data || []).forEach(function(r){ liked[r.post_id] = true; });
+    var rr = await supabaseClient.from('reposts').select('post_id').eq('user_id', currentUser.id).in('post_id', postIds);
+    (rr.data || []).forEach(function(r){ reposted[r.post_id] = true; });
+  }
+  box.innerHTML = posts.map(function(p){ return renderPostCard(p, pmap, origMap, liked, reposted, highlightId); }).join('');
+  if (!posts.length) box.innerHTML = '<div class="card"><p>Nothing posted yet — be the first to post.</p></div>';
+}
+async function toggleLike(postId, btn){
+  if (!supabaseClient || !currentUser) return;
+  var liked = btn.classList.contains('liked');
+  var res = liked
+    ? await supabaseClient.from('post_likes').delete().eq('post_id', postId).eq('user_id', currentUser.id)
+    : await supabaseClient.from('post_likes').insert({post_id: postId, user_id: currentUser.id});
+  if (res.error) return;
+  btn.classList.toggle('liked', !liked);
+  var fresh = await supabaseClient.from('posts').select('like_count').eq('id', postId).maybeSingle();
+  var n = fresh.data ? fresh.data.like_count : 0;
+  btn.innerHTML = '&#10084; Like' + (n ? ' (' + n + ')' : '');
+}
+async function toggleComments(postId, btn){
+  var box = document.getElementById('comments-' + postId);
+  if (!box) return;
+  if (box.style.display === 'block') { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  await loadComments(postId);
+}
+async function loadComments(postId){
+  var box = document.getElementById('comments-' + postId);
+  if (!box || !supabaseClient) return;
+  box.innerHTML = '<p class="meta">Loading comments…</p>';
+  var res = await supabaseClient.from('post_comments').select('id,user_id,body,created_at').eq('post_id', postId).order('created_at', {ascending: true});
+  if (res.error) { box.innerHTML = '<p class="meta">Could not load comments.</p>'; return; }
+  var comments = res.data || [];
+  var ids = [];
+  comments.forEach(function(c){ if (ids.indexOf(c.user_id) === -1) ids.push(c.user_id); });
+  var pmap = await fetchProfilesByIds(ids);
+  var html = comments.map(function(c){
+    var a = profileById(pmap, c.user_id);
+    return '<div class="comment">' + postAvatarHtml(a, 32) + '<div class="comment-body"><b>' + escapeHtml(a.display_name) + '</b><p>' + escapeHtml(c.body) + '</p></div></div>';
+  }).join('');
+  if (!comments.length) html = '<p class="meta">No comments yet — be the first.</p>';
+  html += '<div class="comment-form"><input id="comment-input-' + postId + '" type="text" placeholder="Write a comment…" maxlength="1000"><button class="btn" type="button" onclick="submitComment(' + postId + ')">Post</button></div>';
+  box.innerHTML = html;
+}
+async function submitComment(postId){
+  var input = document.getElementById('comment-input-' + postId);
+  if (!input) return;
+  var body = input.value.trim();
+  if (!body || !supabaseClient || !currentUser) return;
+  var res = await supabaseClient.from('post_comments').insert({post_id: postId, user_id: currentUser.id, body: body});
+  if (res.error) return;
+  await loadComments(postId);
+  var fresh = await supabaseClient.from('posts').select('comment_count').eq('id', postId).maybeSingle();
+  var n = fresh.data ? fresh.data.comment_count : 0;
+  var card = document.getElementById('post-' + postId);
+  var btn = card ? card.querySelectorAll('.pact')[1] : null;
+  if (btn) btn.innerHTML = '&#128172; Comment' + (n ? ' (' + n + ')' : '');
+}
+function shareMemberPost(postId, btn){
+  var url = 'https://daosmedia.com/#post/' + postId;
+  var done = function(){
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = 'Link copied \u2713';
+    setTimeout(function(){ btn.textContent = old; }, 2000);
+  };
+  try {
+    if (navigator.share) {
+      navigator.share({title: 'DAOS App', url: url}).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, function(){ fallbackCopy(url); done(); });
+    } else { fallbackCopy(url); done(); }
+  } catch (e) { fallbackCopy(url); done(); }
+}
+async function toggleRepost(postId, btn){
+  if (!supabaseClient || !currentUser) return;
+  var done = await supabaseClient.from('reposts').select('post_id').eq('post_id', postId).eq('user_id', currentUser.id).maybeSingle();
+  if (done.data) {
+    await supabaseClient.from('reposts').delete().eq('post_id', postId).eq('user_id', currentUser.id);
+    await supabaseClient.from('posts').delete().eq('repost_of', postId).eq('user_id', currentUser.id);
+    loadMemberPosts();
+    return;
+  }
+  var ins = await supabaseClient.from('reposts').insert({post_id: postId, user_id: currentUser.id});
+  if (ins.error) return;
+  var prow = await supabaseClient.from('posts').insert({user_id: currentUser.id, content: '', repost_of: postId});
+  if (prow.error) {
+    await supabaseClient.from('reposts').delete().eq('post_id', postId).eq('user_id', currentUser.id);
+    return;
+  }
+  loadMemberPosts();
+}
+async function toggleFollow(userId, btn){
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  if (userId === currentUser.id) return;
+  var following = !!myFollowIds[userId];
+  var res = following
+    ? await supabaseClient.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', userId)
+    : await supabaseClient.from('follows').insert({follower_id: currentUser.id, following_id: userId});
+  if (res.error) { if (btn) btn.textContent = 'Try again'; return; }
+  if (following) delete myFollowIds[userId]; else myFollowIds[userId] = true;
+  document.querySelectorAll('[data-follow-user="' + userId + '"]').forEach(function(b){
+    b.textContent = myFollowIds[userId] ? 'Following' : 'Follow';
+    b.classList.toggle('following', !!myFollowIds[userId]);
+  });
+  loadSuggestions();
+}
+async function loadMyFollows(){
+  myFollowIds = {};
+  if (!supabaseClient || !currentUser) return;
+  var res = await supabaseClient.from('follows').select('following_id').eq('follower_id', currentUser.id);
+  (res.data || []).forEach(function(r){ myFollowIds[r.following_id] = true; });
+}
+/* ---- Member profiles (Network) ----
+   One profile per member (id = auth user id). Avatars upload to the
+   'avatars' storage bucket, into a folder named after the user's own id. */
+async function loadMyMemberProfile(){
+  var statusEl = document.getElementById('mpStatus');
+  var setupCard = document.getElementById('profileSetupCard');
+  if (!supabaseClient || !currentUser) { myProfile = null; return; }
+  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received').eq('id', currentUser.id).maybeSingle();
+  if (res.error) { if (statusEl) statusEl.textContent = 'Could not load your profile: ' + res.error.message; return; }
+  myProfile = res.data || null;
+  if (myProfile) {
+    document.getElementById('mpName').value = myProfile.display_name || '';
+    document.getElementById('mpBio').value = myProfile.bio || '';
+    var note = document.getElementById('mpAvatarNote');
+    if (note) note.textContent = myProfile.avatar_url ? 'Current photo/logo is set — choose a new file to replace it.' : 'No photo or logo yet — add one so people recognize you.';
+    if (statusEl) statusEl.textContent = myProfile.followers_count + ' followers · ' + myProfile.following_count + ' following · ' + myProfile.likes_received + ' likes received';
+    if (setupCard) setupCard.style.display = 'none';
+  } else {
+    if (statusEl) statusEl.textContent = 'No profile yet — create one so people can find and follow you.';
+    if (setupCard) setupCard.style.display = 'block';
+  }
+}
+async function saveMemberProfile(){
+  var msg = document.getElementById('mpMsg');
+  var name = document.getElementById('mpName').value.trim();
+  var bio = document.getElementById('mpBio').value.trim();
+  if (!name) { if (msg) msg.textContent = 'Add your display name first.'; return; }
+  if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first.'; return; }
+  if (msg) msg.textContent = 'Saving…';
+  var avatarUrl = myProfile ? myProfile.avatar_url : null;
+  var fileInput = document.getElementById('mpAvatar');
+  var file = fileInput && fileInput.files && fileInput.files[0];
+  if (file) {
+    if (file.size > 5 * 1024 * 1024) { if (msg) msg.textContent = 'Photo must be under 5 MB.'; return; }
+    var cleanName = file.name.replace(/[^A-Za-z0-9._-]+/g, '_');
+    var path = currentUser.id + '/' + Date.now() + '-' + cleanName;
+    var up = await supabaseClient.storage.from('avatars').upload(path, file, {upsert: false});
+    if (up.error) { if (msg) msg.textContent = 'Photo upload failed: ' + up.error.message; return; }
+    var pub = supabaseClient.storage.from('avatars').getPublicUrl(path);
+    avatarUrl = pub.data && pub.data.publicUrl;
+  }
+  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl};
+  var res = myProfile
+    ? await supabaseClient.from('profiles').update(row).eq('id', currentUser.id)
+    : await supabaseClient.from('profiles').insert(row);
+  if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  if (msg) msg.textContent = 'Profile saved.';
+  if (fileInput) fileInput.value = '';
+  await loadMyMemberProfile();
+  loadMemberPosts();
+}
+function suggestRowHtml(p){
+  return '<div class="suggest-row">' + postAvatarHtml(p) +
+    '<div class="who"><b><a href="#/member/' + escapeHtml(p.id) + '" onclick="openMember(\'' + escapeHtml(p.id) + '\');return false;">' + escapeHtml(p.display_name) + '</a></b><span>' + p.followers_count + ' follower' + (p.followers_count === 1 ? '' : 's') + (p.bio ? ' · ' + escapeHtml(p.bio.slice(0, 60)) : '') + '</span></div>' +
+    followButtonHtml(p.id) + '</div>';
+}
+async function loadSuggestions(){
+  var list = document.getElementById('suggestList');
+  var side = document.getElementById('suggestSidebar');
+  var sideCard = document.getElementById('suggestSidebarCard');
+  var dir = document.getElementById('memberDirectory');
+  if (!supabaseClient || !currentUser) { if (list) list.innerHTML = ''; return; }
+  var newest = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count').order('created_at', {ascending: false}).limit(10);
+  var top = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count').order('followers_count', {ascending: false}).limit(10);
+  var seen = {}, cands = [];
+  (top.data || []).concat(newest.data || []).forEach(function(p){
+    if (p.id === currentUser.id || myFollowIds[p.id] || seen[p.id]) return;
+    seen[p.id] = true; cands.push(p);
+  });
+  cands = cands.slice(0, 8);
+  var html = cands.length ? cands.map(suggestRowHtml).join('') : '<p class="meta">No new people to suggest right now — check back after more members join.</p>';
+  if (list) list.innerHTML = html;
+  if (side) side.innerHTML = cands.slice(0, 3).map(suggestRowHtml).join('');
+  if (sideCard) sideCard.style.display = cands.length ? 'block' : 'none';
+  if (dir) {
+    var all = (newest.data || []).slice(0, 12);
+    dir.innerHTML = all.length ? all.map(suggestRowHtml).join('') : '<p class="meta">No members yet.</p>';
+  }
+}
+async function loadRankings(){
+  var rf = document.getElementById('rankFighters');
+  var rm = document.getElementById('rankMembers');
+  if (!supabaseClient) return;
+  if (rf) {
+    var fres = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,photo_url,votes_count').eq('status', 'live').order('votes_count', {ascending: false}).order('display_name').limit(10);
+    if (fres.error || !fres.data || !fres.data.length) { rf.innerHTML = '<p class="meta">No live fighter profiles yet.</p>'; }
+    else {
+      rf.innerHTML = fres.data.map(function(p, i){
+        return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml(p) +
+          '<div class="who"><b><a href="#/fighter/' + escapeHtml(p.slug) + '">' + escapeHtml(p.display_name) + '</a></b><span>' + escapeHtml(p.style_rank || '') + '</span></div>' +
+          '<span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></div>';
+      }).join('');
+    }
+  }
+  if (rm) {
+    var mres = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,likes_received').order('followers_count', {ascending: false}).order('created_at', {ascending: false}).limit(10);
+    if (mres.error || !mres.data || !mres.data.length) { rm.innerHTML = '<p class="meta">No member profiles yet — be the first.</p>'; }
+    else {
+      rm.innerHTML = mres.data.map(function(p, i){
+        return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + postAvatarHtml(p) +
+          '<div class="who"><b><a href="#/member/' + escapeHtml(p.id) + '" onclick="openMember(\'' + escapeHtml(p.id) + '\');return false;">' + escapeHtml(p.display_name) + '</a></b><span>' + p.followers_count + ' followers · ' + p.likes_received + ' likes received</span></div>' +
+          followButtonHtml(p.id) + '</div>';
+      }).join('');
+    }
+  }
+}
+async function openMember(userId){
+  showTab('network', document.querySelectorAll('#tabs button')[10]);
+  var box = document.getElementById('memberDetail'); if (!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '<div class="card"><p class="meta">Loading profile…</p></div>';
+  if (!supabaseClient) { box.innerHTML = '<div class="card"><p class="meta">This profile is not available yet.</p></div>'; return; }
+  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received,created_at').eq('id', userId).maybeSingle();
+  if (res.error || !res.data) { box.innerHTML = '<div class="card"><p>This member profile does not exist yet.</p><button class="btn dark" type="button" onclick="closeMember()">Back</button></div>'; return; }
+  var p = res.data;
+  var pres = await supabaseClient.from('posts').select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of').eq('user_id', userId).order('created_at', {ascending: false}).limit(10);
+  var posts = pres.data || [];
+  var pmap = {}; pmap[userId] = p;
+  var origMap = {};
+  var origIds = [];
+  posts.forEach(function(x){ if (x.repost_of && origIds.indexOf(x.repost_of) === -1) origIds.push(x.repost_of); });
+  if (origIds.length) {
+    var ores = await supabaseClient.from('posts').select('id,user_id,content,created_at').in('id', origIds);
+    var oids = [];
+    (ores.data || []).forEach(function(x){ origMap[x.id] = x; if (oids.indexOf(x.user_id) === -1) oids.push(x.user_id); });
+    var omap = await fetchProfilesByIds(oids);
+    Object.keys(omap).forEach(function(k){ pmap[k] = omap[k]; });
+  }
+  var liked = {}, reposted = {};
+  if (currentUser && posts.length) {
+    var ids = posts.map(function(x){ return x.id; });
+    var lr = await supabaseClient.from('post_likes').select('post_id').eq('user_id', currentUser.id).in('post_id', ids);
+    (lr.data || []).forEach(function(r){ liked[r.post_id] = true; });
+    var rr = await supabaseClient.from('reposts').select('post_id').eq('user_id', currentUser.id).in('post_id', ids);
+    (rr.data || []).forEach(function(r){ reposted[r.post_id] = true; });
+  }
+  var d = document.createElement('div'); d.className = 'card';
+  d.innerHTML = '<div style="text-align:center">' + postAvatarHtml(p, 96) +
+    '<h2>' + escapeHtml(p.display_name) + '</h2>' +
+    '<p>' + escapeHtml(p.bio || '') + '</p></div>' +
+    '<div class="member-stats"><div><b>' + p.followers_count + '</b><span>Followers</span></div><div><b>' + p.following_count + '</b><span>Following</span></div><div><b>' + p.likes_received + '</b><span>Likes</span></div></div>' +
+    '<div style="text-align:center">' + followButtonHtml(p.id) + ' <button class="btn dark" type="button" onclick="closeMember()">Back</button></div>';
+  box.innerHTML = ''; box.appendChild(d);
+  if (posts.length) {
+    var list = document.createElement('div');
+    list.innerHTML = '<h3 style="margin:12px 0 8px">Posts by ' + escapeHtml(p.display_name) + '</h3>' + posts.map(function(x){ return renderPostCard(x, pmap, origMap, liked, reposted, null); }).join('');
+    box.appendChild(list);
+  } else {
+    var none = document.createElement('p'); none.className = 'meta'; none.textContent = 'No posts yet.';
+    box.appendChild(none);
+  }
+  if (box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
+}
+function closeMember(){
+  var box = document.getElementById('memberDetail'); if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  if (window.location.hash && window.location.hash.indexOf('#/member/') === 0) history.replaceState(null, '', '#network');
+}
+/* ---- Martial Artist Profiles (Fighters) ----
+   Tables live in Supabase (see supabase/fighter-profiles.sql).
+   Public: anyone reads LIVE profiles and votes by email via the
+   cast_fighter_vote() function (one vote per email, per fighter).
+   Members: signed-in users create/edit their OWN profile; it goes
+   live only after DAOS approves it in the dashboard. */
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function fighterUrl(slug){ return 'https://daosmedia.com/#/fighter/' + slug; }
+function fighterPhotoHtml(p, big){
+  var cls = big ? 'fighter-photo big' : 'fighter-photo';
+  if (p.photo_url) return '<div class="' + cls + '"><img src="' + escapeHtml(p.photo_url) + '" alt="' + escapeHtml(p.display_name) + '"></div>';
+  return '<div class="' + cls + '">' + escapeHtml((p.display_name || '?').charAt(0)) + '</div>';
+}
+async function loadFighters(){
+  var box = document.getElementById('fighterList'); if (!box) return;
+  if (!supabaseClient) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; return; }
+  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,votes_count').eq('status', 'live').order('votes_count', {ascending: false}).order('display_name');
+  if (res.error) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; return; }
+  if (!res.data || !res.data.length) { box.innerHTML = '<p class="meta">No live fighter profiles yet — be the first to create one below.</p>'; return; }
+  box.innerHTML = res.data.map(function(p, i){
+    var d = document.createElement('div'); d.className = 'card fighter-card';
+    d.innerHTML = '<div class="fighter-rank">' + (i + 1) + '</div>' + fighterPhotoHtml(p) +
+      '<div class="fighter-body"><h3><a href="#/fighter/' + escapeHtml(p.slug) + '">' + escapeHtml(p.display_name) + '</a></h3>' +
+      '<p class="meta">' + escapeHtml(p.style_rank || '') + '</p>' +
+      '<p><span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></p>' +
+      '<button class="btn" type="button" onclick="openFighter(\'' + escapeHtml(p.slug) + '\')">Vote</button>' +
+      '<button class="btn dark" type="button" onclick="shareFighter(\'' + escapeHtml(p.slug) + '\',this)">Share</button></div>';
+    return d.outerHTML;
   }).join('');
 }
+async function openFighter(slug){
+  var fightersBtn = document.querySelectorAll('#tabs button')[9];
+  showTab('fighters', fightersBtn);
+  var box = document.getElementById('fighterDetail'); if (!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '<div class="card"><p class="meta">Loading profile&hellip;</p></div>';
+  if (!supabaseClient) { box.innerHTML = '<div class="card"><p class="meta">This profile is not available yet.</p></div>'; return; }
+  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,votes_count').eq('slug', slug).eq('status', 'live').maybeSingle();
+  if (res.error || !res.data) { box.innerHTML = '<div class="card"><p>This fighter profile is not live yet.</p><button class="btn dark" type="button" onclick="closeFighter()">Back to the leaderboard</button></div>'; return; }
+  var p = res.data;
+  var d = document.createElement('div'); d.className = 'card';
+  d.innerHTML = fighterPhotoHtml(p, true) +
+    '<h2>' + escapeHtml(p.display_name) + '</h2>' +
+    '<p class="meta">' + escapeHtml(p.style_rank || '') + '</p>' +
+    '<p>' + escapeHtml(p.bio || '') + '</p>' +
+    '<p><span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></p>' +
+    '<input id="voteEmail" class="finput" type="email" placeholder="Your email — one vote per email">' +
+    '<button class="btn" type="button" onclick="castVote(\'' + escapeHtml(p.id) + '\',\'' + escapeHtml(p.slug) + '\')">Vote for ' + escapeHtml(p.display_name) + '</button>' +
+    '<button class="btn dark" type="button" onclick="shareFighter(\'' + escapeHtml(p.slug) + '\',this)">Share this page</button> ' +
+    '<button class="btn dark" type="button" onclick="closeFighter()">Back to the leaderboard</button>' +
+    '<p id="voteMsg" class="meta"></p>';
+  box.innerHTML = ''; box.appendChild(d);
+  if (box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
+}
+function closeFighter(){
+  var box = document.getElementById('fighterDetail'); if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  if (window.location.hash && window.location.hash.indexOf('#/fighter/') === 0) history.replaceState(null, '', '#fighters');
+}
+async function castVote(fighterId, slug){
+  var em = document.getElementById('voteEmail');
+  var msg = document.getElementById('voteMsg');
+  var email = em ? em.value.trim() : '';
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter a valid email to vote.'; return; }
+  if (!supabaseClient) { if (msg) msg.textContent = 'Voting is not connected yet.'; return; }
+  var res = await supabaseClient.rpc('cast_fighter_vote', {p_fighter_id: fighterId, p_voter_email: email});
+  if (res.error) {
+    var m = res.error.message || '';
+    if (msg) msg.textContent = (m.indexOf('duplicate') !== -1 || res.error.code === '23505') ? 'You already voted for this fighter with that email.' : m;
+    return;
+  }
+  if (msg) msg.textContent = 'Vote counted — thank you.';
+  if (em) em.value = '';
+  loadFighters();
+  await openFighter(slug);
+  var fresh = document.getElementById('voteMsg');
+  if (fresh) fresh.textContent = 'Vote counted — thank you.';
+}
+function shareFighter(slug, btn){
+  var url = fighterUrl(slug);
+  var done = function(){
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = 'Link copied \u2713';
+    setTimeout(function(){ btn.textContent = old; }, 2000);
+  };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, function(){ fallbackCopy(url); done(); });
+    } else { fallbackCopy(url); done(); }
+  } catch (e) { fallbackCopy(url); done(); }
+}
+var myProfileId = null;
+var myProfilePhotoUrl = null;
+async function loadMyProfile(){
+  var loginBox = document.getElementById('myProfileLogin');
+  var formBox = document.getElementById('myProfileForm');
+  if (!loginBox || !formBox) return;
+  if (!supabaseClient) { loginBox.style.display = 'block'; formBox.style.display = 'none'; return; }
+  var sess = await supabaseClient.auth.getSession();
+  var user = sess.data && sess.data.session && sess.data.session.user;
+  if (!user) { loginBox.style.display = 'block'; formBox.style.display = 'none'; myProfileId = null; return; }
+  loginBox.style.display = 'none'; formBox.style.display = 'block';
+  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,status,needs_review').eq('user_id', user.id).maybeSingle();
+  var statusEl = document.getElementById('myProfileStatus');
+  if (res.error) { if (statusEl) statusEl.textContent = 'Could not load your profile: ' + res.error.message; return; }
+  var p = res.data;
+  if (p) {
+    myProfileId = p.id; myProfilePhotoUrl = p.photo_url;
+    document.getElementById('fpName').value = p.display_name || '';
+    document.getElementById('fpSlug').value = p.slug || '';
+    document.getElementById('fpStyle').value = p.style_rank || '';
+    document.getElementById('fpBio').value = p.bio || '';
+    var labels = {submitted: 'Submitted — waiting for DAOS review.', in_review: 'In review — DAOS is looking at your profile.', live: 'Live — your page is public.', rejected: 'Not approved — update your profile and submit again.'};
+    var txt = 'Status: ' + (labels[p.status] || p.status);
+    if (p.status === 'live' && p.needs_review) txt += ' Your latest edits are waiting for review.';
+    if (p.status === 'live') txt += ' Edits stay live and are flagged for re-review.';
+    if (statusEl) statusEl.textContent = txt;
+    var note = document.getElementById('fpPhotoNote');
+    if (note) note.textContent = p.photo_url ? 'Current photo is set — choose a new file to replace it.' : 'No photo yet — add one so voters see your face.';
+  } else {
+    myProfileId = null; myProfilePhotoUrl = null;
+    if (statusEl) statusEl.textContent = 'No profile yet — fill this in and submit it for review.';
+  }
+}
+function slugify(s){
+  return String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+}
+async function saveMyProfile(){
+  var msg = document.getElementById('fpMsg');
+  var name = document.getElementById('fpName').value.trim();
+  var slug = slugify(document.getElementById('fpSlug').value || name);
+  var style = document.getElementById('fpStyle').value.trim();
+  var bio = document.getElementById('fpBio').value.trim();
+  if (!name) { if (msg) msg.textContent = 'Add your name first.'; return; }
+  if (!slug) { if (msg) msg.textContent = 'Add a page name (letters, numbers, hyphens).'; return; }
+  if (!supabaseClient) { if (msg) msg.textContent = 'Profiles are not connected yet.'; return; }
+  var sess = await supabaseClient.auth.getSession();
+  var user = sess.data && sess.data.session && sess.data.session.user;
+  if (!user) { if (msg) msg.textContent = 'Log in first.'; openAuthModal(); return; }
+  if (msg) msg.textContent = 'Saving…';
+  var photoUrl = myProfilePhotoUrl;
+  var fileInput = document.getElementById('fpPhoto');
+  var file = fileInput && fileInput.files && fileInput.files[0];
+  if (file) {
+    if (file.size > 5 * 1024 * 1024) { if (msg) msg.textContent = 'Photo must be under 5 MB.'; return; }
+    var cleanName = file.name.replace(/[^A-Za-z0-9._-]+/g, '_');
+    var path = user.id + '/' + Date.now() + '-' + cleanName;
+    var up = await supabaseClient.storage.from('profile-photos').upload(path, file, {upsert: false});
+    if (up.error) { if (msg) msg.textContent = 'Photo upload failed: ' + up.error.message; return; }
+    var pub = supabaseClient.storage.from('profile-photos').getPublicUrl(path);
+    photoUrl = pub.data && pub.data.publicUrl;
+  }
+  var row = {user_id: user.id, slug: slug, display_name: name, style_rank: style, bio: bio, photo_url: photoUrl};
+  var res;
+  if (myProfileId) {
+    res = await supabaseClient.from('fighter_profiles').update(row).eq('id', myProfileId);
+  } else {
+    row.status = 'submitted';
+    res = await supabaseClient.from('fighter_profiles').insert(row).select('id').single();
+    if (!res.error && res.data) myProfileId = res.data.id;
+  }
+  if (res.error) {
+    if (msg) msg.textContent = (res.error.code === '23505') ? 'That page name is taken — try another.' : res.error.message;
+    return;
+  }
+  if (msg) msg.textContent = 'Saved — your profile is submitted for DAOS review.';
+  if (fileInput) fileInput.value = '';
+  myProfilePhotoUrl = photoUrl;
+  loadMyProfile();
+  loadFighters();
+}
+
+loadFighters();
 refreshAuth();
 </script>
 <script>
@@ -407,6 +1086,31 @@ function openDeepLink(){
   var h=window.location.hash||'';
   var blogBtn=document.querySelectorAll('#tabs button')[6];
   if(h==='#blog'){showTab('blog',blogBtn);return;}
+  if(h==='#fighters'){showTab('fighters',document.querySelectorAll('#tabs button')[9]);loadFighters();return;}
+  if(h==='#network'){showTab('network',document.querySelectorAll('#tabs button')[10]);return;}
+  if(h==='#rankings'){showTab('rankings',document.querySelectorAll('#tabs button')[11]);loadRankings();return;}
+  var fm=h.match(/^#\/fighter\/([A-Za-z0-9\-_]+)$/);
+  if(fm){
+    showTab('fighters',document.querySelectorAll('#tabs button')[9]);
+    setTimeout(function(){openFighter(fm[1]);},50);
+    return;
+  }
+  var mm=h.match(/^#\/member\/([A-Za-z0-9\-]+)$/);
+  if(mm){
+    showTab('network',document.querySelectorAll('#tabs button')[10]);
+    setTimeout(function(){openMember(mm[1]);},50);
+    return;
+  }
+  var pm=h.match(/^#post\/([0-9]+)$/);
+  if(pm){
+    showTab('feed',document.querySelectorAll('#tabs button')[0]);
+    loadMemberPosts(pm[1]);
+    setTimeout(function(){
+      var el=document.getElementById('post-'+pm[1]);
+      if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});
+    },600);
+    return;
+  }
   var m=h.match(/^#blog\/([A-Za-z0-9\-_]+)$/);
   if(!m)return;
   var el=document.getElementById('blog-'+m[1]);
