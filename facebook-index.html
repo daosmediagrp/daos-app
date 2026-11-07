@@ -355,8 +355,9 @@ select.finput{appearance:auto}
   <div class="card"><h3>Newest members</h3><div id="memberDirectory"><p class="meta">Loading members&hellip;</p></div></div>
 </section>
 <section id="rankings" class="tabpane">
-  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top fighters by votes, and top members by followers.</p></div>
-  <div class="card"><h3>Top Fighters</h3><div id="rankFighters"><p class="meta">Loading&hellip;</p></div></div>
+  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top martial artists by votes, top artists by selected songs, and top members by followers.</p></div>
+  <div class="card"><h3>Top Martial Artists</h3><div id="rankFighters"><p class="meta">Loading&hellip;</p></div></div>
+  <div class="card"><h3>Top Artists</h3><div id="rankArtists"><p class="meta">Loading&hellip;</p></div></div>
   <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
 </section>
 <section id="profile" class="tabpane">
@@ -820,6 +821,30 @@ async function loadRankings(){
         return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml(p) +
           '<div class="who"><b><a href="#/fighter/' + escapeHtml(p.slug) + '">' + escapeHtml(p.display_name) + '</a></b><span>' + escapeHtml(p.style_rank || '') + '</span></div>' +
           '<span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></div>';
+      }).join('');
+    }
+  }
+  var ra = document.getElementById('rankArtists');
+  if (ra) {
+    var ares = await supabaseClient.from('song_submissions').select('artist_name,song_title,created_at').eq('status', 'selected').order('created_at', {ascending: false}).limit(50);
+    if (ares.error || !ares.data || !ares.data.length) { ra.innerHTML = '<p class="meta">No artists ranked yet — selected songs will appear here.</p>'; }
+    else {
+      var byArtist = {};
+      ares.data.forEach(function(s){
+        var name = (s.artist_name || 'Unknown Artist').trim() || 'Unknown Artist';
+        if (!byArtist[name]) byArtist[name] = {name: name, count: 0, latest: null, latestAt: ''};
+        byArtist[name].count++;
+        if (!byArtist[name].latestAt || (s.created_at || '') > byArtist[name].latestAt) { byArtist[name].latest = s.song_title; byArtist[name].latestAt = s.created_at || ''; }
+      });
+      var artists = Object.keys(byArtist).map(function(k){ return byArtist[k]; });
+      artists.sort(function(a, b){ return b.count - a.count || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0); });
+      artists = artists.slice(0, 10);
+      ra.innerHTML = artists.map(function(a, i){
+        var sub = a.count + ' selected song' + (a.count === 1 ? '' : 's');
+        if (a.latest) sub += ' · Latest: ' + escapeHtml(a.latest);
+        return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml({display_name: a.name}) +
+          '<div class="who"><b>' + escapeHtml(a.name) + '</b><span>' + sub + '</span></div>' +
+          '<span class="fighter-votes">' + a.count + ' song' + (a.count === 1 ? '' : 's') + '</span></div>';
       }).join('');
     }
   }
