@@ -107,7 +107,7 @@ body.gated header,body.gated nav.tabs,body.gated .layout,body.gated .bottomnav,b
 #loginGate{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:flex-start;justify-content:center;padding:48px 24px;overflow-y:auto}
 body.gated #loginGate{display:flex}
 .logingate-inner{max-width:360px;width:100%;text-align:center}
-.logingate-inner img{height:80px;width:auto;margin-bottom:8px}
+.logingate-inner img{height:150px;width:auto;display:block;margin:0 auto 16px}
 .logingate-inner .ginput{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px;font-size:16px}
 .postactions{display:flex;gap:4px;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
 .pact{flex:1;background:none;border:0;color:var(--muted);font-size:14px;font-weight:bold;cursor:pointer;padding:6px 2px;border-radius:8px}
@@ -141,13 +141,17 @@ body.gated #loginGate{display:flex}
 .member-stats{display:flex;gap:16px;justify-content:center;margin:10px 0}
 .member-stats b{display:block;font-size:18px}
 .member-stats span{color:var(--muted2);font-size:13px}
+/* ---- Paid submissions: $5 event / tournament / song listings ---- */
+.radioquote{border-left:3px solid #E10600;padding:10px 12px;margin:10px 0;font-style:italic;color:var(--text)}
+.paystep{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px}
+.typebadge{display:inline-block;background:#E10600;color:#fff;font-size:11px;font-weight:bold;padding:3px 8px;border-radius:10px;letter-spacing:1px;text-transform:uppercase}
+select.finput{appearance:auto}
 </style>
 </head>
-<body class="gated">
+<body>
 <div id="loginGate">
   <div class="logingate-inner">
     <img src="__CIRCLED__" alt="DAOS">
-    <h1>Deadly Art of <span class="red">Survival</span></h1>
     <p>Martial arts, music &amp; culture &mdash; members only. Log in or create your free account to join the community.</p>
     <input id="gateEmail" class="ginput" type="email" placeholder="Email" autocomplete="email">
     <input id="gatePass" class="ginput" type="password" placeholder="Password" autocomplete="current-password">
@@ -225,10 +229,45 @@ body.gated #loginGate{display:flex}
   <div class="hero"><h1>DAOS <span>PARTY</span></h1><p style="color:#fff;font-weight:bold">Saturday, December 5, 2026 &middot; 5:00 PM &ndash; 10:00 PM<br>Row House, 2128 Frederick Douglass Blvd, Harlem, NYC</p><p id="partyCountdown" style="color:#fff;font-weight:bold;font-size:18px"></p><a class="btn white" href="https://deadlyartofsurvival.com/products/daos-party">Tickets</a><a class="btn dark" href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">Bandsintown</a> <button class="btn dark" type="button" onclick="downloadPartyICS()">Add to calendar</button></div>
   <div class="card"><h3>RSVP — DAOS Party</h3><p>Going? Tell us you're in — tickets are still required via the link above, and this RSVP helps us plan the room.</p><form onsubmit="return submitRSVP(event)"><p><input id="rsvpName" type="text" placeholder="Your name" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpEmail" type="email" placeholder="Email" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpSize" type="number" min="1" max="20" value="1" aria-label="Party size" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"></p><button class="btn" type="submit">Send RSVP</button></form><p id="rsvpDone" class="meta" style="display:none">You're on the list — see you Dec 5 in Harlem. Don't forget your ticket above.</p></div>
   <div class="card"><h3>DAOS CON</h3><p>The DAOS Party is the official pre-party to DAOS CON.</p></div>
+  <div class="card">
+    <h3>Post your event</h3>
+    <p>Got an event, seminar, or tournament? List it here for the DAOS community &mdash; <strong>$5</strong> per listing. It goes live after DAOS review.</p>
+    <button class="btn" type="button" onclick="openEventForm('event')">Post your event &mdash; $5</button>
+  </div>
+  <div class="card" id="eventFormCard" style="display:none">
+    <h3>Post your event &mdash; $5</h3>
+    <p class="meta">Your listing goes live after DAOS reviews it. Payment is $5 per listing.</p>
+    <input id="evTitle" class="finput" type="text" placeholder="Event title" maxlength="100">
+    <select id="evType" class="finput" aria-label="Type">
+      <option value="event">Event</option>
+      <option value="seminar">Seminar</option>
+      <option value="tournament">Tournament</option>
+    </select>
+    <input id="evDate" class="finput" type="datetime-local" aria-label="Date and time">
+    <input id="evLocation" class="finput" type="text" placeholder="Location — venue, city" maxlength="300">
+    <textarea id="evDesc" class="finput" placeholder="What is it? What should people expect?" maxlength="2000"></textarea>
+    <input id="evLink" class="finput" type="url" placeholder="Link — tickets or info page (optional)">
+    <button class="btn" type="button" onclick="goEventPayStep()">Continue to payment &mdash; $5</button>
+    <p id="evMsg" class="meta"></p>
+    <div id="evPayStep" class="paystep" style="display:none">
+      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay with Stripe (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
+      <button class="btn" type="button" onclick="openEventPayLink()">Pay $5 with Stripe</button>
+      <input id="evPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
+      <button class="btn" type="button" onclick="submitEvent()">I&rsquo;ve paid &mdash; submit my listing</button>
+      <p class="meta">DAOS checks the email against Stripe before your listing goes live.</p>
+    </div>
+  </div>
+  <div class="card"><h3>Community Events</h3><div id="communityEvents"><p class="meta">Loading community events&hellip;</p></div></div>
 </section>
 <section id="tournaments" class="tabpane">
+  <div class="card">
+    <h3>Post your tournament</h3>
+    <p>List your tournament for the DAOS community &mdash; <strong>$5</strong> per listing. It goes live after DAOS review.</p>
+    <button class="btn" type="button" onclick="openEventForm('tournament')">Post your tournament &mdash; $5</button>
+  </div>
   <div class="card"><h3>KTOC Nationals &mdash; Karate Tournament of Champions</h3><p>Sunday, November 22, 2026, Queens College Fitzgerald Gym, Flushing, Queens, NY. Divisions: Traditional, Creative Extreme, Sync/Demo Teams, Point Fighting, 2 Person Tag Team, Open Weight, Open Rank. Sanctioned NASKA 3A / WKC. Promoters Rick Diaz &amp; Susan Diaz. Contact ktocnationals@gmail.com, 718-607-6665. Promo code KTOC26.</p></div>
   <div class="card"><h3>Anthony Arango &mdash; Tournament Record</h3><ul><li>Head instructor, The Martial Arts Institute, Massapequa, NY</li><li>Nationally ranked with the Arango Warriors National Karate Team</li><li>USA Fighting Team (USA vs Puerto Rico, USA vs South Africa)</li><li>USA World W.A.K.O. Fighting Team member, silver medal, World Championships Italy at age 48</li><li>Black Belt Fighting Champion, Ocean State National Karate Tournament, Rhode Island (also at age 55)</li><li>Fighting Black Belt Grand Champion, Island Wide Open Championship, Long Island, NY</li><li>Runs the Arango Karate Championship</li></ul></div>
+  <div class="card"><h3>Community Tournaments</h3><div id="communityTournaments"><p class="meta">Loading community tournaments&hellip;</p></div></div>
 </section>
 <section id="community" class="tabpane">
   <div class="card"><h3>Community</h3><p>Latest Magazine Updates &mdash; the DAOS community channel. Feed, groups and conversation around martial arts, music and culture.</p></div>
@@ -253,6 +292,29 @@ body.gated #loginGate{display:flex}
 </section>
 <section id="music" class="tabpane">
   <div class="card"><h3>Jake Northfa$e</h3><p><strong>&ldquo;The Apartheid - Remix&rdquo; ft. Killah Priest</strong></p><a class="btn" href="https://open.spotify.com/artist/6xDnOObztkl0OsrihKaP5C">Jake Northfa$e on Spotify</a><p class="meta">Instagram: @deadlyartofsurvival &middot; @jakethenorthfase</p></div>
+  <div class="card">
+    <h3>Add your song</h3>
+    <p class="radioquote">&ldquo;Best songs (clean versions only) may get placed on DAOS Radio WPAT 930 AM&rdquo;</p>
+    <p>Submit your song for the DAOS community — <strong>$5</strong> per song. Clean versions only.</p>
+    <button class="btn" type="button" onclick="openSongForm()">Add your song &mdash; $5</button>
+  </div>
+  <div class="card" id="songFormCard" style="display:none">
+    <h3>Add your song &mdash; $5</h3>
+    <p class="meta">Clean versions only. The best songs may get placed on DAOS Radio WPAT 930 AM. Your song shows up here after DAOS picks it.</p>
+    <input id="sgTitle" class="finput" type="text" placeholder="Song title" maxlength="100">
+    <input id="sgArtist" class="finput" type="text" placeholder="Artist name" maxlength="100">
+    <input id="sgLink" class="finput" type="url" placeholder="Streaming link — Spotify, YouTube, or SoundCloud">
+    <button class="btn" type="button" onclick="goSongPayStep()">Continue to payment &mdash; $5</button>
+    <p id="sgMsg" class="meta"></p>
+    <div id="sgPayStep" class="paystep" style="display:none">
+      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay with Stripe (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
+      <button class="btn" type="button" onclick="openSongPayLink()">Pay $5 with Stripe</button>
+      <input id="sgPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
+      <button class="btn" type="button" onclick="submitSong()">I&rsquo;ve paid &mdash; submit my song</button>
+      <p class="meta">DAOS checks the email against Stripe before your song is picked.</p>
+    </div>
+  </div>
+  <div class="card"><h3>Selected songs</h3><div id="selectedSongs"><p class="meta">Songs picked by DAOS show up here.</p></div></div>
 </section>
 <section id="fighters" class="tabpane">
   <div class="card"><h3>Martial Artist Vote</h3><p>Vote for the martial artists of DAOS Magazine. One vote per email, per fighter. Tap a fighter to open their page, vote, and share it.</p><p class="meta">New here? Log in below to create your own profile — it goes live after DAOS review. Nothing publishes automatically.</p></div>
@@ -374,18 +436,27 @@ function openAuthModal(){
   document.getElementById('authModal').classList.add('open');
 }
 function closeAuthModal(){ document.getElementById('authModal').classList.remove('open'); }
-/* ---- Social layer: login gate, profiles, feed, network, rankings ----
-   The whole app is members-only: visitors see the login gate until they
-   sign in (Supabase email auth). After first login, members are prompted
-   to create a profile (display name, bio, photo/logo in the avatars
-   bucket) — posting and following need a profile. Tables live in
-   Supabase (see supabase/social-layer.sql). */
+/* ---- Social layer: profiles, feed, network, rankings ----
+   Public-first (Nov 7, 2026): the site is browsable without a login —
+   no login gate on first load. Signing in (Supabase email auth, header
+   Log in button) unlocks posting, following, and member features. After
+   first login, members are prompted to create a profile (display name,
+   bio, photo/logo in the avatars bucket) — posting and following need a
+   profile. The #loginGate markup stays in the page but is never shown
+   by default. Tables live in Supabase (see supabase/social-layer.sql). */
 var currentUser = null;
 var myProfile = null;
 var myFollowIds = {};
 async function refreshAuth(){
   var btn = document.getElementById('authBtn');
-  if (!supabaseClient) { document.body.classList.add('gated'); return; }
+  if (!supabaseClient) {
+    /* Public-first: never gate the site. Header Log in button stays. */
+    document.body.classList.remove('gated');
+    btn.textContent = 'Log in';
+    btn.onclick = openAuthModal;
+    document.getElementById('composerForm').style.display = 'none';
+    return;
+  }
   var res = await supabaseClient.auth.getSession();
   var user = res.data && res.data.session && res.data.session.user;
   currentUser = user || null;
@@ -402,7 +473,9 @@ async function refreshAuth(){
     loadMyProfile();
     if (typeof openDeepLink === 'function') openDeepLink();
   } else {
-    document.body.classList.add('gated');
+    /* Public-first: logged-out visitors browse freely; the login gate
+       never appears. The header Log in button opens the auth modal. */
+    document.body.classList.remove('gated');
     btn.textContent = 'Log in';
     btn.onclick = openAuthModal;
     document.getElementById('composerForm').style.display = 'none';
@@ -989,7 +1062,213 @@ async function saveMyProfile(){
   loadFighters();
 }
 
+/* ---- Paid submissions: $5 event / seminar / tournament listings
+   and $5 song submissions (DAOS Radio WPAT 930 AM) ----
+   Tables live in Supabase (see supabase/paid-submissions.sql).
+   Members only: login + member profile required to submit (same
+   guards as posting). Every listing is saved status='submitted' and
+   goes live ONLY after DAOS approves it in the dashboard.
+   PAYMENT (v1): Stripe is NOT connected yet. The two constants below
+   are empty placeholders — paste the $5 Stripe payment links in once
+   Stripe is connected. Until then the pay buttons explain payments
+   are not open yet and nothing is submitted. There is NO webhook in
+   v1: the member enters the email they paid with, and Jake matches
+   it against Stripe when approving. Never claim a payment is
+   verified — the site cannot check it. */
+var STRIPE_EVENT_PAYMENT_LINK = ''; /* TODO: paste the $5 Stripe payment link for event listings once Stripe is connected. */
+var STRIPE_SONG_PAYMENT_LINK = '';  /* TODO: paste the $5 Stripe payment link for song submissions once Stripe is connected. */
+var EVENT_TYPE_LABELS = {event: 'Event', seminar: 'Seminar', tournament: 'Tournament'};
+function paidGuard(){
+  if (!supabaseClient) { openAuthModal(); return false; }
+  if (!currentUser) { openAuthModal(); return false; }
+  if (!myProfile) { showProfileSetup(); return false; }
+  return true;
+}
+function openEventForm(type){
+  if (!paidGuard()) return;
+  var tabs = document.querySelectorAll('#tabs button');
+  showTab('events', tabs[1]);
+  var card = document.getElementById('eventFormCard');
+  if (!card) return;
+  var sel = document.getElementById('evType');
+  if (sel) sel.value = (type === 'tournament' || type === 'seminar' || type === 'event') ? type : 'event';
+  var pay = document.getElementById('evPayStep');
+  if (pay) pay.style.display = 'none';
+  var msg = document.getElementById('evMsg');
+  if (msg) msg.textContent = '';
+  card.style.display = 'block';
+  if (card.scrollIntoView) card.scrollIntoView({behavior: 'smooth'});
+}
+function isHttpUrl(s){
+  return /^https?:\/\/[^\/\s]+\.[^\/\s]+/.test(s || '');
+}
+function goEventPayStep(){
+  var msg = document.getElementById('evMsg');
+  var title = document.getElementById('evTitle').value.trim();
+  var dateVal = document.getElementById('evDate').value;
+  var loc = document.getElementById('evLocation').value.trim();
+  var link = document.getElementById('evLink').value.trim();
+  if (!title) { if (msg) msg.textContent = 'Add your event title first.'; return; }
+  if (!dateVal || isNaN(new Date(dateVal).getTime())) { if (msg) msg.textContent = 'Pick a date and time for your event.'; return; }
+  if (!loc) { if (msg) msg.textContent = 'Add the location — venue and city.'; return; }
+  if (link && !isHttpUrl(link)) { if (msg) msg.textContent = 'That link does not look right — it should start with http:// or https://.'; return; }
+  if (msg) msg.textContent = '';
+  var pay = document.getElementById('evPayStep');
+  if (pay) { pay.style.display = 'block'; if (pay.scrollIntoView) pay.scrollIntoView({behavior: 'smooth'}); }
+}
+function openEventPayLink(){
+  var msg = document.getElementById('evMsg');
+  if (!STRIPE_EVENT_PAYMENT_LINK) {
+    if (msg) msg.textContent = 'Payments open soon — DAOS is still setting up the $5 payment link. Check back soon.';
+    return;
+  }
+  window.open(STRIPE_EVENT_PAYMENT_LINK, '_blank');
+}
+async function submitEvent(){
+  var msg = document.getElementById('evMsg');
+  var email = document.getElementById('evPayerEmail').value.trim();
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter the email you paid with — DAOS matches it against Stripe.'; return; }
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  var title = document.getElementById('evTitle').value.trim();
+  var dateVal = document.getElementById('evDate').value;
+  var loc = document.getElementById('evLocation').value.trim();
+  if (!title || !dateVal || !loc) { if (msg) msg.textContent = 'Fill in the title, date, and location first.'; return; }
+  if (msg) msg.textContent = 'Submitting…';
+  var row = {
+    user_id: currentUser.id,
+    type: document.getElementById('evType').value,
+    title: title,
+    event_date: new Date(dateVal).toISOString(),
+    location: loc,
+    description: document.getElementById('evDesc').value.trim(),
+    link: document.getElementById('evLink').value.trim() || null,
+    status: 'submitted',
+    payer_email: email,
+    payment_ref: null
+  };
+  var res = await supabaseClient.from('community_events').insert(row);
+  if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  if (msg) msg.textContent = 'Submitted — DAOS will review your listing. It goes live after approval.';
+  document.getElementById('evTitle').value = '';
+  document.getElementById('evDate').value = '';
+  document.getElementById('evLocation').value = '';
+  document.getElementById('evDesc').value = '';
+  document.getElementById('evLink').value = '';
+  document.getElementById('evPayerEmail').value = '';
+  var pay = document.getElementById('evPayStep');
+  if (pay) pay.style.display = 'none';
+  loadCommunityEvents();
+}
+function eventCardHtml(ev){
+  var label = EVENT_TYPE_LABELS[ev.type] || 'Event';
+  var when = ev.event_date ? new Date(ev.event_date).toLocaleString() : '';
+  var html = '<div style="padding:10px 0;border-top:1px solid var(--border)">' +
+    '<span class="typebadge">' + escapeHtml(label) + '</span> ' +
+    '<strong>' + escapeHtml(ev.title) + '</strong><br>' +
+    '<span class="meta">' + escapeHtml(when) + (ev.location ? ' &middot; ' + escapeHtml(ev.location) : '') + '</span>';
+  if (ev.description) html += '<p>' + escapeHtml(ev.description) + '</p>';
+  if (ev.link) html += '<a class="btn" href="' + escapeHtml(ev.link) + '" target="_blank" rel="noopener">More info</a>';
+  return html + '</div>';
+}
+async function loadCommunityEvents(){
+  var box = document.getElementById('communityEvents');
+  var tbox = document.getElementById('communityTournaments');
+  if (!box && !tbox) return;
+  if (!supabaseClient) {
+    if (box) box.innerHTML = '<p class="meta">Community listings open soon.</p>';
+    if (tbox) tbox.innerHTML = '<p class="meta">Community tournaments open soon.</p>';
+    return;
+  }
+  var res = await supabaseClient.from('community_events').select('id,type,title,event_date,location,description,link').eq('status', 'live').order('event_date', {ascending: true}).limit(20);
+  if (res.error || !res.data) {
+    if (box) box.innerHTML = '<p class="meta">Could not load community events.</p>';
+    if (tbox) tbox.innerHTML = '<p class="meta">Could not load community tournaments.</p>';
+    return;
+  }
+  var events = res.data || [];
+  var tourneys = events.filter(function(e){ return e.type === 'tournament'; });
+  if (box) box.innerHTML = events.length ? events.map(eventCardHtml).join('') : '<p class="meta">No community events listed yet — be the first to post one.</p>';
+  if (tbox) tbox.innerHTML = tourneys.length ? tourneys.map(eventCardHtml).join('') : '<p class="meta">No community tournaments listed yet — be the first to post one.</p>';
+}
+function openSongForm(){
+  if (!paidGuard()) return;
+  var tabs = document.querySelectorAll('#tabs button');
+  showTab('music', tabs[7]);
+  var card = document.getElementById('songFormCard');
+  if (!card) return;
+  var pay = document.getElementById('sgPayStep');
+  if (pay) pay.style.display = 'none';
+  var msg = document.getElementById('sgMsg');
+  if (msg) msg.textContent = '';
+  card.style.display = 'block';
+  if (card.scrollIntoView) card.scrollIntoView({behavior: 'smooth'});
+}
+function goSongPayStep(){
+  var msg = document.getElementById('sgMsg');
+  var title = document.getElementById('sgTitle').value.trim();
+  var artist = document.getElementById('sgArtist').value.trim();
+  var link = document.getElementById('sgLink').value.trim();
+  if (!title) { if (msg) msg.textContent = 'Add your song title first.'; return; }
+  if (!artist) { if (msg) msg.textContent = 'Add the artist name.'; return; }
+  if (!link || !isHttpUrl(link)) { if (msg) msg.textContent = 'Add a streaming link — Spotify, YouTube, or SoundCloud (starting with http:// or https://).'; return; }
+  if (msg) msg.textContent = '';
+  var pay = document.getElementById('sgPayStep');
+  if (pay) { pay.style.display = 'block'; if (pay.scrollIntoView) pay.scrollIntoView({behavior: 'smooth'}); }
+}
+function openSongPayLink(){
+  var msg = document.getElementById('sgMsg');
+  if (!STRIPE_SONG_PAYMENT_LINK) {
+    if (msg) msg.textContent = 'Payments open soon — DAOS is still setting up the $5 payment link. Check back soon.';
+    return;
+  }
+  window.open(STRIPE_SONG_PAYMENT_LINK, '_blank');
+}
+async function submitSong(){
+  var msg = document.getElementById('sgMsg');
+  var email = document.getElementById('sgPayerEmail').value.trim();
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter the email you paid with — DAOS matches it against Stripe.'; return; }
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  var title = document.getElementById('sgTitle').value.trim();
+  var artist = document.getElementById('sgArtist').value.trim();
+  var link = document.getElementById('sgLink').value.trim();
+  if (!title || !artist || !link) { if (msg) msg.textContent = 'Fill in the song title, artist, and streaming link first.'; return; }
+  if (msg) msg.textContent = 'Submitting…';
+  var row = {
+    user_id: currentUser.id,
+    song_title: title,
+    artist_name: artist,
+    stream_url: link,
+    status: 'submitted',
+    payer_email: email,
+    payment_ref: null
+  };
+  var res = await supabaseClient.from('song_submissions').insert(row);
+  if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  if (msg) msg.textContent = 'Submitted — DAOS will review your song. Clean versions only; the best songs may get placed on DAOS Radio WPAT 930 AM.';
+  document.getElementById('sgTitle').value = '';
+  document.getElementById('sgArtist').value = '';
+  document.getElementById('sgLink').value = '';
+  document.getElementById('sgPayerEmail').value = '';
+  var pay = document.getElementById('sgPayStep');
+  if (pay) pay.style.display = 'none';
+  loadSelectedSongs();
+}
+async function loadSelectedSongs(){
+  var box = document.getElementById('selectedSongs');
+  if (!box) return;
+  if (!supabaseClient) { box.innerHTML = '<p class="meta">Songs picked by DAOS show up here.</p>'; return; }
+  var res = await supabaseClient.from('song_submissions').select('id,song_title,artist_name,stream_url').eq('status', 'selected').order('created_at', {ascending: false}).limit(20);
+  if (res.error || !res.data) { box.innerHTML = '<p class="meta">Could not load selected songs.</p>'; return; }
+  var songs = res.data || [];
+  box.innerHTML = songs.length ? songs.map(function(s){
+    return '<div style="padding:10px 0;border-top:1px solid var(--border)"><strong>' + escapeHtml(s.song_title) + '</strong> &mdash; ' + escapeHtml(s.artist_name) + '<br><a class="btn" href="' + escapeHtml(s.stream_url) + '" target="_blank" rel="noopener">Listen</a></div>';
+  }).join('') : '<p class="meta">No songs picked yet — submit yours above.</p>';
+}
+
 loadFighters();
+loadCommunityEvents();
+loadSelectedSongs();
+loadRankings();
 refreshAuth();
 </script>
 <script>
