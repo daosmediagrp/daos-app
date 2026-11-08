@@ -103,3 +103,23 @@ Video: "The Deadly Art of Survival Event 5/14/22 Pt. 2 Chinatown NYC" — https:
 ## 6. FIRST DAOS CON FOOD — JAKE'S ACCOUNT (Nov 8, 2026)
 - The first DAOS CON had Chasity Ingram (Jake's wife) and Evelyn Bermudez doing the food.
 - CONFIRMED Nov 8, 2026: the first DAOS CON was the May 14, 2022 Mariner's Temple event (section 5) — Jake: "that was the first one."
+
+## 7. 1ST EDITION FOUND ON AMAZON (Nov 8, 2026)
+The 1st edition has no magazine design in Canva — but it exists on Amazon.
+- Amazon listing (via Desertcart mirror, verified Nov 8, 2026): "Deadly Art of Survival Magazine", ASIN **B09KDW9Z8W**, ISBN-13 **979-8755022323**, **60 pages**, publication date **October 28, 2021** (the magazine's founding date), Independently published, 8.5 x 11 in. Customer rating **4.8 stars from 84 reviews**. DAOS TV podcast page links it as "1st Edition: https://amzn.to/3glzKhm". Google Books also lists it ("Stay tuned for the second edition of our ongoing magazine!").
+- Cover (read from the Amazon product images, Nov 8, 2026): **Winter 21/22**, headline "THE HISTORY OF THE POWERFUL D.A.S. KARATE FEDERATION". Cover stars: **GM Odette Russell** (top right, with weapons) — "MOTHER OF S.W.A.M. ONE OF THE DEADLIEST WOMEN ON THIS PLANET" — and **Mildred Tse Gonzalez** (top left, kicking) — "D.A.S. KARATE FEDERATION'S WINNINGEST CHAMPION". Also "EAST COAST LEGENDS — RECOGNITION SECTION CENTERFOLD" and Nathan Ingram's photo/signature at the bottom. Back cover: "THANK YOU FOR HELPING US BREAK BARRIERS" on a brick wall, ISBN barcode 9798755022323.
+- The wall now lists all 28 editions (1–28 complete).
+
+## 8. ALTERNATE COVERS — THE "CONFLICTS" RESOLVED (Nov 8, 2026)
+The 25th/26th wall-vs-Canva disagreements were not errors: DAOS publishes multiple covers per edition, sold as separate KDP listings ("Featuring X", often marked "(Alternative cover only)").
+- 12th: Flex Wheeler + Dr. Robert Goldman. 13th: Lorenzo Hunt (Juggernaut) + Jeff Chan (MMAShredded). 16th: Anthony Arango + Buzz Durkin (a file titled for Abdul Shabazz carries the same Durkin cover). 17th: Jadi Tention / Gregg Zilb / Carl Scott. 18th: Shi Yan Ming / Luis Morales / Grant Campbell. 20th: Anthony Codispoti + Sam McGee.
+- 24th: Ernest "The Cat" Miller (main Amazon listing, ISBN 9798245744308, Jan 2026) + GM Bill McCloud, Soke Haisan Kaleak, Eddie Morales, Jose Luis Torres, Jared Hudson.
+- 25th: The Torres Family (main Amazon listing, ISBN 9798255304912, Apr 22, 2026) + Derrick Williams ("NYC Legend"), Jessie Wray, Professor Mahaliel Bethea ("52 Blocks").
+- 26th: Kai Leung (main) + Jim Rivera, Carl Matthews, Professor Lemuel Muhammad, Robert Shimonski, Paul Cervizzi, Raul Ortiz, Antonio Arango.
+- 27th: Shannon Briggs (first official cover, Jul 26, 2026) + Khaleeq Lewis, David Kovar, Helena Crevar, Ivan Mendez, Maggie Messina.
+- 28th: Zoltan Bathory (main) + Dominick Brioche (on Amazon) and Cheuk Ho Kwong.
+- 22nd: Amazon also lists a 22nd Edition featuring Olando Rivera (ISBN 9798290498980).
+- The wall now lists every alternate cover per edition (card shows "+N more covers", plaque lists them).
+
+## 9. FIRST DAOS PARTY — CORRECTION (Jake, Nov 8, 2026)
+- **The first DAOS Party was at Sour Mouse, New York City** (Jake's word; date not stated). This supersedes the Canva flyer read: a flyer in Canva advertises a DAOS Party "Saturday July 25th" at Hello Hello Bar & Cafe, 26th & 7th Ave, NYC (music by DJ J-Ronin and Jake Northfa$e) — its place in the sequence is unconfirmed. Dec 5, 2026 Row House may therefore be the second or third party, not necessarily the second. No public source found for the Sour Mouse party (search Nov 8, 2026 returned only Dec 5 Row House promo).
