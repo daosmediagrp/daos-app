@@ -1,0 +1,1556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>The Daos Museum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Barlow:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ec; --bg2:#ece8e0; --panel:#ffffff; --panel2:#faf8f4;
+  --ink:#141210; --ink2:#3d3833; --muted:#6f675e;
+  /* Always-dark display surfaces (hero, covers, visit panel): these never flip
+     with the color scheme, so their light text stays readable in both modes. */
+  --surface-dark:#141210; --on-dark:#f5f1ea; --on-dark-dim:#ddd5c8; --on-dark-faint:#bdb2a2;
+  --line:#d8d0c4; --line-strong:#141210;
+  --red:#b91c1c; --red-dark:#7f1d1d; --red-soft:#fbe9e7;
+  --gold:#8a6d1b; --gold-soft:#f5ecd2;
+  --shadow:0 1px 0 rgba(20,18,16,.06), 0 12px 32px rgba(20,18,16,.08);
+  --radius:4px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]){
+    --bg:#0c0b0a; --bg2:#131110; --panel:#171412; --panel2:#1c1916;
+    --ink:#f3efe8; --ink2:#d8d0c4; --muted:#a89d90;
+    --line:#2e2a26; --line-strong:#f3efe8;
+    --red:#e0342b; --red-dark:#ff6b61; --red-soft:#2a1210;
+    --gold:#d9b45a; --gold-soft:#241d0d;
+    --shadow:0 1px 0 rgba(255,255,255,.04), 0 12px 32px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0c0b0a; --bg2:#131110; --panel:#171412; --panel2:#1c1916;
+  --ink:#f3efe8; --ink2:#d8d0c4; --muted:#a89d90;
+  --line:#2e2a26; --line-strong:#f3efe8;
+  --red:#e0342b; --red-dark:#ff6b61; --red-soft:#2a1210;
+  --gold:#d9b45a; --gold-soft:#241d0d;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 12px 32px rgba(0,0,0,.45);
+}
+:root[data-theme="light"]{color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important; transition:none!important} }
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--red);text-decoration-color:color-mix(in srgb, var(--red) 45%, transparent);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--red)}
+h1,h2,h3,.cond{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.02em;line-height:1.05;margin:0}
+.serif{font-family:"Source Serif 4",Georgia,serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.small{font-size:.82rem;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 9px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2)}
+.tag.red{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.tag.gold{border-color:var(--gold);color:var(--gold);background:var(--gold-soft)}
+
+/* Hero */
+.hero{background:var(--surface-dark);color:var(--on-dark);position:relative;overflow:hidden}
+.hero-inner{max-width:1120px;margin:0 auto;padding:52px 20px 0}
+.hero-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(245,241,234,.18);padding-bottom:16px}
+.hero-top .brand{font-family:"Oswald",sans-serif;letter-spacing:.22em;font-size:.78rem;text-transform:uppercase;opacity:.85}
+.hero h1{font-size:clamp(3.2rem,10vw,7.2rem);font-weight:700;margin:28px 0 6px;line-height:.92}
+.hero h1 span{color:#e0342b;display:block}
+.hero .sub{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(1.05rem,2.4vw,1.35rem);max-width:640px;color:#ddd5c8;margin:14px 0 0}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(245,241,234,.18);margin-top:36px}
+.hero-stats div{padding:18px 16px 22px;border-right:1px solid rgba(245,241,234,.14)}
+.hero-stats div:last-child{border-right:0}
+.hero-stats b{font-family:"Oswald",sans-serif;font-size:clamp(1.6rem,4vw,2.4rem);display:block;line-height:1}
+.hero-stats span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#bdb2a2}
+@media(max-width:640px){.hero-stats{grid-template-columns:1fr 1fr}.hero-stats div{border-bottom:1px solid rgba(245,241,234,.12)}}
+
+/* Wing nav */
+.wingnav{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(10px);border-bottom:2px solid var(--line-strong)}
+.wingnav .wrap{display:flex;gap:4px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+@media(max-width:640px){.wingnav a{flex:1 1 30%;text-align:center;padding:8px 6px;font-size:.76rem}}
+.wingnav a{flex:0 0 auto;font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;color:var(--ink2);text-decoration:none;padding:8px 12px;border:1px solid transparent;border-radius:999px}
+.wingnav a.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.wingnav a:hover{border-color:var(--line-strong)}
+
+/* Sections */
+section{padding:56px 0 8px;scroll-margin-top:64px}
+.visit{scroll-margin-top:64px}
+.wing-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:8px}
+.wing-num{font-family:"Oswald",sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.16em;color:var(--red);border:2px solid var(--red);padding:8px 10px;line-height:1;white-space:nowrap;margin-top:6px}
+.wing-head h2{font-size:clamp(2rem,5.5vw,3.2rem);font-weight:600}
+.wing-head p{margin:8px 0 0;color:var(--ink2);max-width:680px;font-size:1.02rem}
+.plaque{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--ink);box-shadow:var(--shadow);padding:22px;border-radius:var(--radius)}
+.plaque.redtop{border-top-color:var(--red)}
+.plaque h3{font-size:1.05rem;margin-bottom:10px}
+.plaque p{margin:0 0 10px;color:var(--ink2)}
+.plaque p:last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
+.label{font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.factlist{list-style:none;margin:0;padding:0}
+.factlist li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
+.factlist li:last-child{border-bottom:0}
+.factlist .yr{font-family:"Oswald",sans-serif;font-weight:600;min-width:74px;color:var(--red)}
+.src{font-size:.75rem;color:var(--muted)}
+.src a{color:var(--muted);text-decoration:underline}
+blockquote{margin:0;font-family:"Source Serif 4",Georgia,serif;font-size:1.25rem;line-height:1.45;font-style:italic}
+blockquote footer{font-family:"Barlow",sans-serif;font-style:normal;font-size:.82rem;color:var(--muted);margin-top:10px;letter-spacing:.04em}
+
+/* Timeline */
+.timeline{margin-top:22px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow)}
+.tl-years{display:flex;flex-wrap:wrap;border-bottom:2px solid var(--line-strong)}
+.tl-years button{appearance:none;border:0;border-right:1px solid var(--line);background:transparent;color:var(--ink2);font-family:"Oswald",sans-serif;font-size:1rem;padding:14px 16px;cursor:pointer;flex:1 1 auto}
+.tl-years button:last-child{border-right:0}
+.tl-years button[aria-pressed="true"]{background:var(--red);color:#fff}
+.tl-body{padding:22px}
+.tl-body h3{font-size:1.5rem;margin-bottom:8px}
+.tl-body p{color:var(--ink2);max-width:720px;margin:0 0 10px}
+
+/* Film */
+.film-hero{background:#111;color:#f3efe8;border:1px solid #000;padding:26px;margin-top:18px;display:grid;grid-template-columns:1.15fr .85fr;gap:26px}
+@media(max-width:820px){.film-hero{grid-template-columns:1fr}}
+.film-hero h3{font-size:clamp(1.8rem,4vw,2.6rem);color:#fff}
+.film-hero h3 span{color:#e0342b}
+.film-hero p{color:#d8d0c4}
+.film-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#2b2723;border:1px solid #2b2723;height:fit-content}
+.film-meta div{background:#171412;padding:12px}
+.film-meta b{font-family:"Oswald",sans-serif;display:block;font-size:1.05rem;color:#fff}
+.film-meta span{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#a89d90}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.flow .step{background:var(--panel);border:1px solid var(--line-strong);padding:10px 12px;font-family:"Oswald",sans-serif;text-transform:uppercase;font-size:.82rem;letter-spacing:.05em}
+.flow .arrow{color:var(--red);font-weight:700}
+
+/* Editions */
+.ed-tools{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px}
+.ed-tools button{appearance:none;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:999px;font-weight:600;cursor:pointer;font-family:"Barlow",sans-serif}
+.ed-tools button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.ed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+.ed-card{appearance:none;text-align:left;border:1px solid var(--line);background:var(--panel);padding:0;cursor:pointer;border-radius:var(--radius);overflow:hidden;color:var(--ink);font-family:"Barlow",sans-serif;width:100%}
+.ed-card .cover{aspect-ratio:3/4;background:var(--surface-dark);color:var(--on-dark);display:flex;flex-direction:column;justify-content:space-between;padding:12px;position:relative}
+.ed-card .cover::after{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--red)}
+.ed-card .cover .no{font-family:"Oswald",sans-serif;font-size:2rem;line-height:1}
+.ed-card .cover .feat{font-family:"Oswald",sans-serif;text-transform:uppercase;font-size:.82rem;line-height:1.25}
+.ed-card .cover .brandline{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+.ed-card .meta{padding:9px 10px;font-size:.78rem;color:var(--muted)}
+.ed-card[aria-pressed="true"]{outline:3px solid var(--red);outline-offset:1px}
+.ed-detail{margin-top:16px}
+.ed-detail h3{font-size:1.6rem}
+
+/* People */
+.ppl-tools{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px}
+.ppl-tools button{appearance:none;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:999px;font-weight:600;cursor:pointer}
+.ppl-tools button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ppl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.person{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--ink);padding:18px;box-shadow:var(--shadow);border-radius:var(--radius)}
+.person.cover{border-top-color:var(--red)}
+.person h3{font-size:1.15rem;text-transform:none;letter-spacing:0;font-family:"Barlow",sans-serif;font-weight:700}
+.person .role{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin:4px 0 8px}
+.person p{margin:0;color:var(--ink2);font-size:.94rem}
+
+/* Music / future */
+.track{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+@media(max-width:560px){.track{grid-template-columns:1fr}}
+.vinyl{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at center, var(--red) 0 26%, #171412 27% 100%);border:6px solid #0c0b0a;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Oswald",sans-serif;font-size:.62rem;letter-spacing:.14em;text-align:center;padding:18px}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff!important;text-decoration:none;padding:11px 16px;font-weight:700;border-radius:3px;border:1px solid var(--red)}
+.btn.ghost{background:transparent;color:var(--ink)!important;border-color:var(--line-strong)}
+.btn:hover{filter:brightness(1.06)}
+.appgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:16px}
+.appfeat{background:var(--panel2);border:1px solid var(--line);padding:14px}
+.appfeat b{font-family:"Oswald",sans-serif;text-transform:uppercase;font-size:.92rem;display:block;margin-bottom:4px}
+.appfeat p{margin:0;color:var(--ink2);font-size:.9rem}
+.visit{background:var(--surface-dark);color:var(--on-dark);padding:28px;margin:56px 0 0}
+.visit h2{color:#fff;font-size:clamp(1.8rem,4.5vw,2.6rem)}
+.visit p{color:#d8d0c4;max-width:680px}
+.visit a{color:#ff8a80}
+footer.site{padding:28px 0 44px;color:var(--muted);font-size:.86rem}
+footer.site .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){footer.site .cols{grid-template-columns:1fr}}
+footer.site h4{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ink);font-size:.85rem;margin:0 0 8px}
+footer.site ul{list-style:none;margin:0;padding:0}
+footer.site li{margin:5px 0}
+
+
+/* ===== Accessibility toolbar ===== */
+:root[data-font="serif"] body{font-family:"Source Serif 4",Georgia,serif}
+:root[data-font="readable"] body{font-family:"Atkinson Hyperlegible","Barlow",system-ui,sans-serif;letter-spacing:.012em}
+:root[data-linespacing="roomy"] body{line-height:1.9}
+:root[data-linespacing="roomy"] p,:root[data-linespacing="roomy"] li,:root[data-linespacing="roomy"] blockquote{line-height:1.9}
+:root[data-motion="reduced"]{scroll-behavior:auto}
+:root[data-motion="reduced"] *, :root[data-motion="reduced"] *::before, :root[data-motion="reduced"] *::after{animation:none!important;transition:none!important}
+:root[data-underline="all"] a{text-decoration:underline!important;text-underline-offset:3px}
+:root[data-contrast="high"]{--muted:#453d33;--ink2:#221d18;--line:#857a68}
+:root[data-theme="dark"][data-contrast="high"]{--bg:#000000;--panel:#0b0a09;--panel2:#12100e;--ink:#ffffff;--ink2:#f5efe4;--muted:#d6c9b4;--line:#6f6455}
+:root[data-contrast="high"] .plaque,:root[data-contrast="high"] .person,:root[data-contrast="high"] .timeline{border-width:2px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px}
+.tool-pill{display:inline-flex;align-items:center;gap:8px;appearance:none;background:rgba(245,241,234,.08);border:1px solid rgba(245,241,234,.45);color:#f5f1ea;border-radius:999px;padding:9px 16px;font-family:"Barlow",sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;line-height:1.2}
+.tool-pill:hover{background:rgba(245,241,234,.18)}
+.tool-pill[aria-expanded="true"],.tool-pill[aria-pressed="true"]{background:#f5f1ea;color:#141210;border-color:#f5f1ea}
+.tool-pill:focus-visible{outline:2px solid #e0342b;outline-offset:2px}
+.tool-pill svg{flex:0 0 auto}
+.tool-pill .a11y-plus{font-weight:700;font-size:1.05rem;line-height:1}
+.tool-panel{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px;margin-top:12px;max-width:640px}
+.tool-panel[hidden]{display:none}
+.panel-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.panel-row:first-child{padding-top:0}
+.panel-row:last-of-type{border-bottom:0}
+.panel-label{font-weight:600;font-size:1rem;color:var(--ink)}
+.ts-controls{display:inline-flex;align-items:center;gap:10px}
+.ts-controls button{appearance:none;border:1.5px solid var(--line-strong);background:var(--panel);color:var(--ink);border-radius:10px;padding:8px 13px;font-family:"Barlow",sans-serif;font-weight:700;font-size:1rem;cursor:pointer;line-height:1}
+.ts-controls button:hover{border-color:var(--red);color:var(--red)}
+.ts-controls .ts-pct{border:0;background:transparent;font-size:1.05rem;min-width:56px;text-align:center;padding:8px 2px}
+.font-opts{display:inline-flex;gap:8px;flex-wrap:wrap}
+.font-opts button{appearance:none;border:1.5px solid var(--line-strong);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:600;font-size:.95rem;cursor:pointer}
+.font-opts button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.switch{appearance:none;width:52px;height:30px;border-radius:999px;background:color-mix(in srgb, var(--ink) 22%, var(--panel));border:1.5px solid var(--line-strong);position:relative;cursor:pointer;flex:0 0 auto;padding:0}
+.switch .knob{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:var(--panel);border:1.5px solid var(--line-strong);transition:left .15s ease}
+.switch[aria-checked="true"]{background:var(--ink)}
+.switch[aria-checked="true"] .knob{left:24px;background:var(--bg)}
+.switch:focus-visible,.font-opts button:focus-visible,.ts-controls button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.saved-note{margin:14px 0 0;color:var(--muted);font-size:.9rem}
+.search-row{display:flex;align-items:center;gap:10px}
+.search-row svg{flex:0 0 auto;color:var(--muted)}
+.search-row input{flex:1 1 auto;min-width:0;border:1.5px solid var(--line-strong);background:var(--panel2);color:var(--ink);border-radius:10px;padding:11px 13px;font:inherit;font-size:1rem}
+.search-row input:focus{outline:2px solid var(--red);outline-offset:1px}
+.search-clear{appearance:none;border:0;background:transparent;color:var(--red);font:inherit;font-weight:700;cursor:pointer;padding:8px 4px}
+.search-results{margin-top:6px}
+.search-results .sr-count{font-size:.82rem;color:var(--muted);margin:10px 0 4px}
+.search-results .sr-none{color:var(--ink2);margin:10px 0 2px}
+.sr-item{display:block;width:100%;text-align:left;appearance:none;background:transparent;border:0;border-bottom:1px solid var(--line);padding:11px 4px;cursor:pointer;font-family:inherit;color:var(--ink)}
+.sr-item:last-child{border-bottom:0}
+.sr-item:hover,.sr-item:focus-visible{background:var(--panel2);outline:none}
+.sr-item .sr-title{font-weight:700;font-size:1rem;display:block}
+.sr-item .sr-cat{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:2px}
+.sr-item .sr-snip{font-size:.88rem;color:var(--ink2);display:block;margin-top:2px}
+.sr-item mark,.search-flash mark{background:var(--gold-soft);color:inherit;padding:0 1px}
+.search-flash{outline:3px solid var(--red)!important;outline-offset:4px;animation:srflash 1.1s ease-in-out 2}
+@keyframes srflash{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,0)}50%{box-shadow:0 0 0 8px rgba(185,28,28,.28)}}
+@media(max-width:640px){.tool-panel{max-width:none}.tool-pill{flex:1 1 auto;justify-content:center}}
+
+/* Language pill */
+.langpill{display:inline-flex;align-items:center;gap:2px;background:rgba(245,241,234,.08);border:1px solid rgba(245,241,234,.45);border-radius:999px;padding:4px 6px}
+.langpill button{appearance:none;border:0;background:transparent;color:#bdb2a2;font-family:"Barlow",sans-serif;font-weight:700;font-size:.82rem;padding:5px 9px;border-radius:999px;cursor:pointer;letter-spacing:.02em}
+.langpill button[aria-pressed="true"]{background:#f5f1ea;color:#141210}
+.langpill .sep{color:rgba(245,241,234,.4);font-size:.8rem}
+.langpill button:focus-visible{outline:2px solid #e0342b;outline-offset:2px}
+
+/* Donate */
+.donate{margin:56px 0 0;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--red);box-shadow:var(--shadow);padding:28px;border-radius:var(--radius)}
+.donate h2{font-size:clamp(1.8rem,4.5vw,2.6rem)}
+.donate .intro{color:var(--ink2);max-width:680px;margin:10px 0 0}
+.donate-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.donate-btn{display:inline-flex;align-items:center;gap:10px;background:var(--panel);color:var(--ink)!important;border:1.5px solid var(--line-strong);border-radius:14px;padding:16px 22px;font-weight:700;font-size:1.08rem;text-decoration:none;line-height:1.2}
+.donate-btn .arr{font-weight:700;color:var(--red)}
+.donate-btn:hover{border-color:var(--red);text-decoration:none}
+.donate-btn.soon{opacity:.55;cursor:default;border-style:dashed}
+.donate-btn .soon-tag{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:3px 8px}
+.donate .note2{margin-top:16px;color:var(--muted);font-size:.88rem}
+.note{border:1px dashed var(--line-strong);padding:14px 16px;margin-top:16px;color:var(--ink2);background:var(--panel2);font-size:.92rem}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="brand" data-i18n="brand">Deadly Art of Survival &middot; Est. 1973</div>
+      <div class="langpill" role="group" aria-label="Language / Idioma">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><span class="sep" aria-hidden="true">|</span><button type="button" data-lang="es" aria-pressed="false">ES</button><span class="sep" aria-hidden="true">|</span><button type="button" data-lang="zh" aria-pressed="false">中文</button><span class="sep" aria-hidden="true">|</span><button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+    </div>
+    <div class="tag" style="background:transparent;color:#f5f1ea;border-color:rgba(245,241,234,.4)" data-i18n="openTag">A digital museum &middot; Open now</div>
+    </div>
+    
+    <div class="toolbar" role="group" aria-label="Search, font, theme and accessibility tools">
+      <button type="button" class="tool-pill" id="searchBtn" aria-expanded="false" aria-controls="searchPanel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16 L22 22"/></svg><span data-i18n="uiSearch">Search</span></button>
+      <button type="button" class="tool-pill" id="fontBtn" aria-expanded="false" aria-controls="fontPanel"><span data-i18n="uiFont">Font</span></button>
+      <button type="button" class="tool-pill" id="themeBtn" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 3 a9 9 0 0 1 0 18 Z" fill="currentColor"/></svg><span data-i18n="uiTheme">Theme</span></button>
+      <button type="button" class="tool-pill" id="a11yBtn" aria-expanded="false" aria-controls="a11yPanel"><span data-i18n="uiAccessibility">Accessibility</span><span class="a11y-plus" id="a11yPlus" aria-hidden="true">+</span></button>
+    </div>
+    <div class="tool-panel" id="searchPanel" hidden>
+      <div class="search-row">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16 L22 22"/></svg>
+        <input type="search" id="searchInput" data-i18n-ph="uiSearchPh" placeholder="Search exhibits, editions, people…" autocomplete="off" aria-label="Search the museum">
+        <button type="button" class="search-clear" id="searchClear" data-i18n="uiClear">Clear</button>
+      </div>
+      <div class="search-results" id="searchResults" aria-live="polite"></div>
+    </div>
+    <div class="tool-panel" id="fontPanel" hidden>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiFontStyle">Font style</span>
+        <div class="font-opts" role="group" aria-label="Font style">
+          <button type="button" data-fontopt="sans" aria-pressed="true" style="font-family:'Barlow',sans-serif" data-i18n="fontSans">Sans-serif</button>
+          <button type="button" data-fontopt="serif" aria-pressed="false" style="font-family:'Source Serif 4',Georgia,serif" data-i18n="fontSerif">Serif</button>
+          <button type="button" data-fontopt="readable" aria-pressed="false" style="font-family:'Atkinson Hyperlegible',sans-serif" data-i18n="fontReadable">Clear &amp; readable</button>
+        </div>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiTextSize">Text size</span>
+        <div class="ts-controls">
+          <button type="button" data-ts="dec" aria-label="Decrease text size">A−</button>
+          <button type="button" data-ts="reset" class="ts-pct" aria-label="Reset text size to 100%">100%</button>
+          <button type="button" data-ts="inc" aria-label="Increase text size">A+</button>
+        </div>
+      </div>
+      <p class="saved-note" data-i18n="uiSavedNote">Saved on this device only — nothing is sent anywhere.</p>
+    </div>
+    <div class="tool-panel" id="a11yPanel" hidden>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiTextSize">Text size</span>
+        <div class="ts-controls">
+          <button type="button" data-ts="dec" aria-label="Decrease text size">A−</button>
+          <button type="button" data-ts="reset" class="ts-pct" aria-label="Reset text size to 100%">100%</button>
+          <button type="button" data-ts="inc" aria-label="Increase text size">A+</button>
+        </div>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiLineSpacing">Roomier line spacing</span>
+        <button type="button" class="switch" role="switch" aria-checked="false" data-setting="linespacing"><span class="knob" aria-hidden="true"></span></button>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiContrast">Higher contrast</span>
+        <button type="button" class="switch" role="switch" aria-checked="false" data-setting="contrast"><span class="knob" aria-hidden="true"></span></button>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiReduceMotion">Reduce motion</span>
+        <button type="button" class="switch" role="switch" aria-checked="false" data-setting="motion"><span class="knob" aria-hidden="true"></span></button>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label" data-i18n="uiUnderline">Underline all links</span>
+        <button type="button" class="switch" role="switch" aria-checked="false" data-setting="underline"><span class="knob" aria-hidden="true"></span></button>
+      </div>
+      <p class="saved-note" data-i18n="uiSavedNote">Saved on this device only — nothing is sent anywhere.</p>
+    </div>
+    <h1><span style="color:inherit;display:inline" data-i18n="heroDaos">The Daos</span> <span data-i18n="heroMuseum">Museum</span></h1>
+    <p class="sub" data-i18n="heroSub">Fifty years of martial arts, film, hip-hop and print — from a Lower East Side dojo in 1973, through a Super 8 film that helped lead to <em>Wild Style</em>, to 28 magazine editions and counting.</p>
+    <div class="hero-stats" aria-label="Museum at a glance">
+      <div><b>1973</b><span data-i18n="statFounded">System founded</span></div>
+      <div><b>1979</b><span data-i18n="statFilm">The film released</span></div>
+      <div><b>28</b><span data-i18n="statEditions">Editions &amp; counting</span></div>
+      <div><b>2021</b><span data-i18n="statRebirth">Father–son rebirth</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="wingnav" aria-label="Museum wings">
+  <div class="wrap" id="wingNav">
+    <a href="#origins" class="active" data-i18n="navOrigins">01 Origins</a>
+    <a href="#film" data-i18n="navFilm">02 The Film</a>
+    <a href="#magazine" data-i18n="navMagazine">03 The Magazine</a>
+    <a href="#people" data-i18n="navPeople">04 The People</a>
+    <a href="#music" data-i18n="navMusic">05 Music &amp; Future</a>
+    <a href="#visit" data-i18n="navVisit">Visit</a>
+    <a href="#donate" data-i18n="navDonate">Donate</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ORIGINS -->
+  <section id="origins" data-wing>
+    <div class="wing-head">
+      <div class="wing-num" data-i18n="wing01">Wing 01</div>
+      <div>
+        <h2 data-i18n="originsTitle">Origins — The Lower East Side</h2>
+        <p data-i18n="originsIntro">The Deadly Art of Survival began as a martial arts system founded by Nathan Ingram in New York City's Lower East Side — and, in DAOS's own words, “quickly evolved into something far greater than a style — it became a cultural movement.”</p>
+      </div>
+    </div>
+
+    <div class="timeline" aria-label="DAOS timeline">
+      <div class="tl-years" id="tlYears" role="group" aria-label="Choose a year"></div>
+      <div class="tl-body" id="tlBody"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="plaque redtop">
+        <div class="label" data-i18n="ex11label">Exhibit 1.1 — The Founder</div>
+        <h3 data-i18n="ex11title">Nathan Ingram</h3>
+        <p data-i18n="ex11p1">Born and raised on the Lower East Side of Manhattan. He began training in 1968 under Angel Crespo Sensei, a traditional Japanese Shotokan instructor. In June 1973 he earned his Shotokan black belt (Shodan); that October he also earned a black belt in Goju Ryu under Timothy Yearwood Sensei.</p>
+        <p data-i18n="ex11p2">He went on to become the only African American karate instructor to own a school in the history of Chinatown, NY, and founder and chief instructor of The D.A.S. Karate Federation (1979–present).</p>
+        <p class="src">Source: Ingram author biography, 25th Edition listing — <a href="https://www.amazon.com/dp/B0GY5M6F6T/ref=cm_sw_r_ffobk_apin_dp_MY7F09B8TGT1YX13KK44" target="_blank" rel="noopener">Amazon</a>. The 1973 founding year is carried consistently across DAOS's own materials.</p>
+      </div>
+      <div class="plaque">
+        <div class="label" data-i18n="ex12label">Exhibit 1.2 — Record &amp; Ranks</div>
+        <h3 data-i18n="ex12title">On the record</h3>
+        <ul class="factlist">
+          <li><span class="yr">1976–78</span><span data-i18n="ex12li1">Rated No. 3 by the World Gung Fu Kickboxing Association; 16-time bare-knuckle champion.</span></li>
+          <li><span class="yr">Ranks</span><span data-i18n="ex12li2">10th Degree Red Belt; 5th Dan Shotokan (ASKD), 3rd Dan Goju Ryu, 5th Dan Jujitsu, 4th Dan Semi Fist–Semi Mantis, senior ranking White Crane, Black Sash Northern 7 Star Praying Mantis.</span></li>
+          <li><span class="yr">1979–</span><span data-i18n="ex12li3">Founder and chief instructor, The D.A.S. Karate Federation.</span></li>
+        </ul>
+        <p class="src">Source: Ingram author biography — <a href="https://www.amazon.com/dp/B0GY5M6F6T/ref=cm_sw_r_ffobk_apin_dp_MY7F09B8TGT1YX13KK44" target="_blank" rel="noopener">Amazon, 25th Edition</a>.</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="plaque">
+        <div class="label" data-i18n="ex13label">Exhibit 1.3 — The Rebirth</div>
+        <h3 data-i18n="ex13title">2021: Father and son</h3>
+        <p data-i18n="ex13p1">More than four decades after the founding, 2021 marked the rebirth of The Deadly Art of Survival — spearheaded by Nathan Ingram and his son Jacob Ingram, and reimagined as a global multimedia brand dedicated to preserving martial arts history while celebrating culture, music, entrepreneurship, and the arts.</p>
+        <p data-i18n="ex13p2">Today DAOS describes itself as “a martial arts system turned global multimedia brand, home to DAOS Magazine, DAOS TV, radio programming, and The DAOS Foundation.”</p>
+        <p class="src">Source: DAOS history — <a href="https://deadlyartofsurvival.com/blogs/news/before-wild-style-the-film-that-helped-shape-hip-hop" target="_blank" rel="noopener">deadlyartofsurvival.com</a></p>
+      </div>
+      <div class="plaque redtop">
+        <div class="label" data-i18n="ex14label">Exhibit 1.4 — In their words</div>
+        <blockquote>“Preserving Martial Arts History. Connecting Cultures. Honoring the Legacy.”</blockquote>
+        <footer>— DAOS Magazine sign-off line</footer>
+        <p class="src" style="margin-top:12px">Source: <a href="https://deadlyartofsurvival.com/blogs/news/five-finger-death-punch-s-zoltan-bathory" target="_blank" rel="noopener">DAOS, 28th Edition announcement</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILM -->
+  <section id="film" data-wing>
+    <div class="wing-head">
+      <div class="wing-num" data-i18n="wing02">Wing 02</div>
+      <div>
+        <h2 data-i18n="filmTitle">The Film — 1979</h2>
+        <p data-i18n="filmIntro">Before <em>Wild Style</em>, there was a Super 8 kung fu movie shot on weekends in the Smith Projects — with a rival “disco dojo,” handball courts painted by Lee Quiñones, and Nathan Ingram playing a version of himself.</p>
+      </div>
+    </div>
+
+    <div class="film-hero">
+      <div>
+        <div class="label" style="color:#a89d90" data-i18n="ex21label">Exhibit 2.1 — Feature presentation</div>
+        <h3>The Deadly Art <span>of Survival</span></h3>
+        <p data-i18n="ex21p1">Nathan Ingram plays a local karate school owner who clashes with drug traffickers posing as the owners of a rival dojo — “Handsome Harry's Disco Dojo,” slogan: <em>Martial Arts With Style</em>. Underneath the plot, the film plays as an intimate snapshot of life on the Lower East Side in 1979, and touches on drugs, gun violence and policing in Black neighborhoods as matter-of-fact parts of the story.</p>
+        <p data-i18n="ex21p2">Director Charlie Ahearn was approached by members of the martial arts school to make the film — they were already performing live narrative martial arts scenarios in front of audiences. Most of the budget, Film Forum notes, went to “buying pizza for the kids.”</p>
+        <div class="btnrow">
+          <a class="btn" href="https://filmforum.org/film/the-deadly-art-of-survival-hiphop" target="_blank" rel="noopener" data-i18n="btnFilmForum">Film Forum notes</a>
+          <a class="btn ghost" style="color:#f3efe8!important;border-color:#6b6259" href="https://mvdshop.com/collections/dvds/products/deadly-art-of-survival-dvd" target="_blank" rel="noopener" data-i18n="btnDvd">The DVD release</a>
+        </div>
+        <p class="small" style="color:#a89d90;margin-top:12px" data-i18n="filmStreams">The film streams on ARROW and is available free on Tubi, per current listings.</p>
+      </div>
+      <div class="film-meta" aria-label="Film facts">
+        <div><span data-i18n="metaDirector">Director</span><b>Charlie Ahearn</b></div>
+        <div><span data-i18n="metaFirst">First feature</span><b data-i18n="metaFirstVal">Yes — Ahearn's debut</b></div>
+        <div><span data-i18n="metaShot">Shot</span><b>1977–78, Super 8</b></div>
+        <div><span data-i18n="metaReleased">Released</span><b>1979</b></div>
+        <div><span data-i18n="metaLocation">Location</span><b data-i18n="metaLocationVal">Smith Projects, LES</b></div>
+        <div><span data-i18n="metaRuntime">Runtime</span><b data-i18n="metaRuntimeVal">Listed 61–77 min*</b></div>
+        <div><span data-i18n="metaStarring">Starring</span><b>Nathan Ingram</b></div>
+        <div><span data-i18n="metaGenre">Genre</span><b data-i18n="metaGenreVal">No Wave action-drama</b></div>
+      </div>
+    </div>
+    <p class="small" style="margin-top:8px" data-i18n="filmRuntimeNote">*Sources disagree on runtime — most databases list 77 minutes, Film Forum lists approx. 76, and the ARROW streaming cut runs 61. The museum lists the range rather than picking one.</p>
+
+    <div class="grid2">
+      <div class="plaque">
+        <div class="label" data-i18n="ex22label">Exhibit 2.2 — The handball courts</div>
+        <h3 data-i18n="ex22title">Lee Quiñones &amp; Howard the Duck</h3>
+        <p data-i18n="ex22p1">While filming, Ahearn came across Lee Quiñones' freshly painted handball-court murals — including a Howard the Duck mural — and included them in the film. Quiñones arrived on his motorbike during filming, introduced himself, and Ahearn invited him to participate.</p>
+        <p class="src">Source: <a href="https://hyperallergic.com/the-story-of-hip-hops-film-birth/" target="_blank" rel="noopener">Hyperallergic, “The Story of Hip-Hop's Film Birth”</a> &middot; <a href="https://filmforum.org/film/the-deadly-art-of-survival-hiphop" target="_blank" rel="noopener">Film Forum</a></p>
+      </div>
+      <div class="plaque redtop">
+        <div class="label" data-i18n="ex23label">Exhibit 2.3 — The road to Wild Style</div>
+        <h3 data-i18n="ex23title">One film led to the other</h3>
+        <div class="flow" aria-label="Chain of events">
+          <span class="step" data-i18n="flow1">1979 — DAOS film</span><span class="arrow">→</span>
+          <span class="step" data-i18n="flow2">1980 — Times Square Show posters</span><span class="arrow">→</span>
+          <span class="step" data-i18n="flow3">Fab 5 Freddy meets Ahearn</span><span class="arrow">→</span>
+          <span class="step" data-i18n="flow4">1983 — Wild Style</span>
+        </div>
+        <p style="margin-top:12px" data-i18n="ex23p1">Posters for <em>The Deadly Art of Survival</em> at the 1980 Times Square Show caught Fab 5 Freddy's eye; that meeting led to the plan for <em>Wild Style</em> — the first hip-hop feature film — in which Quiñones starred as Zoro and Nathan Ingram appeared as a cop in the yard. Ahearn has said this film “led directly to the making of” <em>Wild Style</em>.</p>
+        <p class="src">Source: <a href="https://hyperallergic.com/the-story-of-hip-hops-film-birth/" target="_blank" rel="noopener">Hyperallergic</a> &middot; <a href="https://www.cinemaparadiso.co.uk/rentals/the-deadly-art-of-survival-128160.html" target="_blank" rel="noopener">Cinema Paradiso</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAGAZINE -->
+  <section id="magazine" data-wing>
+    <div class="wing-head">
+      <div class="wing-num" data-i18n="wing03">Wing 03</div>
+      <div>
+        <h2 data-i18n="magTitle">The Magazine — The Edition Wall</h2>
+        <p data-i18n="magIntro">DAOS Magazine — billed on its own store as “The #1 Martial Arts Magazine” — publishes in print and digital, run by Nathan and Jacob Ingram. Tap any cover on the wall to read its plaque. The wall shows the editions verified from the DAOS store.</p>
+      </div>
+    </div>
+
+    <div class="ed-tools" role="group" aria-label="Filter editions">
+      <button type="button" data-edfilter="all" aria-pressed="true" data-i18n="edFilterAll">All editions</button>
+      <button type="button" data-edfilter="named" aria-pressed="false" data-i18n="edFilterNamed">Named covers only</button>
+    </div>
+    <div class="ed-grid" id="edGrid"></div>
+    <div class="plaque redtop ed-detail" id="edDetail" aria-live="polite"></div>
+
+    <div class="grid2">
+      <div class="plaque">
+        <div class="label" data-i18n="ex32label">Exhibit 3.2 — On the air</div>
+        <h3 data-i18n="ex32title">DAOS Radio — WPAT 930 AM</h3>
+        <p data-i18n="ex32p1">DAOS Radio is the brand's live broadcast platform on WPAT 930 AM in New York — “conversations, insights, and storytelling rooted in martial arts, music, entrepreneurship, and community empowerment,” covering martial arts, MMA, sports, music and culture. A DAOS Radio segment returned to WPAT in March 2026, with further broadcasts that July.</p>
+        <p class="src">Source: <a href="https://deadlyartofsurvival.com/en-ca/collections/advertise-in-our-magazine" target="_blank" rel="noopener">DAOS store — Advertise</a></p>
+      </div>
+      <div class="plaque redtop">
+        <div class="label" data-i18n="ex33label">Exhibit 3.3 — Next on the calendar</div>
+        <h3 data-i18n="ex33title">THE DAOS PARTY — Dec 5, 2026</h3>
+        <p data-i18n="ex33p1">The official pre-party to DAOS CON, celebrating 28 editions: Saturday, December 5, 2026, 5:00–10:00 PM at Row House, 2128 Frederick Douglass Blvd, Harlem. Music by DJ J-Ronin and DJ Johnny Grems, with filmed technique demonstrations and open-mic performances. Tickets are offer-based — you choose the price.</p>
+        <div class="btnrow">
+          <a class="btn" href="https://deadlyartofsurvival.com/products/daos-party" target="_blank" rel="noopener" data-i18n="btnTickets">Tickets — make an offer</a>
+          <a class="btn ghost" href="https://www.facebook.com/events/1097566019364353/" target="_blank" rel="noopener" data-i18n="btnFbEvent">Facebook event</a>
+        </div>
+        <p class="src" style="margin-top:10px">Source: <a href="https://deadlyartofsurvival.com/blogs/news/harlem-get-ready-the-daos-party-december-5" target="_blank" rel="noopener">DAOS — Harlem, Get Ready</a></p>
+      </div>
+    </div>
+
+    <div class="note" data-i18n="magNote">By DAOS's own count, the community behind the magazine stands at 139K Instagram followers, 14K Facebook group members, and a 30K email list. Aspiring features can apply through the magazine's <a href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine" target="_blank" rel="noopener">apply-to-be-featured page</a>.</div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section id="people" data-wing>
+    <div class="wing-head">
+      <div class="wing-num" data-i18n="wing04">Wing 04</div>
+      <div>
+        <h2 data-i18n="pplTitle">The People — Hall of Features</h2>
+        <p data-i18n="pplIntro">Cover stars, guests and collaborators — each labeled for what they actually did with DAOS. A music collaboration is not a cover, and a convention guest is not a feature; the museum keeps them straight.</p>
+      </div>
+    </div>
+
+    <div class="ppl-tools" role="group" aria-label="Filter people">
+      <button type="button" data-pfilter="all" aria-pressed="true" data-i18n="pFilterAll">Everyone</button>
+      <button type="button" data-pfilter="cover" aria-pressed="false" data-i18n="pFilterCover">Cover features</button>
+      <button type="button" data-pfilter="guest" aria-pressed="false" data-i18n="pFilterGuest">Guests &amp; collaborators</button>
+    </div>
+    <div class="ppl-grid" id="pplGrid"></div>
+  </section>
+
+  <!-- MUSIC & FUTURE -->
+  <section id="music" data-wing>
+    <div class="wing-head">
+      <div class="wing-num" data-i18n="wing05">Wing 05</div>
+      <div>
+        <h2 data-i18n="musicTitle">Music &amp; The Future</h2>
+        <p data-i18n="musicIntro">The rebirth was never just print. This wing holds the music of Jake Northfa$e, the DAOS App, and the reason this digital museum exists at all: The DAOS Foundation's goal of a physical museum and cultural center.</p>
+      </div>
+    </div>
+
+    <div class="plaque redtop">
+      <div class="track">
+        <div class="vinyl" aria-hidden="true">JAKE<br>NORTHFA$E</div>
+        <div>
+          <div class="label" data-i18n="ex51label">Exhibit 5.1 — Now playing</div>
+          <h3 style="font-size:1.5rem">“The Apartheid — Remix” ft. Killah Priest</h3>
+          <p style="color:var(--ink2);margin:8px 0 0" data-i18n="ex51p1">Raw boom-bap: Wu-Tang affiliate Killah Priest delivers a verse over a gritty remake while Northfa$e anchors the track with his own pen — a sound Jacob describes as “concrete, scripture, survival.” Production by Stoic Beats and Bailey Daniel; mastering by Giovanni “Blu” Rottier. The remix is the first single off the <em>DAOS</em> EP, scheduled for release December 5, 2026 — the same night as THE DAOS PARTY at Row House.</p>
+          <p style="color:var(--ink2)" data-i18n="ex51p2">Earlier Jake Northfa$e singles include “Nissan,” “Hey Miss Thing” and “I Made Her Say,” alongside tracks such as “Iced Coffee Baby” and the original “The Apartheid” (2024).</p>
+          <div class="btnrow">
+            <a class="btn" href="https://open.spotify.com/track/70Q0cMiKSGWKwaEUs7Z8OQ" target="_blank" rel="noopener" data-i18n="btnSpotify">Listen on Spotify</a>
+            <a class="btn ghost" href="https://deadlyartofsurvival.com/blogs/news/jake-northfase-unveils-new-visuals" target="_blank" rel="noopener" data-i18n="btnVisuals">The visuals — DAOS</a>
+          </div>
+          <p class="src" style="margin-top:10px">Sources: <a href="https://exposedvocals.com/new-on-ev-jake-northfae-the-apartheid-remix/" target="_blank" rel="noopener">Exposed Vocals</a> &middot; <a href="https://www.mrcnnlive.com/jake-northfae-ft-killah-priest-the-apartheid-remix/" target="_blank" rel="noopener">MRC Hip Hop</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="plaque" style="margin-top:16px">
+      <div class="label" data-i18n="ex52label">Exhibit 5.2 — Coming to phones</div>
+      <h3 style="font-size:1.4rem" data-i18n="ex52title">The DAOS App</h3>
+      <p style="color:var(--ink2)" data-i18n="ex52p1">Launching imminently — rankings checkable in the app or on deadlyartofsurvival.com. A November 8, 2026 preview showed a Feed, Events, Tournaments and Rankings, with THE DAOS PARTY listed and a “TOP MARTIAL ARTISTS” leaderboard already live.</p>
+      <div class="appgrid">
+        <div class="appfeat"><b data-i18n="app1t">Live rankings</b><p data-i18n="app1p">Top martial artists, MMA, BJJ, strikers and youth — filterable by style, weight, region and age.</p></div>
+        <div class="appfeat"><b data-i18n="app2t">School leaderboard</b><p data-i18n="app2p">Schools earn points when their students rank, win, or get featured.</p></div>
+        <div class="appfeat"><b data-i18n="app3t">Fighter profiles</b><p data-i18n="app3p">Record, style, school, photos, video highlights and DAOS features.</p></div>
+        <div class="appfeat"><b data-i18n="app4t">Student submission</b><p data-i18n="app4p">Schools can submit a student for ranking in the app, free.</p></div>
+        <div class="appfeat"><b data-i18n="app5t">Events near me</b><p data-i18n="app5p">Map and calendar discovery, with check-in and results posted after the event.</p></div>
+        <div class="appfeat"><b data-i18n="app6t">School profiles</b><p data-i18n="app6p">Photos, programs, schedule and contact — plus a “get featured” button to the apply page.</p></div>
+        <div class="appfeat"><b data-i18n="app7t">Push alerts</b><p data-i18n="app7p">Notified when a new edition drops or your school's feature goes live.</p></div>
+        <div class="appfeat"><b data-i18n="app8t">Follow &amp; share</b><p data-i18n="app8p">Follow schools and fighters; share rankings and features to Instagram, Facebook and WhatsApp.</p></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="plaque redtop">
+        <div class="label" data-i18n="ex53label">Exhibit 5.3 — The Foundation</div>
+        <h3 data-i18n="ex53title">The DAOS Foundation</h3>
+        <p data-i18n="ex53p1">The nonprofit behind DAOS, organized for charitable and educational purposes. Its mission: the preservation, documentation, and advancement of cultural history — including contemporary cultural movements, art, music, design, film and social expression — through exhibitions, public events, research, radio, TV and film, education, and the archiving of artifacts and oral histories.</p>
+        <p class="src">Source: DAOS Foundation mission statement, provided by Jacob Ingram, Nov 4, 2026.</p>
+      </div>
+      <div class="plaque">
+        <div class="label" data-i18n="ex54label">Exhibit 5.4 — The next building</div>
+        <h3 data-i18n="ex54title">A museum you can walk into</h3>
+        <p data-i18n="ex54p1">The Foundation's mission gives it the long-term goal of establishing a museum or cultural center dedicated to preserving and presenting cultural history for public education and community enrichment.</p>
+        <p data-i18n="ex54p2">No site, timeline or budget has been announced — this digital museum is the first room of that building, and it is open today.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIT -->
+  <div class="visit" id="visit">
+    <div class="label" style="color:#a89d90" data-i18n="visitLabel">Plan your visit</div>
+    <h2 data-i18n="visitTitle">Take the museum with you</h2>
+    <p data-i18n="visitP">The exhibits continue at the source: read the editions, apply to be featured, or stand in the room where it started — the next gathering is THE DAOS PARTY, December 5, 2026 in Harlem.</p>
+    <div class="btnrow">
+      <a class="btn" href="https://deadlyartofsurvival.com" target="_blank" rel="noopener">deadlyartofsurvival.com</a>
+      <a class="btn ghost" style="color:#f3efe8!important;border-color:#6b6259" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine" target="_blank" rel="noopener" data-i18n="btnApply">Apply to be featured</a>
+      <a class="btn ghost" style="color:#f3efe8!important;border-color:#6b6259" href="https://deadlyartofsurvival.com/collections/ebooks" target="_blank" rel="noopener" data-i18n="btnBrowse">Browse the editions</a>
+    </div>
+  </div>
+
+  <!-- DONATE -->
+  <div class="donate" id="donate">
+    <div class="label" data-i18n="donateLabel">Support the museum</div>
+    <h2 data-i18n="donateTitle">Donate and support us</h2>
+    <p class="intro" data-i18n="donateIntro">Every gift helps The DAOS Foundation preserve martial arts history — the exhibitions, the archives, the oral histories, and the future physical museum. Support DAOS on Patreon today; more ways to give are on the way.</p>
+    <div class="donate-grid">
+      <a class="donate-btn" href="https://www.patreon.com/DAOSTV" target="_blank" rel="noopener">Patreon <span class="arr" aria-hidden="true">&#8599;</span></a>
+      <span class="donate-btn soon" aria-disabled="true">PayPal <span class="soon-tag" data-i18n="comingSoon">Coming soon</span></span>
+      <span class="donate-btn soon" aria-disabled="true">LaunchGood <span class="soon-tag" data-i18n="comingSoon">Coming soon</span></span>
+      <span class="donate-btn soon" aria-disabled="true">GitHub Sponsors <span class="soon-tag" data-i18n="comingSoon">Coming soon</span></span>
+      <span class="donate-btn soon" aria-disabled="true">Raisely <span class="soon-tag" data-i18n="comingSoon">Coming soon</span></span>
+      <span class="donate-btn soon" aria-disabled="true">GoFundMe <span class="soon-tag" data-i18n="comingSoon">Coming soon</span></span>
+    </div>
+    <p class="note2" data-i18n="donateNote">Patreon is live now at patreon.com/DAOSTV. The other platforms are being set up — their buttons will link here as soon as each page is ready.</p>
+  </div>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4 data-i18n="footAboutTitle">About this museum</h4>
+        <p data-i18n="footAbout">The Daos Museum is a digital museum of the Deadly Art of Survival: the system founded by Nathan Ingram in 1973, the 1979 Charlie Ahearn film, DAOS Magazine, and the people and music around them. Every exhibit is drawn from a published source, linked on its plaque. Where sources disagree — the film's runtime, its shooting year — the museum shows the disagreement instead of picking a winner.</p>
+      </div>
+      <div>
+        <h4 data-i18n="footSourcesTitle">Principal sources</h4>
+        <ul>
+          <li><a href="https://deadlyartofsurvival.com/blogs/news/before-wild-style-the-film-that-helped-shape-hip-hop" target="_blank" rel="noopener">DAOS — Before Wild Style</a></li>
+          <li><a href="https://filmforum.org/film/the-deadly-art-of-survival-hiphop" target="_blank" rel="noopener">Film Forum — The Deadly Art of Survival</a></li>
+          <li><a href="https://hyperallergic.com/the-story-of-hip-hops-film-birth/" target="_blank" rel="noopener">Hyperallergic — The Story of Hip-Hop's Film Birth</a></li>
+          <li><a href="https://deadlyartofsurvival.com/collections/ebooks" target="_blank" rel="noopener">DAOS Store — eBooks collection</a></li>
+          <li><a href="https://thesource.com/2025/12/15/how-nycs-jake-northfae-continues-to-curate-hip-hops-true-art-form/" target="_blank" rel="noopener">The Source — Jake Northfa$e feature (Dec 15, 2025)</a></li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:20px" data-i18n="footLine">The Daos Museum &middot; Deadly Art of Survival &middot; New York City</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var LANG = 'en';
+
+  /* ================= Static UI strings ================= */
+  var I18N = {
+  en: {
+    brand:"Deadly Art of Survival · Est. 1973", openTag:"A digital museum · Open now",
+    heroDaos:"The Daos", heroMuseum:"Museum",
+    heroSub:"Fifty years of martial arts, film, hip-hop and print — from a Lower East Side dojo in 1973, through a Super 8 film that helped lead to <em>Wild Style</em>, to 28 magazine editions and counting.",
+    statFounded:"System founded", statFilm:"The film released", statEditions:"Editions & counting", statRebirth:"Father–son rebirth",
+    navOrigins:"01 Origins", navFilm:"02 The Film", navMagazine:"03 The Magazine", navPeople:"04 The People", navMusic:"05 Music & Future", navVisit:"Visit", navDonate:"Donate",
+    wing01:"Wing 01", wing02:"Wing 02", wing03:"Wing 03", wing04:"Wing 04", wing05:"Wing 05",
+    originsTitle:"Origins — The Lower East Side",
+    originsIntro:"The Deadly Art of Survival began as a martial arts system founded by Nathan Ingram in New York City's Lower East Side — and, in DAOS's own words, “quickly evolved into something far greater than a style — it became a cultural movement.”",
+    ex11label:"Exhibit 1.1 — The Founder", ex11title:"Nathan Ingram",
+    ex11p1:"Born and raised on the Lower East Side of Manhattan. He began training in 1968 under Angel Crespo Sensei, a traditional Japanese Shotokan instructor. In June 1973 he earned his Shotokan black belt (Shodan); that October he also earned a black belt in Goju Ryu under Timothy Yearwood Sensei.",
+    ex11p2:"He went on to become the only African American karate instructor to own a school in the history of Chinatown, NY, and founder and chief instructor of The D.A.S. Karate Federation (1979–present).",
+    ex12label:"Exhibit 1.2 — Record & Ranks", ex12title:"On the record",
+    ex12li1:"Rated No. 3 by the World Gung Fu Kickboxing Association; 16-time bare-knuckle champion.",
+    ex12li2:"10th Degree Red Belt; 5th Dan Shotokan (ASKD), 3rd Dan Goju Ryu, 5th Dan Jujitsu, 4th Dan Semi Fist–Semi Mantis, senior ranking White Crane, Black Sash Northern 7 Star Praying Mantis.",
+    ex12li3:"Founder and chief instructor, The D.A.S. Karate Federation.",
+    ex13label:"Exhibit 1.3 — The Rebirth", ex13title:"2021: Father and son",
+    ex13p1:"More than four decades after the founding, 2021 marked the rebirth of The Deadly Art of Survival — spearheaded by Nathan Ingram and his son Jacob Ingram, and reimagined as a global multimedia brand dedicated to preserving martial arts history while celebrating culture, music, entrepreneurship, and the arts.",
+    ex13p2:"Today DAOS describes itself as “a martial arts system turned global multimedia brand, home to DAOS Magazine, DAOS TV, radio programming, and The DAOS Foundation.”",
+    ex14label:"Exhibit 1.4 — In their words",
+    filmTitle:"The Film — 1979",
+    filmIntro:"Before <em>Wild Style</em>, there was a Super 8 kung fu movie shot on weekends in the Smith Projects — with a rival “disco dojo,” handball courts painted by Lee Quiñones, and Nathan Ingram playing a version of himself.",
+    ex21label:"Exhibit 2.1 — Feature presentation",
+    ex21p1:"Nathan Ingram plays a local karate school owner who clashes with drug traffickers posing as the owners of a rival dojo — “Handsome Harry's Disco Dojo,” slogan: <em>Martial Arts With Style</em>. Underneath the plot, the film plays as an intimate snapshot of life on the Lower East Side in 1979, and touches on drugs, gun violence and policing in Black neighborhoods as matter-of-fact parts of the story.",
+    ex21p2:"Director Charlie Ahearn was approached by members of the martial arts school to make the film — they were already performing live narrative martial arts scenarios in front of audiences. Most of the budget, Film Forum notes, went to “buying pizza for the kids.”",
+    btnFilmForum:"Film Forum notes", btnDvd:"The DVD release",
+    filmStreams:"The film streams on ARROW and is available free on Tubi, per current listings.",
+    metaDirector:"Director", metaFirst:"First feature", metaFirstVal:"Yes — Ahearn's debut", metaShot:"Shot", metaReleased:"Released",
+    metaLocation:"Location", metaLocationVal:"Smith Projects, LES", metaRuntime:"Runtime", metaRuntimeVal:"Listed 61–77 min*",
+    metaStarring:"Starring", metaGenre:"Genre", metaGenreVal:"No Wave action-drama",
+    filmRuntimeNote:"*Sources disagree on runtime — most databases list 77 minutes, Film Forum lists approx. 76, and the ARROW streaming cut runs 61. The museum lists the range rather than picking one.",
+    ex22label:"Exhibit 2.2 — The handball courts", ex22title:"Lee Quiñones & Howard the Duck",
+    ex22p1:"While filming, Ahearn came across Lee Quiñones' freshly painted handball-court murals — including a Howard the Duck mural — and included them in the film. Quiñones arrived on his motorbike during filming, introduced himself, and Ahearn invited him to participate.",
+    ex23label:"Exhibit 2.3 — The road to Wild Style", ex23title:"One film led to the other",
+    flow1:"1979 — DAOS film", flow2:"1980 — Times Square Show posters", flow3:"Fab 5 Freddy meets Ahearn", flow4:"1983 — Wild Style",
+    ex23p1:"Posters for <em>The Deadly Art of Survival</em> at the 1980 Times Square Show caught Fab 5 Freddy's eye; that meeting led to the plan for <em>Wild Style</em> — the first hip-hop feature film — in which Quiñones starred as Zoro and Nathan Ingram appeared as a cop in the yard. Ahearn has said this film “led directly to the making of” <em>Wild Style</em>.",
+    magTitle:"The Magazine — The Edition Wall",
+    magIntro:"DAOS Magazine — billed on its own store as “The #1 Martial Arts Magazine” — publishes in print and digital, run by Nathan and Jacob Ingram. Tap any cover on the wall to read its plaque. The wall shows the editions verified from the DAOS store.",
+    edFilterAll:"All editions", edFilterNamed:"Named covers only",
+    ex32label:"Exhibit 3.2 — On the air", ex32title:"DAOS Radio — WPAT 930 AM",
+    ex32p1:"DAOS Radio is the brand's live broadcast platform on WPAT 930 AM in New York — “conversations, insights, and storytelling rooted in martial arts, music, entrepreneurship, and community empowerment,” covering martial arts, MMA, sports, music and culture. A DAOS Radio segment returned to WPAT in March 2026, with further broadcasts that July.",
+    ex33label:"Exhibit 3.3 — Next on the calendar", ex33title:"THE DAOS PARTY — Dec 5, 2026",
+    ex33p1:"The official pre-party to DAOS CON, celebrating 28 editions: Saturday, December 5, 2026, 5:00–10:00 PM at Row House, 2128 Frederick Douglass Blvd, Harlem. Music by DJ J-Ronin and DJ Johnny Grems, with filmed technique demonstrations and open-mic performances. Tickets are offer-based — you choose the price.",
+    btnTickets:"Tickets — make an offer", btnFbEvent:"Facebook event",
+    magNote:"By DAOS's own count, the community behind the magazine stands at 139K Instagram followers, 14K Facebook group members, and a 30K email list. Aspiring features can apply through the magazine's <a href=\"https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine\" target=\"_blank\" rel=\"noopener\">apply-to-be-featured page</a>.",
+    pplTitle:"The People — Hall of Features",
+    pplIntro:"Cover stars, guests and collaborators — each labeled for what they actually did with DAOS. A music collaboration is not a cover, and a convention guest is not a feature; the museum keeps them straight.",
+    pFilterAll:"Everyone", pFilterCover:"Cover features", pFilterGuest:"Guests & collaborators",
+    musicTitle:"Music & The Future",
+    musicIntro:"The rebirth was never just print. This wing holds the music of Jake Northfa$e, the DAOS App, and the reason this digital museum exists at all: The DAOS Foundation's goal of a physical museum and cultural center.",
+    ex51label:"Exhibit 5.1 — Now playing",
+    ex51p1:"Raw boom-bap: Wu-Tang affiliate Killah Priest delivers a verse over a gritty remake while Northfa$e anchors the track with his own pen — a sound Jacob describes as “concrete, scripture, survival.” Production by Stoic Beats and Bailey Daniel; mastering by Giovanni “Blu” Rottier. The remix is the first single off the <em>DAOS</em> EP, scheduled for release December 5, 2026 — the same night as THE DAOS PARTY at Row House.",
+    ex51p2:"Earlier Jake Northfa$e singles include “Nissan,” “Hey Miss Thing” and “I Made Her Say,” alongside tracks such as “Iced Coffee Baby” and the original “The Apartheid” (2024).",
+    btnSpotify:"Listen on Spotify", btnVisuals:"The visuals — DAOS",
+    ex52label:"Exhibit 5.2 — Coming to phones", ex52title:"The DAOS App",
+    ex52p1:"Launching imminently — rankings checkable in the app or on deadlyartofsurvival.com. A November 8, 2026 preview showed a Feed, Events, Tournaments and Rankings, with THE DAOS PARTY listed and a “TOP MARTIAL ARTISTS” leaderboard already live.",
+    app1t:"Live rankings", app1p:"Top martial artists, MMA, BJJ, strikers and youth — filterable by style, weight, region and age.",
+    app2t:"School leaderboard", app2p:"Schools earn points when their students rank, win, or get featured.",
+    app3t:"Fighter profiles", app3p:"Record, style, school, photos, video highlights and DAOS features.",
+    app4t:"Student submission", app4p:"Schools can submit a student for ranking in the app, free.",
+    app5t:"Events near me", app5p:"Map and calendar discovery, with check-in and results posted after the event.",
+    app6t:"School profiles", app6p:"Photos, programs, schedule and contact — plus a “get featured” button to the apply page.",
+    app7t:"Push alerts", app7p:"Notified when a new edition drops or your school's feature goes live.",
+    app8t:"Follow & share", app8p:"Follow schools and fighters; share rankings and features to Instagram, Facebook and WhatsApp.",
+    ex53label:"Exhibit 5.3 — The Foundation", ex53title:"The DAOS Foundation",
+    ex53p1:"The nonprofit behind DAOS, organized for charitable and educational purposes. Its mission: the preservation, documentation, and advancement of cultural history — including contemporary cultural movements, art, music, design, film and social expression — through exhibitions, public events, research, radio, TV and film, education, and the archiving of artifacts and oral histories.",
+    ex54label:"Exhibit 5.4 — The next building", ex54title:"A museum you can walk into",
+    ex54p1:"The Foundation's mission gives it the long-term goal of establishing a museum or cultural center dedicated to preserving and presenting cultural history for public education and community enrichment.",
+    ex54p2:"No site, timeline or budget has been announced — this digital museum is the first room of that building, and it is open today.",
+    visitLabel:"Plan your visit", visitTitle:"Take the museum with you",
+    visitP:"The exhibits continue at the source: read the editions, apply to be featured, or stand in the room where it started — the next gathering is THE DAOS PARTY, December 5, 2026 in Harlem.",
+    btnApply:"Apply to be featured", btnBrowse:"Browse the editions",
+    donateLabel:"Support the museum", donateTitle:"Donate and support us",
+    donateIntro:"Every gift helps The DAOS Foundation preserve martial arts history — the exhibitions, the archives, the oral histories, and the future physical museum. Support DAOS on Patreon today; more ways to give are on the way.",
+    comingSoon:"Coming soon",
+    donateNote:"Patreon is live now at patreon.com/DAOSTV. The other platforms are being set up — their buttons will link here as soon as each page is ready.",
+    footAboutTitle:"About this museum",
+    footAbout:"The Daos Museum is a digital museum of the Deadly Art of Survival: the system founded by Nathan Ingram in 1973, the 1979 Charlie Ahearn film, DAOS Magazine, and the people and music around them. Every exhibit is drawn from a published source, linked on its plaque. Where sources disagree — the film's runtime, its shooting year — the museum shows the disagreement instead of picking a winner.",
+    footSourcesTitle:"Principal sources",
+    footLine:"The Daos Museum · Deadly Art of Survival · New York City",
+    uiTimeline:"Timeline", uiSource:"Source", uiTap:"Tap for plaque", uiPlaque:"Exhibit 3.1 — Edition plaque",
+    uiEdition:"Edition", uiEdWord:"Edition", uiStoreSrc:"DAOS store / DAOS blog", uiBrowseAll:"Browse all eBooks", uiView:"view",
+    uiSearch:"Search", uiFont:"Font", uiTheme:"Theme", uiAccessibility:"Accessibility",
+    uiFontStyle:"Font style", fontSans:"Sans-serif", fontSerif:"Serif", fontReadable:"Clear & readable",
+    uiTextSize:"Text size", uiLineSpacing:"Roomier line spacing", uiContrast:"Higher contrast",
+    uiReduceMotion:"Reduce motion", uiUnderline:"Underline all links",
+    uiSavedNote:"Saved on this device only — nothing is sent anywhere.",
+    uiSearchPh:"Search exhibits, editions, people…", uiClear:"Clear",
+    uiNoResults:"No matches found. Try another word.", uiOneResult:"1 result", uiResults:"results",
+    uiDark:"Switch to dark mode", uiLight:"Switch to light mode"
+  },
+  es: {
+    brand:"Deadly Art of Survival · Est. 1973", openTag:"Un museo digital · Abierto ahora",
+    heroDaos:"El Museo", heroMuseum:"Daos",
+    heroSub:"Cincuenta años de artes marciales, cine, hip-hop y prensa — desde un dojo del Lower East Side en 1973, pasando por una película en Super 8 que ayudó a dar paso a <em>Wild Style</em>, hasta 28 ediciones de la revista y contando.",
+    statFounded:"Sistema fundado", statFilm:"La película estrenada", statEditions:"Ediciones y contando", statRebirth:"Renacimiento padre e hijo",
+    navOrigins:"01 Orígenes", navFilm:"02 La Película", navMagazine:"03 La Revista", navPeople:"04 Las Personas", navMusic:"05 Música y Futuro", navVisit:"Visita", navDonate:"Donar",
+    wing01:"Sala 01", wing02:"Sala 02", wing03:"Sala 03", wing04:"Sala 04", wing05:"Sala 05",
+    originsTitle:"Orígenes — El Lower East Side",
+    originsIntro:"The Deadly Art of Survival comenzó como un sistema de artes marciales fundado por Nathan Ingram en el Lower East Side de la ciudad de Nueva York — y, en palabras de DAOS, “rápidamente evolucionó hacia algo mucho más grande que un estilo: se convirtió en un movimiento cultural”.",
+    ex11label:"Pieza 1.1 — El Fundador", ex11title:"Nathan Ingram",
+    ex11p1:"Nació y creció en el Lower East Side de Manhattan. Comenzó a entrenar en 1968 con Angel Crespo Sensei, un instructor tradicional japonés de Shotokan. En junio de 1973 obtuvo su cinturón negro de Shotokan (Shodan); ese octubre también obtuvo un cinturón negro en Goju Ryu con Timothy Yearwood Sensei.",
+    ex11p2:"Llegó a ser el único instructor afroamericano de karate propietario de una escuela en la historia de Chinatown, NY, y fundador e instructor jefe de The D.A.S. Karate Federation (1979–presente).",
+    ex12label:"Pieza 1.2 — Historial y Rangos", ex12title:"En el registro",
+    ex12li1:"Clasificado n.º 3 por la World Gung Fu Kickboxing Association; 16 veces campeón a puño limpio.",
+    ex12li2:"Cinturón Rojo de 10.º Grado; 5.º Dan Shotokan (ASKD), 3.er Dan Goju Ryu, 5.º Dan Jujitsu, 4.º Dan Semi Fist–Semi Mantis, rango senior en White Crane, Faja Negra en Northern 7 Star Praying Mantis.",
+    ex12li3:"Fundador e instructor jefe de The D.A.S. Karate Federation.",
+    ex13label:"Pieza 1.3 — El Renacimiento", ex13title:"2021: Padre e hijo",
+    ex13p1:"Más de cuatro décadas después de la fundación, 2021 marcó el renacimiento de The Deadly Art of Survival — encabezado por Nathan Ingram y su hijo Jacob Ingram, y reinventado como una marca multimedia global dedicada a preservar la historia de las artes marciales mientras celebra la cultura, la música, el emprendimiento y las artes.",
+    ex13p2:"Hoy DAOS se describe como “un sistema de artes marciales convertido en marca multimedia global, hogar de DAOS Magazine, DAOS TV, programación de radio y The DAOS Foundation”.",
+    ex14label:"Pieza 1.4 — En sus palabras",
+    filmTitle:"La Película — 1979",
+    filmIntro:"Antes de <em>Wild Style</em>, hubo una película de kung fu en Super 8 filmada los fines de semana en los Smith Projects — con un “dojo disco” rival, canchas de balonmano pintadas por Lee Quiñones y Nathan Ingram interpretándose a sí mismo.",
+    ex21label:"Pieza 2.1 — Función principal",
+    ex21p1:"Nathan Ingram interpreta al dueño de una escuela local de karate que se enfrenta a traficantes de drogas que se hacen pasar por dueños de un dojo rival — “Handsome Harry's Disco Dojo”, con el lema <em>Artes marciales con estilo</em>. Bajo la trama, la película es una mirada íntima a la vida en el Lower East Side en 1979, y toca las drogas, la violencia armada y la policía en los barrios negros como partes cotidianas de la historia.",
+    ex21p2:"El director Charlie Ahearn fue contactado por miembros de la escuela de artes marciales para hacer la película — ya representaban en vivo escenas narrativas de artes marciales ante el público. La mayor parte del presupuesto, señala Film Forum, se fue en “comprar pizza para los niños”.",
+    btnFilmForum:"Notas de Film Forum", btnDvd:"La edición en DVD",
+    filmStreams:"La película se transmite en ARROW y está disponible gratis en Tubi, según los listados actuales.",
+    metaDirector:"Director", metaFirst:"Primera película", metaFirstVal:"Sí — el debut de Ahearn", metaShot:"Filmada", metaReleased:"Estreno",
+    metaLocation:"Ubicación", metaLocationVal:"Smith Projects, LES", metaRuntime:"Duración", metaRuntimeVal:"Publicada: 61–77 min*",
+    metaStarring:"Protagonista", metaGenre:"Género", metaGenreVal:"Drama de acción No Wave",
+    filmRuntimeNote:"*Las fuentes no coinciden en la duración: la mayoría de las bases de datos indican 77 minutos, Film Forum indica aprox. 76, y la versión de ARROW dura 61. El museo muestra el rango en lugar de elegir una.",
+    ex22label:"Pieza 2.2 — Las canchas de balonmano", ex22title:"Lee Quiñones y Howard el Pato",
+    ex22p1:"Durante el rodaje, Ahearn se encontró con los murales recién pintados por Lee Quiñones en las canchas de balonmano — incluido un mural de Howard el Pato — y los incluyó en la película. Quiñones llegó en su moto durante el rodaje, se presentó, y Ahearn lo invitó a participar.",
+    ex23label:"Pieza 2.3 — El camino a Wild Style", ex23title:"Una película llevó a la otra",
+    flow1:"1979 — Película DAOS", flow2:"1980 — Carteles del Times Square Show", flow3:"Fab 5 Freddy conoce a Ahearn", flow4:"1983 — Wild Style",
+    ex23p1:"Los carteles de <em>The Deadly Art of Survival</em> en el Times Square Show de 1980 llamaron la atención de Fab 5 Freddy; ese encuentro llevó al plan de <em>Wild Style</em> — la primera película de hip-hop — en la que Quiñones protagonizó como Zoro y Nathan Ingram apareció como policía en el patio. Ahearn ha dicho que esta película “llevó directamente a la realización de” <em>Wild Style</em>.",
+    magTitle:"La Revista — El Muro de Ediciones",
+    magIntro:"DAOS Magazine — presentada en su propia tienda como “La revista de artes marciales n.º 1” — se publica en formato impreso y digital, dirigida por Nathan y Jacob Ingram. Toca cualquier portada del muro para leer su placa. El muro muestra las ediciones verificadas en la tienda de DAOS.",
+    edFilterAll:"Todas las ediciones", edFilterNamed:"Solo portadas con nombre",
+    ex32label:"Pieza 3.2 — Al aire", ex32title:"DAOS Radio — WPAT 930 AM",
+    ex32p1:"DAOS Radio es la plataforma de transmisión en vivo de la marca en WPAT 930 AM en Nueva York — “conversaciones, ideas y narración con raíces en las artes marciales, la música, el emprendimiento y el empoderamiento comunitario”, cubriendo artes marciales, MMA, deportes, música y cultura. Un segmento de DAOS Radio regresó a WPAT en marzo de 2026, con más transmisiones ese julio.",
+    ex33label:"Pieza 3.3 — Próximo en el calendario", ex33title:"THE DAOS PARTY — 5 dic 2026",
+    ex33p1:"La fiesta previa oficial a DAOS CON, celebrando 28 ediciones: sábado 5 de diciembre de 2026, 5:00–10:00 PM en Row House, 2128 Frederick Douglass Blvd, Harlem. Música de DJ J-Ronin y DJ Johnny Grems, con demostraciones de técnicas filmadas y actuaciones de micrófono abierto. Las entradas son por oferta: tú eliges el precio.",
+    btnTickets:"Entradas — haz una oferta", btnFbEvent:"Evento de Facebook",
+    magNote:"Según el propio conteo de DAOS, la comunidad detrás de la revista suma 139 mil seguidores en Instagram, 14 mil miembros en el grupo de Facebook y una lista de correo de 30 mil. Quienes aspiren a aparecer pueden postularse en la <a href=\"https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine\" target=\"_blank\" rel=\"noopener\">página para ser destacados</a>.",
+    pplTitle:"Las Personas — Salón de Destacados",
+    pplIntro:"Estrellas de portada, invitados y colaboradores — cada uno etiquetado por lo que realmente hizo con DAOS. Una colaboración musical no es una portada, y un invitado a una convención no es un reportaje; el museo los mantiene claros.",
+    pFilterAll:"Todos", pFilterCover:"Portadas", pFilterGuest:"Invitados y colaboradores",
+    musicTitle:"Música y el Futuro",
+    musicIntro:"El renacimiento nunca fue solo papel. Esta sala guarda la música de Jake Northfa$e, la App de DAOS y la razón por la que existe este museo digital: la meta de The DAOS Foundation de crear un museo físico y centro cultural.",
+    ex51label:"Pieza 5.1 — Sonando ahora",
+    ex51p1:"Boom-bap puro: Killah Priest, afiliado a Wu-Tang, entrega un verso sobre una remake cruda mientras Northfa$e sostiene el tema con su propia pluma — un sonido que Jacob describe como “concreto, escritura, supervivencia”. Producción de Stoic Beats y Bailey Daniel; masterización de Giovanni “Blu” Rottier. El remix es el primer sencillo del EP <em>DAOS</em>, programado para el 5 de diciembre de 2026 — la misma noche de THE DAOS PARTY en Row House.",
+    ex51p2:"Entre los sencillos anteriores de Jake Northfa$e están “Nissan”, “Hey Miss Thing” y “I Made Her Say”, junto a temas como “Iced Coffee Baby” y el original “The Apartheid” (2024).",
+    btnSpotify:"Escuchar en Spotify", btnVisuals:"Los visuales — DAOS",
+    ex52label:"Pieza 5.2 — Llega a los teléfonos", ex52title:"La App de DAOS",
+    ex52p1:"Lanzamiento inminente: los rankings se podrán consultar en la app o en deadlyartofsurvival.com. Una vista previa del 8 de noviembre de 2026 mostró Feed, Eventos, Torneos y Rankings, con THE DAOS PARTY listado y una tabla de “MEJORES ARTISTAS MARCIALES” ya activa.",
+    app1t:"Rankings en vivo", app1p:"Mejores artistas marciales, MMA, BJJ, strikers y juveniles — filtrables por estilo, peso, región y edad.",
+    app2t:"Tabla de escuelas", app2p:"Las escuelas ganan puntos cuando sus estudiantes clasifican, ganan o son destacados.",
+    app3t:"Perfiles de luchadores", app3p:"Historial, estilo, escuela, fotos, videos destacados y apariciones en DAOS.",
+    app4t:"Envío de estudiantes", app4p:"Las escuelas pueden enviar un estudiante para el ranking en la app, gratis.",
+    app5t:"Eventos cerca de mí", app5p:"Descubrimiento por mapa y calendario, con registro de asistencia y resultados tras el evento.",
+    app6t:"Perfiles de escuelas", app6p:"Fotos, programas, horarios y contacto — además de un botón “ser destacado” hacia la página de postulación.",
+    app7t:"Alertas push", app7p:"Aviso cuando sale una nueva edición o se publica el reportaje de tu escuela.",
+    app8t:"Seguir y compartir", app8p:"Sigue escuelas y luchadores; comparte rankings y reportajes en Instagram, Facebook y WhatsApp.",
+    ex53label:"Pieza 5.3 — La Fundación", ex53title:"The DAOS Foundation",
+    ex53p1:"La organización sin fines de lucro detrás de DAOS, creada con fines benéficos y educativos. Su misión: la preservación, documentación y avance de la historia cultural — incluidos los movimientos culturales contemporáneos, el arte, la música, el diseño, el cine y la expresión social — mediante exposiciones, eventos públicos, investigación, radio, TV y cine, educación, y el archivo de artefactos e historias orales.",
+    ex54label:"Pieza 5.4 — El próximo edificio", ex54title:"Un museo que puedes recorrer",
+    ex54p1:"La misión de la Fundación le da la meta a largo plazo de establecer un museo o centro cultural dedicado a preservar y presentar la historia cultural para la educación pública y el enriquecimiento comunitario.",
+    ex54p2:"Aún no se ha anunciado sede, cronograma ni presupuesto — este museo digital es la primera sala de ese edificio, y está abierto hoy.",
+    visitLabel:"Planifica tu visita", visitTitle:"Llévate el museo contigo",
+    visitP:"Las piezas continúan en la fuente: lee las ediciones, postúlate para ser destacado o párate en la sala donde todo empezó — el próximo encuentro es THE DAOS PARTY, el 5 de diciembre de 2026 en Harlem.",
+    btnApply:"Postúlate para ser destacado", btnBrowse:"Explorar las ediciones",
+    donateLabel:"Apoya el museo", donateTitle:"Dona y apóyanos",
+    donateIntro:"Cada aporte ayuda a The DAOS Foundation a preservar la historia de las artes marciales: las exposiciones, los archivos, las historias orales y el futuro museo físico. Apoya a DAOS en Patreon hoy; más formas de donar están en camino.",
+    comingSoon:"Próximamente",
+    donateNote:"Patreon ya está activo en patreon.com/DAOSTV. Las demás plataformas se están preparando: sus botones enlazarán aquí en cuanto cada página esté lista.",
+    footAboutTitle:"Sobre este museo",
+    footAbout:"The Daos Museum es un museo digital de The Deadly Art of Survival: el sistema fundado por Nathan Ingram en 1973, la película de Charlie Ahearn de 1979, DAOS Magazine, y las personas y la música que los rodean. Cada pieza proviene de una fuente publicada, enlazada en su placa. Donde las fuentes no coinciden — la duración de la película, su año de rodaje — el museo muestra el desacuerdo en lugar de elegir un ganador.",
+    footSourcesTitle:"Fuentes principales",
+    footLine:"The Daos Museum · Deadly Art of Survival · Ciudad de Nueva York",
+    uiTimeline:"Cronología", uiSource:"Fuente", uiTap:"Toca para ver la placa", uiPlaque:"Pieza 3.1 — Placa de la edición",
+    uiEdition:"Edición", uiEdWord:"Edición", uiStoreSrc:"Tienda DAOS / Blog DAOS", uiBrowseAll:"Explorar todos los eBooks", uiView:"ver",
+    uiSearch:"Buscar", uiFont:"Fuente", uiTheme:"Tema", uiAccessibility:"Accesibilidad",
+    uiFontStyle:"Estilo de fuente", fontSans:"Sin serifa", fontSerif:"Con serifa", fontReadable:"Clara y legible",
+    uiTextSize:"Tamaño del texto", uiLineSpacing:"Interlineado más amplio", uiContrast:"Contraste más alto",
+    uiReduceMotion:"Reducir movimiento", uiUnderline:"Subrayar todos los enlaces",
+    uiSavedNote:"Guardado solo en este dispositivo — no se envía nada a ninguna parte.",
+    uiSearchPh:"Buscar piezas, ediciones, personas…", uiClear:"Borrar",
+    uiNoResults:"Sin resultados. Prueba con otra palabra.", uiOneResult:"1 resultado", uiResults:"resultados",
+    uiDark:"Cambiar a modo oscuro", uiLight:"Cambiar a modo claro"
+  },
+  zh: {
+    brand:"Deadly Art of Survival · 创立于 1973", openTag:"数字博物馆 · 现已开放",
+    heroDaos:"DAOS", heroMuseum:"博物馆",
+    heroSub:"五十年的武术、电影、嘻哈与印刷出版——从 1973 年下东区的一间道场，到一部帮助催生了 <em>Wild Style</em> 的 Super 8 电影，再到 28 期杂志并持续增加。",
+    statFounded:"体系创立", statFilm:"电影上映", statEditions:"期数持续增加", statRebirth:"父子重振",
+    navOrigins:"01 起源", navFilm:"02 电影", navMagazine:"03 杂志", navPeople:"04 人物", navMusic:"05 音乐与未来", navVisit:"参观", navDonate:"捐赠",
+    wing01:"展厅 01", wing02:"展厅 02", wing03:"展厅 03", wing04:"展厅 04", wing05:"展厅 05",
+    originsTitle:"起源——下东区",
+    originsIntro:"The Deadly Art of Survival 最初是由 Nathan Ingram 在纽约市下东区创立的武术体系——用 DAOS 自己的话说，它“迅速发展成为远超一种流派的东西——成为了一场文化运动”。",
+    ex11label:"展品 1.1 — 创始人", ex11title:"Nathan Ingram",
+    ex11p1:"在曼哈顿下东区出生长大。他于 1968 年开始在日本传统空手道松涛馆教练 Angel Crespo Sensei 门下训练。1973 年 6 月，他获得松涛馆黑带（初段）；同年 10 月，他又在 Timothy Yearwood Sensei 门下获得刚柔流黑带。",
+    ex11p2:"他后来成为纽约唐人街历史上唯一一位拥有自己学校的非裔美国空手道教练，并且是 D.A.S. 空手道联盟（1979 年至今）的创始人兼总教练。",
+    ex12label:"展品 1.2 — 战绩与段位", ex12title:"记录在案",
+    ex12li1:"被世界功夫踢拳协会评为第 3 名；16 次徒手格斗冠军。",
+    ex12li2:"十段红带；松涛馆五段（ASKD）、刚柔流三段、柔术五段、Semi Fist–Semi Mantis 四段、白鹤派高级段位、北派七星螳螂拳黑带。",
+    ex12li3:"D.A.S. 空手道联盟创始人兼总教练。",
+    ex13label:"展品 1.3 — 重生", ex13title:"2021：父与子",
+    ex13p1:"创立四十多年后，2021 年标志着 The Deadly Art of Survival 的重生——由 Nathan Ingram 与其子 Jacob Ingram 领衔，并被重新构想为一个全球多媒体品牌，致力于保存武术历史，同时颂扬文化、音乐、创业与艺术。",
+    ex13p2:"如今 DAOS 将自己描述为“一个由武术体系转变而来的全球多媒体品牌，旗下包括 DAOS Magazine、DAOS TV、电台节目和 The DAOS Foundation”。",
+    ex14label:"展品 1.4 — 他们的话",
+    filmTitle:"电影——1979",
+    filmIntro:"在 <em>Wild Style</em> 之前，有一部在周末于 Smith Projects 拍摄的 Super 8 功夫电影——一家对手“迪斯科道场”、由 Lee Quiñones 绘制的手球场，以及饰演自己的 Nathan Ingram。",
+    ex21label:"展品 2.1 — 主打放映",
+    ex21p1:"Nathan Ingram 饰演一位本地空手道学校校长，与冒充对手道场老板的毒贩发生冲突——“Handsome Harry 的迪斯科道场”，口号是：<em>有型的武术</em>。在剧情之下，这部电影是 1979 年下东区生活的亲密缩影，并将毒品、枪支暴力和黑人社区的警务作为故事中日常的一部分呈现。",
+    ex21p2:"导演 Charlie Ahearn 是受武术学校成员之邀拍摄这部电影的——他们当时已经在观众面前现场表演叙事性的武术场景。Film Forum 指出，预算的大部分都花在了“给孩子们买披萨”上。",
+    btnFilmForum:"Film Forum 说明", btnDvd:"DVD 版本",
+    filmStreams:"据当前片单，该片在 ARROW 上线流媒体，并可在 Tubi 免费观看。",
+    metaDirector:"导演", metaFirst:"首部长片", metaFirstVal:"是——Ahearn 的处女作", metaShot:"拍摄", metaReleased:"上映",
+    metaLocation:"地点", metaLocationVal:"Smith Projects，下东区", metaRuntime:"片长", metaRuntimeVal:"标注 61–77 分钟*",
+    metaStarring:"主演", metaGenre:"类型", metaGenreVal:"No Wave 动作剧情片",
+    filmRuntimeNote:"*各来源对片长说法不一——多数数据库标注 77 分钟，Film Forum 标注约 76 分钟，ARROW 流媒体版本为 61 分钟。本博物馆列出范围，而不选定其一。",
+    ex22label:"展品 2.2 — 手球场", ex22title:"Lee Quiñones 与霍华德鸭",
+    ex22p1:"拍摄期间，Ahearn 偶然看到 Lee Quiñones 刚绘好的手球场壁画——其中包括一幅霍华德鸭壁画——并将它们收入片中。Quiñones 在拍摄时骑摩托车赶到，做了自我介绍，Ahearn 随即邀请他参与演出。",
+    ex23label:"展品 2.3 — 通往 Wild Style 之路", ex23title:"一部电影引出了另一部",
+    flow1:"1979 — DAOS 电影", flow2:"1980 — 时代广场展海报", flow3:"Fab 5 Freddy 结识 Ahearn", flow4:"1983 — Wild Style",
+    ex23p1:"1980 年时代广场展上 <em>The Deadly Art of Survival</em> 的海报引起了 Fab 5 Freddy 的注意；那次相遇促成了 <em>Wild Style</em> 的计划——第一部嘻哈故事片，Quiñones 在片中饰演 Zoro，Nathan Ingram 饰演院子里的警察。Ahearn 曾说这部电影“直接促成了”<em>Wild Style</em> 的诞生。",
+    magTitle:"杂志——期刊墙",
+    magIntro:"DAOS Magazine——在其自家商店中被称为“第一武术杂志”——以印刷版和数字版发行，由 Nathan 和 Jacob Ingram 主理。点击墙上的任何封面即可阅读其展签。墙上展示的是已在 DAOS 商店核实的期刊。",
+    edFilterAll:"全部期刊", edFilterNamed:"仅署名封面",
+    ex32label:"展品 3.2 — 电台节目", ex32title:"DAOS Radio — WPAT 930 AM",
+    ex32p1:"DAOS Radio 是该品牌在纽约 WPAT 930 AM 的直播广播平台——“植根于武术、音乐、创业和社区赋能的对话、见解与故事”，涵盖武术、MMA、体育、音乐和文化。DAOS Radio 的一个时段于 2026 年 3 月重返 WPAT，并于当年 7 月继续播出。",
+    ex33label:"展品 3.3 — 日历上的下一站", ex33title:"THE DAOS PARTY — 2026年12月5日",
+    ex33p1:"DAOS CON 的官方预热派对，庆祝第 28 期：2026 年 12 月 5 日星期六，下午 5:00–10:00，地点为 Harlem 的 Row House（2128 Frederick Douglass Blvd）。音乐由 DJ J-Ronin 和 DJ Johnny Grems 呈现，现场还有拍摄的技术演示和开放麦表演。门票为出价制——价格由你决定。",
+    btnTickets:"门票——出价购买", btnFbEvent:"Facebook 活动",
+    magNote:"据 DAOS 本方的统计，该杂志背后的社区拥有 13.9 万 Instagram 粉丝、1.4 万 Facebook 群组成员和 3 万人的邮件名单。有志登上杂志的人可以通过<a href=\"https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine\" target=\"_blank\" rel=\"noopener\">申请专题页面</a>报名。",
+    pplTitle:"人物——专题人物厅",
+    pplIntro:"封面明星、嘉宾与合作者——每位都按其与 DAOS 的真实关系标注。音乐合作不是封面，大会嘉宾也不是专题报道；本博物馆将它们区分清楚。",
+    pFilterAll:"全部", pFilterCover:"封面人物", pFilterGuest:"嘉宾与合作者",
+    musicTitle:"音乐与未来",
+    musicIntro:"重生从来不只是印刷品。本展厅收录 Jake Northfa$e 的音乐、DAOS App，以及这座数字博物馆存在的理由：The DAOS Foundation 建立实体博物馆和文化中心的目标。",
+    ex51label:"展品 5.1 — 正在播放",
+    ex51p1:"原汁原味的 boom-bap：Wu-Tang 成员 Killah Priest 在一首粗粝的重制曲上献声，Northfa$e 则以自己的笔触撑起整首歌——Jacob 将这种声音形容为“混凝土、经文、生存”。由 Stoic Beats 与 Bailey Daniel 制作；Giovanni “Blu” Rottier 母带处理。这首混音是 <em>DAOS</em> EP 的首支单曲，定于 2026 年 12 月 5 日发行——与 Row House 的 THE DAOS PARTY 同一晚。",
+    ex51p2:"Jake Northfa$e 较早的单曲包括“Nissan”“Hey Miss Thing”和“I Made Her Say”，以及“Iced Coffee Baby”和原版“The Apartheid”（2024）等曲目。",
+    btnSpotify:"在 Spotify 收听", btnVisuals:"视觉作品——DAOS",
+    ex52label:"展品 5.2 — 即将登陆手机", ex52title:"DAOS App",
+    ex52p1:"即将上线——可在 App 内或 deadlyartofsurvival.com 查看排名。2026 年 11 月 8 日的预览展示了动态、活动、锦标赛和排名，THE DAOS PARTY 已上架，“顶级武术家”排行榜已经上线。",
+    app1t:"实时排名", app1p:"顶级武术家、MMA、BJJ、站立打击和青少年——可按流派、体重、地区和年龄筛选。",
+    app2t:"学校排行榜", app2p:"当学生获得排名、获胜或被专题报道时，学校即可得分。",
+    app3t:"选手档案", app3p:"战绩、流派、学校、照片、视频集锦和 DAOS 专题。",
+    app4t:"学生提交", app4p:"学校可以在 App 中免费提交学生参与排名。",
+    app5t:"我附近的活动", app5p:"通过地图和日历发现活动，并可签到，活动后发布结果。",
+    app6t:"学校档案", app6p:"照片、课程、时间表和联系方式——还有一个前往申请页面的“获得专题报道”按钮。",
+    app7t:"推送提醒", app7p:"当新一期发布或你学校的专题上线时通知你。",
+    app8t:"关注与分享", app8p:"关注学校和选手；将排名和专题分享到 Instagram、Facebook 和 WhatsApp。",
+    ex53label:"展品 5.3 — 基金会", ex53title:"The DAOS Foundation",
+    ex53p1:"DAOS 背后的非营利组织，为慈善和教育目的而设立。其使命是：保存、记录和推进文化历史——包括当代文化运动、艺术、音乐、设计、电影和社会表达——通过展览、公共活动、研究、广播、电视和电影、教育，以及文物和口述历史的归档来实现。",
+    ex54label:"展品 5.4 — 下一座建筑", ex54title:"一座可以走进去的博物馆",
+    ex54p1:"基金会的使命赋予它一个长期目标：建立一座博物馆或文化中心，致力于保存和呈现文化历史，促进公共教育和社区福祉。",
+    ex54p2:"目前尚未公布选址、时间表或预算——这座数字博物馆就是那座建筑的第一间展厅，今天已经开放。",
+    visitLabel:"规划你的参观", visitTitle:"把博物馆带在身边",
+    visitP:"展品在源头继续：阅读各期杂志、申请成为专题人物，或站在一切开始的那间屋子里——下一次聚会是 2026 年 12 月 5 日在 Harlem 举行的 THE DAOS PARTY。",
+    btnApply:"申请成为专题人物", btnBrowse:"浏览各期杂志",
+    donateLabel:"支持博物馆", donateTitle:"捐赠并支持我们",
+    donateIntro:"每一份捐赠都帮助 The DAOS Foundation 保存武术历史——展览、档案、口述历史，以及未来的实体博物馆。今天就在 Patreon 上支持 DAOS；更多捐赠方式即将推出。",
+    comingSoon:"即将推出",
+    donateNote:"Patreon 现已在 patreon.com/DAOSTV 上线。其他平台正在筹备中——每个页面就绪后，其按钮将链接至此。",
+    footAboutTitle:"关于本博物馆",
+    footAbout:"The Daos Museum 是一座关于 The Deadly Art of Survival 的数字博物馆：Nathan Ingram 于 1973 年创立的体系、Charlie Ahearn 1979 年的电影、DAOS Magazine，以及围绕它们的人物与音乐。每件展品都来自已发表的来源，并在其展签上附有链接。当来源说法不一时——电影的片长、拍摄年份——本博物馆呈现分歧，而不是选出赢家。",
+    footSourcesTitle:"主要来源",
+    footLine:"The Daos Museum · Deadly Art of Survival · 纽约市",
+    uiTimeline:"时间线", uiSource:"来源", uiTap:"点击查看展签", uiPlaque:"展品 3.1 — 期刊展签",
+    uiEdition:"期", uiEdWord:"期", uiStoreSrc:"DAOS 商店 / DAOS 博客", uiBrowseAll:"浏览全部电子书", uiView:"查看",
+    uiSearch:"搜索", uiFont:"字体", uiTheme:"主题", uiAccessibility:"无障碍",
+    uiFontStyle:"字体样式", fontSans:"无衬线", fontSerif:"衬线", fontReadable:"清晰易读",
+    uiTextSize:"文字大小", uiLineSpacing:"更宽的行距", uiContrast:"更高对比度",
+    uiReduceMotion:"减少动态效果", uiUnderline:"为所有链接加下划线",
+    uiSavedNote:"仅保存在此设备上——不会发送到任何地方。",
+    uiSearchPh:"搜索展品、期刊、人物…", uiClear:"清除",
+    uiNoResults:"未找到匹配项。请换一个词试试。", uiOneResult:"1 条结果", uiResults:"条结果",
+    uiDark:"切换到深色模式", uiLight:"切换到浅色模式"
+  },
+  ja: {
+    brand:"Deadly Art of Survival · 1973年創設", openTag:"デジタルミュージアム · 開館中",
+    heroDaos:"DAOS", heroMuseum:"ミュージアム",
+    heroSub:"武道、映画、ヒップホップ、印刷物の50年——1973年、ローワー・イースト・サイドの道場から、<em>Wild Style</em> へとつながったスーパー8映画を経て、雑誌28号まで、そして今も続いています。",
+    statFounded:"流派創設", statFilm:"映画公開", statEditions:"号数と継続中", statRebirth:"父と子による再生",
+    navOrigins:"01 起源", navFilm:"02 映画", navMagazine:"03 雑誌", navPeople:"04 人々", navMusic:"05 音楽と未来", navVisit:"来館案内", navDonate:"寄付",
+    wing01:"展示室 01", wing02:"展示室 02", wing03:"展示室 03", wing04:"展示室 04", wing05:"展示室 05",
+    originsTitle:"起源——ローワー・イースト・サイド",
+    originsIntro:"The Deadly Art of Survival は、ニューヨーク市のローワー・イースト・サイドで Nathan Ingram が創設した武道の流派として始まりました——DAOS 自身の言葉によれば、「ひとつのスタイルをはるかに超えるもの、文化的ムーブメントへと急速に進化」しました。",
+    ex11label:"展示 1.1 — 創設者", ex11title:"Nathan Ingram",
+    ex11p1:"マンハッタンのローワー・イースト・サイドに生まれ育ちました。1968年、伝統的な日本の松濤館の師範 Angel Crespo Sensei のもとで修行を開始。1973年6月に松濤館の黒帯（初段）を取得し、同年10月には Timothy Yearwood Sensei のもとで剛柔流の黒帯も取得しました。",
+    ex11p2:"彼はニューヨークのチャイナタウン史上、学校を所有した唯一のアフリカ系アメリカ人の空手指導者となり、The D.A.S. Karate Federation（1979年–現在）の創設者兼主席師範となりました。",
+    ex12label:"展示 1.2 — 記録と段位", ex12title:"公式記録",
+    ex12li1:"World Gung Fu Kickboxing Association で第3位にランクイン。素手格闘で16回の優勝。",
+    ex12li2:"赤帯10段。松濤館5段（ASKD）、剛柔流3段、柔術5段、Semi Fist–Semi Mantis 4段、白鶴拳の上級段位、北派七星螳螂拳の黒帯。",
+    ex12li3:"The D.A.S. Karate Federation の創設者兼主席師範。",
+    ex13label:"展示 1.3 — 再生", ex13title:"2021年：父と子",
+    ex13p1:"創設から40年以上を経て、2021年は The Deadly Art of Survival の再生の年となりました——Nathan Ingram と息子の Jacob Ingram が牽引し、武道の歴史を守りながら文化・音楽・起業・芸術を称えるグローバルなマルチメディアブランドとして再構築されました。",
+    ex13p2:"今日、DAOS は自らを「武道の流派からグローバルなマルチメディアブランドへと変わり、DAOS Magazine、DAOS TV、ラジオ番組、そして The DAOS Foundation を擁する存在」と表現しています。",
+    ex14label:"展示 1.4 — 彼らの言葉で",
+    filmTitle:"映画——1979年",
+    filmIntro:"<em>Wild Style</em> の前に、Smith Projects で週末に撮影されたスーパー8のカンフー映画がありました——ライバルの「ディスコ道場」、Lee Quiñones が描いたハンドボールコート、そして自分自身を演じる Nathan Ingram とともに。",
+    ex21label:"展示 2.1 — 特別上映",
+    ex21p1:"Nathan Ingram は、地元の空手学校の経営者として、ライバル道場の経営者を装う麻薬密売人たちと対決します——「ハンサム・ハリーのディスコ道場」、スローガンは <em>スタイルのある武道</em>。ストーリーの奥では、この映画は1979年のローワー・イースト・サイドの暮らしの親密なスナップショットとして機能し、麻薬、銃暴力、黒人コミュニティでの警察活動を日常の一部として描いています。",
+    ex21p2:"監督の Charlie Ahearn は、武道学校のメンバーから映画制作を依頼されました——彼らはすでに観客の前で武道の物語を実演していました。Film Forum によれば、予算の大部分は「子どもたちにピザを買うこと」に使われました。",
+    btnFilmForum:"Film Forum の解説", btnDvd:"DVD リリース",
+    filmStreams:"現在の配信情報によれば、本作は ARROW でストリーミング配信され、Tubi で無料視聴できます。",
+    metaDirector:"監督", metaFirst:"長編デビュー", metaFirstVal:"はい — Ahearn のデビュー作", metaShot:"撮影", metaReleased:"公開",
+    metaLocation:"撮影地", metaLocationVal:"Smith Projects、LES", metaRuntime:"上映時間", metaRuntimeVal:"表記は61–77分*",
+    metaStarring:"主演", metaGenre:"ジャンル", metaGenreVal:"No Wave アクションドラマ",
+    filmRuntimeNote:"*上映時間については情報源によって異なります——ほとんどのデータベースは77分、Film Forum は約76分と記載し、ARROW の配信版は61分です。本館ではひとつに決めず、範囲を示しています。",
+    ex22label:"展示 2.2 — ハンドボールコート", ex22title:"Lee Quiñones とハワード・ザ・ダック",
+    ex22p1:"撮影中、Ahearn は Lee Quiñones が描いたばかりのハンドボールコートの壁画——ハワード・ザ・ダックの壁画を含む——に出会い、映画に取り入れました。Quiñones は撮影中にバイクで現れて自己紹介し、Ahearn は彼を参加へ招きました。",
+    ex23label:"展示 2.3 — Wild Style への道", ex23title:"ひとつの映画がもうひとつを生んだ",
+    flow1:"1979年 — DAOS の映画", flow2:"1980年 — タイムズスクエア展のポスター", flow3:"Fab 5 Freddy が Ahearn と出会う", flow4:"1983年 — Wild Style",
+    ex23p1:"1980年のタイムズスクエア展での <em>The Deadly Art of Survival</em> のポスターが Fab 5 Freddy の目に留まり、その出会いが <em>Wild Style</em>——初のヒップホップ長編映画——の計画へとつながりました。Quiñones は Zoro を演じ、Nathan Ingram は中庭の警官役で出演。Ahearn はこの映画が <em>Wild Style</em> の制作に「直接つながった」と語っています。",
+    magTitle:"雑誌——エディションの壁",
+    magIntro:"DAOS Magazine——自社ストアでは「武道雑誌 No.1」と掲げる——は印刷版とデジタル版で発行され、Nathan と Jacob Ingram が運営しています。壁の表紙をタップすると、その解説プレートが読めます。壁には DAOS ストアで確認できた号を展示しています。",
+    edFilterAll:"全エディション", edFilterNamed:"名前入り表紙のみ",
+    ex32label:"展示 3.2 — オンエア", ex32title:"DAOS Radio — WPAT 930 AM",
+    ex32p1:"DAOS Radio はニューヨークの WPAT 930 AM におけるブランドのライブ放送プラットフォームで、「武道、音楽、起業、コミュニティの力に根ざした対話、洞察、ストーリーテリング」として、武道、MMA、スポーツ、音楽、文化を扱います。DAOS Radio のコーナーは2026年3月に WPAT に復帰し、同年7月にも放送されました。",
+    ex33label:"展示 3.3 — カレンダーの次", ex33title:"THE DAOS PARTY — 2026年12月5日",
+    ex33p1:"DAOS CON の公式プレパーティーとして28号を祝うイベント。2026年12月5日（土）午後5時〜10時、ハーレムの Row House（2128 Frederick Douglass Blvd）にて。音楽は DJ J-Ronin と DJ Johnny Grems、撮影される技のデモンストレーションとオープンマイクのパフォーマンスも。チケットはオファー制——価格はあなたが決めます。",
+    btnTickets:"チケット — オファーする", btnFbEvent:"Facebook イベント",
+    magNote:"DAOS 自身の集計によれば、雑誌を支えるコミュニティは Instagram フォロワー13.9万人、Facebook グループメンバー1.4万人、メールリスト3万人です。掲載を希望する方は、雑誌の<a href=\"https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine\" target=\"_blank\" rel=\"noopener\">掲載応募ページ</a>から申し込めます。",
+    pplTitle:"人々——特集の殿堂",
+    pplIntro:"表紙スター、ゲスト、コラボレーター——それぞれ DAOS と実際に関わった内容で表示しています。音楽コラボは表紙ではなく、コンベンションのゲストは特集ではありません。本館ではそれを明確に区別しています。",
+    pFilterAll:"全員", pFilterCover:"表紙特集", pFilterGuest:"ゲスト＆コラボレーター",
+    musicTitle:"音楽と未来",
+    musicIntro:"再生は印刷物だけではありませんでした。この展示室には Jake Northfa$e の音楽、DAOS アプリ、そしてこのデジタルミュージアムが存在する理由そのもの——The DAOS Foundation が目指す物理的な博物館と文化センター——を収めています。",
+    ex51label:"展示 5.1 — 再生中",
+    ex51p1:"生々しいブーンバップ。Wu-Tang 系の Killah Priest が荒々しいリメイクにバースを刻み、Northfa$e が自身のペンで楽曲を支えます——Jacob が「コンクリート、聖典、サバイバル」と表現するサウンドです。プロデュースは Stoic Beats と Bailey Daniel、マスタリングは Giovanni “Blu” Rottier。リミックスは <em>DAOS</em> EP のファーストシングルで、リリースは2026年12月5日——Row House での THE DAOS PARTY と同じ夜です。",
+    ex51p2:"Jake Northfa$e の初期のシングルには「Nissan」「Hey Miss Thing」「I Made Her Say」があり、「Iced Coffee Baby」やオリジナルの「The Apartheid」（2024年）といった楽曲もあります。",
+    btnSpotify:"Spotify で聴く", btnVisuals:"ビジュアル — DAOS",
+    ex52label:"展示 5.2 — スマホへ", ex52title:"DAOS アプリ",
+    ex52p1:"まもなくリリース——ランキングはアプリ内、または deadlyartofsurvival.com で確認できます。2026年11月8日のプレビューでは、フィード、イベント、トーナメント、ランキングが表示され、THE DAOS PARTY が掲載され、「TOP MARTIAL ARTISTS」ランキングがすでに稼働していました。",
+    app1t:"ライブランキング", app1p:"トップの武道家、MMA、BJJ、ストライカー、青少年——流派、階級、地域、年齢で絞り込み可能。",
+    app2t:"学校ランキング", app2p:"生徒がランクイン、勝利、特集されると学校にポイントが入ります。",
+    app3t:"選手プロフィール", app3p:"戦績、流派、学校、写真、ハイライト映像、DAOS 特集。",
+    app4t:"生徒の登録", app4p:"学校はアプリで生徒を無料でランキングに登録できます。",
+    app5t:"近くのイベント", app5p:"地図とカレンダーで探し、チェックインとイベント後の結果掲載も。",
+    app6t:"学校プロフィール", app6p:"写真、プログラム、スケジュール、連絡先——さらに応募ページへの「特集される」ボタンも。",
+    app7t:"プッシュ通知", app7p:"新しい号が出たとき、あなたの学校の特集が公開されたときに通知します。",
+    app8t:"フォロー＆共有", app8p:"学校や選手をフォローし、ランキングや特集を Instagram、Facebook、WhatsApp に共有できます。",
+    ex53label:"展示 5.3 — 財団", ex53title:"The DAOS Foundation",
+    ex53p1:"DAOS の背後にある非営利団体で、慈善および教育を目的として設立されました。その使命は、文化史——現代の文化運動、アート、音楽、デザイン、映画、社会的表現を含む——の保存、記録、発展であり、展示、公共イベント、研究、ラジオ・テレビ・映画、教育、そして工芸品や口述歴史のアーカイブを通じて行われます。",
+    ex54label:"展示 5.4 — 次の建物", ex54title:"歩いて入れる博物館",
+    ex54p1:"財団の使命には、公共教育とコミュニティの充実のために文化史を保存し展示することに専念する博物館または文化センターを設立するという長期目標が含まれています。",
+    ex54p2:"場所、スケジュール、予算はまだ発表されていません——このデジタルミュージアムはその建物の最初の部屋であり、本日開館しています。",
+    visitLabel:"来館のご案内", visitTitle:"博物館を持ち歩こう",
+    visitP:"展示は発信元で続きます。各号を読む、特集に応募する、あるいはすべてが始まったあの部屋に立つ——次の集まりは2026年12月5日、ハーレムでの THE DAOS PARTY です。",
+    btnApply:"特集に応募する", btnBrowse:"エディションを見る",
+    donateLabel:"博物館を支援", donateTitle:"寄付で応援してください",
+    donateIntro:"すべての寄付が、The DAOS Foundation による武道の歴史の保存——展示、アーカイブ、口述歴史、そして将来の物理的な博物館——を助けます。今日 Patreon で DAOS を支援してください。他の寄付方法も準備中です。",
+    comingSoon:"近日公開",
+    donateNote:"Patreon は patreon.com/DAOSTV で公開中です。他のプラットフォームは準備中です——各ページが整い次第、ここのボタンからリンクします。",
+    footAboutTitle:"この博物館について",
+    footAbout:"The Daos Museum は The Deadly Art of Survival のデジタルミュージアムです。1973年に Nathan Ingram が創設した流派、1979年の Charlie Ahearn の映画、DAOS Magazine、そしてそれを取り巻く人々と音楽を扱います。すべての展示は公開された出典に基づいており、解説プレートにリンクを付けています。情報源が食い違う場合——映画の上映時間や撮影年——本館では勝者を決めず、その食い違い自体を示します。",
+    footSourcesTitle:"主な出典",
+    footLine:"The Daos Museum · Deadly Art of Survival · ニューヨーク市",
+    uiTimeline:"年表", uiSource:"出典", uiTap:"タップで解説を見る", uiPlaque:"展示 3.1 — エディション解説",
+    uiEdition:"号", uiEdWord:"号", uiStoreSrc:"DAOS ストア / DAOS ブログ", uiBrowseAll:"電子書籍をすべて見る", uiView:"見る",
+    uiSearch:"検索", uiFont:"フォント", uiTheme:"テーマ", uiAccessibility:"アクセシビリティ",
+    uiFontStyle:"フォントの種類", fontSans:"サンセリフ", fontSerif:"セリフ", fontReadable:"読みやすい",
+    uiTextSize:"文字サイズ", uiLineSpacing:"行間を広く", uiContrast:"コントラストを高く",
+    uiReduceMotion:"動きを減らす", uiUnderline:"すべてのリンクに下線",
+    uiSavedNote:"このデバイスにのみ保存されます — どこにも送信されません。",
+    uiSearchPh:"展示・号・人物を検索…", uiClear:"クリア",
+    uiNoResults:"一致する結果がありません。別の言葉でお試しください。", uiOneResult:"1 件の結果", uiResults:"件の結果",
+    uiDark:"ダークモードに切り替え", uiLight:"ライトモードに切り替え"
+  }
+  };
+
+  /* ================= Dynamic content translations ================= */
+  var DYN = {
+  es: {
+    tlTitle:["Comienza el entrenamiento","Se funda The Deadly Art of Survival","Una cámara Super 8 en los Smith Projects","Se estrena la película","El camino a Wild Style","El renacimiento — padre e hijo","28 ediciones y contando"],
+    tlBody:[
+      "Nathan Ingram, nacido y criado en el Lower East Side de Manhattan, comienza su carrera en las artes marciales con Angel Crespo Sensei, un instructor tradicional japonés de Shotokan.",
+      "Tras cinco años de entrenamiento, Nathan obtiene su cinturón negro de Shotokan en junio de 1973 y su cinturón negro de Goju Ryu ese octubre — y funda The Deadly Art of Survival en el Lower East Side de la ciudad de Nueva York. Comienza como un sistema de artes marciales y se convierte en un movimiento cultural.",
+      "Charlie Ahearn filma The Deadly Art of Survival los fines de semana durante aproximadamente un año y medio en las viviendas Alfred E. Smith — su primera película. El reparto está formado en gran parte por miembros de la escuela DAOS interpretándose a sí mismos, y los murales de Lee Quiñones en las canchas de balonmano aparecen en pantalla.",
+      "The Deadly Art of Survival llega al público: Nathan contra el Disco Dojo de Handsome Harry. Ese mismo año, Nathan funda The D.A.S. Karate Federation, que aún lidera hoy.",
+      "Los carteles de la película DAOS en el Times Square Show de 1980 llaman la atención de Fab 5 Freddy. Él busca a Ahearn — y el plan que se convierte en Wild Style, la primera película de hip-hop, se pone en marcha. Quiñones protagoniza como Zoro; Nathan aparece como policía en el patio.",
+      "Nathan y su hijo Jacob Ingram reinventan DAOS como una marca multimedia global: una revista, una plataforma de medios digitales, programación de radio y música original, dedicada a preservar la historia de las artes marciales.",
+      "La revista alcanza 28 ediciones en formato impreso y digital. THE DAOS PARTY — la fiesta previa oficial a DAOS CON — llega a Harlem el 5 de diciembre de 2026, y la App de DAOS y el EP DAOS de Jake Northfa$e llegan con ella."],
+    edFeat:{2:"Edición temprana",3:"Edición temprana",4:"Edición Tiger — Serie de Colección All Kung Fu",9:"Cookie Melendez — Artes Marciales a Puño Limpio de los 70",13:"Edición Juggernaut — Lorenzo Hunt",18:"Edición digital",19:"Edición digital",20:"La más vendida"},
+    edNote:{
+      2:"Disponible en la colección de eBooks de la tienda como edición digital.",
+      3:"Disponible en la colección de eBooks de la tienda como edición digital.",
+      4:"La Edición Tiger n.º 4, parte de la Serie de Colección All Kung Fu, vendida como eBook.",
+      6:"La 6.ª Edición con Wesley Snipes. Un porcentaje de las ganancias fue donado a AngelsLive.Org.",
+      9:"Una portada/póster de la 9.ª edición presenta a Cookie Melendez y “Artes Marciales a Puño Limpio de los 70”, con GM Jonas Nunez Jr., Master Ivan Mendez, GM GJ Torres y GM Roberto Hernandez-Velez.",
+      11:"La 11.ª Edición presenta a Taimak de The Last Dragon, con una entrevista profunda en su interior. También existe una Edición de Coleccionista en caja n.º 11 — solo se hicieron 5.",
+      13:"“La Edición Juggernaut” presenta a Lorenzo Hunt, el primer luchador de BKFC reconocido por DAOS. Una variante “Edición MMAShredded” también lleva el número 13.",
+      14:"La 14.ª Edición presenta a Odette Russell.",
+      15:"La 15.ª Edición presenta a GM Darryl Starks Sr.; otra 15.ª Edición presenta a Soke Little John Davis. Wesley Snipes es citado en su interior, compartiendo su historia en las artes marciales con DAOS.",
+      16:"La 16.ª Edición presenta a Anthony Arango, Buzz Durkin y Abdul Shabazz.",
+      17:"La 17.ª Edición presenta a Jadi Tention, Shi Fu Gregg Zilb y Carl Scott.",
+      18:"La 18.ª Edición está en la colección de eBooks de la tienda.",
+      19:"La 19.ª Edición está en la colección de eBooks de la tienda.",
+      20:"La 20.ª Edición, en papel ($20 en la tienda) y eBook — la tienda la llama “nuestra revista de artes marciales n.º 1 en ventas en todo el mundo”. Los miembros de Patreon reciben las ediciones a $12.",
+      21:"La 21.ª Edición presenta a Master Ken.",
+      22:"La 22.ª Edición presenta a Tom Terwilliger, Najee Hassan, Olando Rivera y Rodel Dagooc.",
+      23:"La 23.ª Edición presenta a Yoel Judah, Sunnie Road, Austin Trout, Viking Samurai, Robin Black y más.",
+      24:"La 24.ª Edición presenta a Ernest “The Cat” Miller, ex superestrella de WCW y WWE — lanzada en enero de 2026.",
+      25:"La 25.ª Edición presenta a La Familia Torres.",
+      26:"La 26.ª Edición presenta a Kai Leung.",
+      27:"La primera portada oficial de la 27.ª Edición (anunciada el 26 de julio de 2026) presenta al ícono del boxeo de peso pesado Shannon “The Cannon” Briggs, bajo el lema “LA NUEVA ERA DE DAOS”. Las portadas variantes incluyen a Khaleeq Lewis, David Kovar, Helena Crevar y Maggie Messina.",
+      28:"La 28.ª Edición (anunciada el 22 de septiembre de 2026) presenta a Zoltan Bathory, guitarrista y miembro fundador de Five Finger Death Punch — mostrado con un gi blanco de BJJ y sus medallas de oro del American National de la IBJJF. Una portada variante presenta a Dominick Brioche."},
+    pplRole:["Portada — 6.ª Edición","Portada — 11.ª Edición","Portada — 28.ª Edición","Portada — 27.ª Edición","Portada — 23.ª Edición","Portada — 24.ª Edición","Invitado especial — DAOS CON 6","Colaborador musical","Entrevistador y colaborador","Cobertura de prensa"],
+    pplText:[
+      "Actor y artista marcial. La 6.ª Edición lleva su nombre, y es citado en la 15.ª Edición compartiendo su historia en las artes marciales con DAOS.",
+      "Estrella de la película de 1985 The Last Dragon. Su entrevista de la 11.ª Edición ancla el número; también se lanzó una Edición de Coleccionista de tapa dura en caja del n.º 11 — solo 5 hechas.",
+      "Guitarrista y miembro fundador de Five Finger Death Punch, y cinturón negro de BJJ mostrado en la portada con sus medallas de oro del American National de la IBJJF.",
+      "Ícono del boxeo de peso pesado. Su portada fue la primera portada oficial de la 27.ª Edición, anunciada el 26 de julio de 2026 bajo “LA NUEVA ERA DE DAOS”.",
+      "Boxeador y campeón de BKFC, presentado en la 23.ª Edición junto a Yoel Judah, Robin Black y otros.",
+      "Ex superestrella de WCW y WWE y anunciador de ring, presentado en la 24.ª Edición (enero de 2026).",
+      "Pionero del hip-hop de los Cold Crush Brothers. Invitado especial en DAOS CON 6, el 8 de marzo de 2026, en The Hip Hop Museum, NYC — una aparición como invitado, no una portada de revista.",
+      "MC afiliado a Wu-Tang. Artista invitado en “The Apartheid (Remix)” de Jake Northfa$e — una colaboración musical de DAOS, no un reportaje de portada.",
+      "Personalidad de los medios de hip-hop (Flip Da Network) que entrevistó a Nathan Ingram en cámara en Chinatown, NYC, con artículos de seguimiento de DAOS en noviembre de 2025.",
+      "La revista de hip-hop presentó a Jake Northfa$e y DAOS el 15 de diciembre de 2025: “Cómo Jake Northfa$e de NYC continúa curando la verdadera forma de arte del hip-hop”."]
+  },
+  zh: {
+    tlTitle:["训练开始","The Deadly Art of Survival 创立","Smith Projects 里的一台 Super 8 摄影机","电影上映","通往 Wild Style 之路","重生——父与子","第 28 期并持续增加"],
+    tlBody:[
+      "Nathan Ingram 在曼哈顿下东区出生长大，他在日本传统松涛馆教练 Angel Crespo Sensei 门下开始了自己的武术生涯。",
+      "经过五年的训练，Nathan 于 1973 年 6 月获得松涛馆黑带，同年 10 月获得刚柔流黑带——并在纽约市下东区创立了 The Deadly Art of Survival。它最初是一个武术体系，后来成为一场文化运动。",
+      "Charlie Ahearn 在大约一年半的时间里，于周末在 Alfred E. Smith 住宅区拍摄了 The Deadly Art of Survival——这是他的第一部长片。演员大多是 DAOS 学校的成员，饰演他们自己，Lee Quiñones 的手球场壁画也出现在银幕上。",
+      "The Deadly Art of Survival 与观众见面：Nathan 对阵 Handsome Harry 的迪斯科道场。同年，Nathan 创立了 D.A.S. 空手道联盟，并至今仍担任领导。",
+      "1980 年时代广场展上 DAOS 电影的海报引起了 Fab 5 Freddy 的注意。他找到 Ahearn——成为 Wild Style 的那个计划就此启动，那是第一部嘻哈故事片。Quiñones 饰演 Zoro；Nathan 饰演院子里的警察。",
+      "Nathan 与其子 Jacob Ingram 将 DAOS 重新构想为一个全球多媒体品牌：一本杂志、一个数字媒体平台、电台节目和原创音乐，致力于保存武术历史。",
+      "该杂志的印刷版和数字版已达 28 期。THE DAOS PARTY——DAOS CON 的官方预热派对——将于 2026 年 12 月 5 日登陆 Harlem，DAOS App 和 Jake Northfa$e 的 DAOS EP 也将随之而来。"],
+    edFeat:{2:"早期期刊",3:"早期期刊",4:"虎版 — 全功夫收藏系列",9:"Cookie Melendez — 70 年代徒手武术",13:"Juggernaut 版 — Lorenzo Hunt",18:"数字版",19:"数字版",20:"畅销版"},
+    edNote:{
+      2:"收录于商店电子书系列的数字版。",
+      3:"收录于商店电子书系列的数字版。",
+      4:"虎版第 4 期，属于全功夫收藏系列，以电子书形式出售。",
+      6:"第 6 期，特辑人物 Wesley Snipes。部分收益捐赠给了 AngelsLive.Org。",
+      9:"第 9 期的一张封面/海报以 Cookie Melendez 和“70 年代徒手武术”为主题，并有 GM Jonas Nunez Jr.、Master Ivan Mendez、GM GJ Torres 和 GM Roberto Hernandez-Velez。",
+      11:"第 11 期特辑人物为《龙威小子》主演 Taimak，内含深度访谈。另有一套盒装收藏版第 11 期——仅制作了 5 套。",
+      13:"“Juggernaut 版”特辑人物为 Lorenzo Hunt，他是第一位获得 DAOS 认可的 BKFC 选手。还有一个“MMAShredded 版”变体同样标为第 13 期。",
+      14:"第 14 期特辑人物为 Odette Russell。",
+      15:"第 15 期特辑人物为 GM Darryl Starks Sr.；另一版第 15 期特辑人物为 Soke Little John Davis。Wesley Snipes 在内页被引述，分享了他与 DAOS 的武术渊源。",
+      16:"第 16 期特辑人物为 Anthony Arango、Buzz Durkin 和 Abdul Shabazz。",
+      17:"第 17 期特辑人物为 Jadi Tention、Shi Fu Gregg Zilb 和 Carl Scott。",
+      18:"第 18 期收录于商店的电子书系列。",
+      19:"第 19 期收录于商店的电子书系列。",
+      20:"第 20 期，有印刷版（商店售价 20 美元）和电子书版——商店称其为“我们全球销量第一的武术杂志”。Patreon 会员可以 12 美元获得各期。",
+      21:"第 21 期特辑人物为 Master Ken。",
+      22:"第 22 期特辑人物为 Tom Terwilliger、Najee Hassan、Olando Rivera 和 Rodel Dagooc。",
+      23:"第 23 期特辑人物为 Yoel Judah、Sunnie Road、Austin Trout、Viking Samurai、Robin Black 等。",
+      24:"第 24 期特辑人物为前 WCW 与 WWE 超级明星 Ernest “The Cat” Miller——2026 年 1 月发行。",
+      25:"第 25 期特辑人物为 Torres 家族。",
+      26:"第 26 期特辑人物为 Kai Leung。",
+      27:"第 27 期的第一张官方封面（2026 年 7 月 26 日公布）特辑人物为重量级拳击偶像 Shannon “The Cannon” Briggs，打出“DAOS 新时代”的旗号。变体封面包括 Khaleeq Lewis、David Kovar、Helena Crevar 和 Maggie Messina。",
+      28:"第 28 期（2026 年 9 月 22 日公布）特辑人物为 Five Finger Death Punch 吉他手及创始成员 Zoltan Bathory——封面上他身穿白色 BJJ 道服，佩戴 IBJJF 美国全国赛金牌。变体封面人物为 Dominick Brioche。"},
+    pplRole:["封面人物 — 第 6 期","封面人物 — 第 11 期","封面人物 — 第 28 期","封面人物 — 第 27 期","封面人物 — 第 23 期","封面人物 — 第 24 期","特邀嘉宾 — DAOS CON 6","音乐合作者","采访者与合作者","媒体报道"],
+    pplText:[
+      "演员兼武术家。第 6 期以他为题，他在第 15 期内页被引述，分享了他与 DAOS 的武术渊源。",
+      "1985 年电影《龙威小子》的主演。他在第 11 期的访谈是该期的核心；第 11 期还推出过盒装精装收藏版——仅制作 5 套。",
+      "Five Finger Death Punch 的吉他手和创始成员，也是一名 BJJ 黑带，封面上他佩戴着 IBJJF 美国全国赛金牌。",
+      "重量级拳击偶像。他的封面是第 27 期的第一张官方封面，于 2026 年 7 月 26 日在“DAOS 新时代”的旗号下公布。",
+      "拳击手兼 BKFC 冠军，在第 23 期与 Yoel Judah、Robin Black 等人共同登场。",
+      "前 WCW 与 WWE 超级明星及擂台播报员，登上第 24 期（2026 年 1 月）。",
+      "Cold Crush Brothers 的嘻哈先驱。2026 年 3 月 8 日在纽约 The Hip Hop Museum 举行的 DAOS CON 6 的特邀嘉宾——是嘉宾出席，而非杂志封面。",
+      "Wu-Tang 关联 MC。他是 Jake Northfa$e 的“The Apartheid (Remix)”的特邀艺人——这是 DAOS 的音乐合作，而非杂志封面专题。",
+      "嘻哈媒体人（Flip Da Network），曾在纽约唐人街镜头前采访 Nathan Ingram，DAOS 随后在 2025 年 11 月发表了后续文章。",
+      "这本嘻哈杂志于 2025 年 12 月 15 日报道了 Jake Northfa$e 和 DAOS：“纽约的 Jake Northfa$e 如何继续策展嘻哈的真正艺术形式”。"]
+  },
+  ja: {
+    tlTitle:["修行の始まり","The Deadly Art of Survival 創設","Smith Projects のスーパー8カメラ","映画公開","Wild Style への道","再生——父と子","28号、そして継続中"],
+    tlBody:[
+      "マンハッタンのローワー・イースト・サイドに生まれ育った Nathan Ingram は、伝統的な日本の松濤館の師範 Angel Crespo Sensei のもとで武道のキャリアを始めました。",
+      "5年間の修行を経て、Nathan は1973年6月に松濤館の黒帯を、同年10月に剛柔流の黒帯を取得し——ニューヨーク市のローワー・イースト・サイドに The Deadly Art of Survival を創設しました。それは武道の流派として始まり、文化的ムーブメントとなりました。",
+      "Charlie Ahearn は約1年半にわたり週末に Alfred E. Smith 住宅で The Deadly Art of Survival を撮影しました——彼の長編デビュー作です。出演者の多くは DAOS の学校のメンバーが自分自身を演じ、Lee Quiñones のハンドボールコートの壁画が画面に登場します。",
+      "The Deadly Art of Survival が公開されました。Nathan 対ハンサム・ハリーのディスコ道場です。同年、Nathan は The D.A.S. Karate Federation を創設し、現在も率いています。",
+      "1980年のタイムズスクエア展での DAOS 映画のポスターが Fab 5 Freddy の目に留まります。彼は Ahearn を探し出し——初のヒップホップ長編映画となる Wild Style の計画が動き出しました。Quiñones は Zoro を演じ、Nathan は中庭の警官役で出演しました。",
+      "Nathan と息子の Jacob Ingram は DAOS をグローバルなマルチメディアブランドとして再構築しました。雑誌、デジタルメディアプラットフォーム、ラジオ番組、オリジナル音楽を通じて、武道の歴史の保存に捧げられています。",
+      "雑誌は印刷版とデジタル版で28号に達しました。THE DAOS PARTY——DAOS CON の公式プレパーティー——は2026年12月5日にハーレムで開催され、DAOS アプリと Jake Northfa$e の DAOS EP も同時に登場します。"],
+    edFeat:{2:"初期の号",3:"初期の号",4:"タイガー版 — オールカンフー・コレクターズシリーズ",9:"Cookie Melendez — 70年代の素手武道",13:"ジャガーノート版 — Lorenzo Hunt",18:"デジタル版",19:"デジタル版",20:"ベストセラー"},
+    edNote:{
+      2:"ストアの電子書籍コレクションにデジタル版として収録。",
+      3:"ストアの電子書籍コレクションにデジタル版として収録。",
+      4:"オールカンフー・コレクターズシリーズの一部であるタイガー版第4号。電子書籍として販売。",
+      6:"Wesley Snipes を特集した第6号。収益の一部は AngelsLive.Org に寄付されました。",
+      9:"第9号の表紙／ポスターは Cookie Melendez と「70年代の素手武道」を特集し、GM Jonas Nunez Jr.、Master Ivan Mendez、GM GJ Torres、GM Roberto Hernandez-Velez が登場します。",
+      11:"第11号は『ドラゴン少年（The Last Dragon）』の Taimak を特集し、深いインタビューを収録。ボックス入りのコレクターズ版第11号も存在し、わずか5部のみ制作されました。",
+      13:"「ジャガーノート版」は、DAOS が認めた初の BKFC ファイター Lorenzo Hunt を特集。「MMAShredded 版」のバリアントも13号を名乗ります。",
+      14:"第14号は Odette Russell を特集。",
+      15:"第15号は GM Darryl Starks Sr. を特集。別の第15号は Soke Little John Davis を特集しています。Wesley Snipes が誌面で引用され、DAOS との武道の歴史を語っています。",
+      16:"第16号は Anthony Arango、Buzz Durkin、Abdul Shabazz を特集。",
+      17:"第17号は Jadi Tention、Shi Fu Gregg Zilb、Carl Scott を特集。",
+      18:"第18号はストアの電子書籍コレクションに収録。",
+      19:"第19号はストアの電子書籍コレクションに収録。",
+      20:"第20号は印刷版（ストアで20ドル）と電子書籍版があり——ストアは「世界で最も売れている武道雑誌 No.1」と呼んでいます。Patreon メンバーは各号を12ドルで入手できます。",
+      21:"第21号は Master Ken を特集。",
+      22:"第22号は Tom Terwilliger、Najee Hassan、Olando Rivera、Rodel Dagooc を特集。",
+      23:"第23号は Yoel Judah、Sunnie Road、Austin Trout、Viking Samurai、Robin Black などを特集。",
+      24:"第24号は元 WCW・WWE スーパースターの Ernest “The Cat” Miller を特集——2026年1月発売。",
+      25:"第25号はトーレス一家を特集。",
+      26:"第26号は Kai Leung を特集。",
+      27:"第27号の最初の公式表紙（2026年7月26日発表）は、ヘビー級ボクシングのアイコン Shannon “The Cannon” Briggs を「DAOS の新時代」のバナーのもとで特集。バリアント表紙には Khaleeq Lewis、David Kovar、Helena Crevar、Maggie Messina が登場します。",
+      28:"第28号（2026年9月22日発表）は Five Finger Death Punch のギタリストで創設メンバーの Zoltan Bathory を特集——白い BJJ の道着を着て、IBJJF アメリカン・ナショナルの金メダルを身につけた姿が表紙です。バリアント表紙は Dominick Brioche。"},
+    pplRole:["表紙特集 — 第6号","表紙特集 — 第11号","表紙特集 — 第28号","表紙特集 — 第27号","表紙特集 — 第23号","表紙特集 — 第24号","スペシャルゲスト — DAOS CON 6","音楽コラボレーター","インタビュアー＆コラボレーター","メディア掲載"],
+    pplText:[
+      "俳優であり武道家。第6号は彼をタイトルに掲げ、第15号では誌面で引用され、DAOS との武道の歴史を語っています。",
+      "1985年の映画『ラスト・ドラゴン』のスター。第11号のインタビューが号の中心であり、箱入りのハードカバー・コレクターズ版第11号——わずか5部のみ——も発売されました。",
+      "Five Finger Death Punch のギタリストで創設メンバーであり、BJJ の黒帯。表紙では IBJJF アメリカン・ナショナルの金メダルを身につけています。",
+      "ヘビー級ボクシングのアイコン。彼の表紙は第27号の最初の公式表紙で、2026年7月26日に「DAOS の新時代」のもと発表されました。",
+      "ボクサーであり BKFC チャンピオン。第23号で Yoel Judah、Robin Black らとともに特集されました。",
+      "元 WCW・WWE スーパースターでリングアナウンサー。第24号（2026年1月）に特集されました。",
+      "Cold Crush Brothers のヒップホップパイオニア。2026年3月8日にニューヨークの The Hip Hop Museum で開かれた DAOS CON 6 のスペシャルゲスト——雑誌の表紙ではなく、ゲスト出演です。",
+      "Wu-Tang 系の MC。Jake Northfa$e の「The Apartheid (Remix)」のフィーチャリングアーティスト——雑誌の表紙特集ではなく、DAOS の音楽コラボです。",
+      "ヒップホップメディアのパーソナリティ（Flip Da Network）で、ニューヨークのチャイナタウンで Nathan Ingram にカメラの前でインタビューし、2025年11月に DAOS の続報記事が出ました。",
+      "ヒップホップ誌が2025年12月15日に Jake Northfa$e と DAOS を特集：「NYC の Jake Northfa$e はいかにヒップホップの真の芸術様式をキュレーションし続けるか」。"]
+  }
+  };
+  function T(){ return I18N[LANG] || I18N.en; }
+  function D(){ return DYN[LANG] || null; }
+
+  /* ---------- Language engine ---------- */
+  function applyStatic(){
+    var t = T();
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      if(t[k] !== undefined) el.innerHTML = t[k];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-ph');
+      if(t[k] !== undefined) el.setAttribute('placeholder', t[k]);
+    });
+    document.querySelectorAll('.langpill button').forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-lang')===LANG ? 'true' : 'false');
+    });
+    document.documentElement.lang = LANG==='zh' ? 'zh-Hans' : LANG;
+  }
+  function setLang(l){
+    if(!I18N[l]) return;
+    LANG = l;
+    applyStatic();
+    buildTimeline(); showTl(tlIndex);
+    renderEds(); showEd(edCurrent);
+    renderPpl();
+  }
+  document.querySelectorAll('.langpill button').forEach(function(b){
+    b.addEventListener('click', function(){ setLang(b.getAttribute('data-lang')); });
+  });
+
+  /* ---------- Timeline ---------- */
+  var TL = [
+    {yr:"1968", title:"The training begins", body:"Nathan Ingram, born and raised on the Lower East Side of Manhattan, begins his martial arts career under Angel Crespo Sensei, a traditional Japanese Shotokan instructor.", src:"Ingram author biography, 25th Edition listing (Amazon)."},
+    {yr:"1973", title:"The Deadly Art of Survival is founded", body:"After five years of training, Nathan earns his Shotokan black belt in June 1973 and his Goju Ryu black belt that October — and founds The Deadly Art of Survival in New York City's Lower East Side. It begins as a martial arts system and becomes a cultural movement.", src:"DAOS history, deadlyartofsurvival.com. The 1973 year is carried consistently across DAOS's own materials."},
+    {yr:"1977–78", title:"A Super 8 camera in the Smith Projects", body:"Charlie Ahearn shoots The Deadly Art of Survival on weekends over about a year and a half in the Alfred E. Smith Houses — his first feature. The cast are largely members of the DAOS school playing versions of themselves, and Lee Quiñones' handball-court murals appear on screen.", src:"Film Forum; Hyperallergic."},
+    {yr:"1979", title:"The film is released", body:"The Deadly Art of Survival reaches audiences: Nathan versus Handsome Harry's Disco Dojo. The same year, Nathan founds The D.A.S. Karate Federation, which he still leads today.", src:"MVD DVD release notes; Ingram author biography."},
+    {yr:"1980–83", title:"The road to Wild Style", body:"DAOS film posters at the 1980 Times Square Show catch Fab 5 Freddy's eye. He seeks out Ahearn — and the plan that becomes Wild Style, the first hip-hop feature film, is set in motion. Quiñones stars as Zoro; Nathan appears as a cop in the yard.", src:"Hyperallergic; Metacritic, Wild Style credits."},
+    {yr:"2021", title:"The rebirth — father and son", body:"Nathan and his son Jacob Ingram reimagine DAOS as a global multimedia brand: a magazine, a digital media platform, radio programming and original music, dedicated to preserving martial arts history.", src:"DAOS history, deadlyartofsurvival.com."},
+    {yr:"2026", title:"28 editions and counting", body:"The magazine stands at 28 editions in print and digital. THE DAOS PARTY — the official pre-party to DAOS CON — lands in Harlem on December 5, 2026, and the DAOS App and the Jake Northfa$e DAOS EP arrive with it.", src:"DAOS — Harlem, Get Ready (Nov 6, 2026)."}
+  ];
+  var tlYears = document.getElementById('tlYears');
+  var tlBody = document.getElementById('tlBody');
+  var tlIndex = 1;
+  function buildTimeline(){
+    tlYears.innerHTML='';
+    TL.forEach(function(t,i){
+      var b=document.createElement('button');
+      b.type='button'; b.textContent=t.yr; b.setAttribute('aria-pressed', i===tlIndex?'true':'false');
+      b.addEventListener('click', function(){ showTl(i); });
+      tlYears.appendChild(b);
+    });
+  }
+  function showTl(i){
+    tlIndex = i;
+    var items = tlYears.querySelectorAll('button');
+    for(var k=0;k<items.length;k++) items[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+    var t = TL[i], d = D();
+    var title = (d && d.tlTitle[i]) || t.title;
+    var body = (d && d.tlBody[i]) || t.body;
+    tlBody.innerHTML = '<div class="label">'+T().uiTimeline+' &middot; '+t.yr+'</div><h3>'+title+'</h3><p>'+body+'</p><p class="src">'+T().uiSource+': '+t.src+'</p>';
+  }
+  buildTimeline(); showTl(1);
+
+  /* ---------- Editions ---------- */
+  var EDS = [
+    {n:2, feat:"Early edition", named:false, note:"Held in the store's eBooks collection as a digital edition.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:3, feat:"Early edition", named:false, note:"Held in the store's eBooks collection as a digital edition.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:4, feat:"Tiger Edition — All Kung Fu Collector's Series", named:true, note:"The Tiger Edition #4, part of the All Kung Fu Collector's Series, sold as an eBook.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:6, feat:"Wesley Snipes", named:true, note:"The 6th Edition featuring Wesley Snipes. A percentage of proceeds was donated to AngelsLive.Org.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:9, feat:"Cookie Melendez — 70s Bare-Knuckle Martial Arts", named:true, note:"A 9th-edition cover/poster features Cookie Melendez and “70s Bare-Knuckle Martial Arts,” with GM Jonas Nunez Jr., Master Ivan Mendez, GM GJ Torres and GM Roberto Hernandez-Velez.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:11, feat:"Taimak — The Last Dragon", named:true, note:"The 11th Edition features Taimak of The Last Dragon, with a deep interview inside. A Boxed Collector's Edition #11 also exists — only 5 were ever made.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:13, feat:"The Juggernaut Edition — Lorenzo Hunt", named:true, note:"“The Juggernaut Edition” features Lorenzo Hunt, the first BKFC fighter recognized by DAOS. A “MMAShredded Edition” variant also carries the 13th number.", src:"https://deadlyartofsurvival.com/en-ca"},
+    {n:14, feat:"Odette Russell", named:true, note:"The 14th Edition features Odette Russell.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:15, feat:"GM Darryl Starks Sr. / Soke Little John Davis", named:true, note:"The 15th Edition features GM Darryl Starks Sr.; a separate 15th Edition features Soke Little John Davis. Wesley Snipes is quoted inside, sharing his martial arts history with DAOS.", src:"https://deadlyartofsurvival.com/collections/shorts"},
+    {n:16, feat:"Arango, Durkin & Shabazz", named:true, note:"The 16th Edition features Anthony Arango, Buzz Durkin and Abdul Shabazz.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:17, feat:"Tention, Zilb & Scott", named:true, note:"The 17th Edition features Jadi Tention, Shi Fu Gregg Zilb and Carl Scott.", src:"https://deadlyartofsurvival.com/collections/shorts"},
+    {n:18, feat:"Digital edition", named:false, note:"The 18th Edition is held in the store's eBooks collection.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:19, feat:"Digital edition", named:false, note:"The 19th Edition is held in the store's eBooks collection.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:20, feat:"The bestseller", named:true, note:"The 20th Edition, in print ($20 on the store) and eBook — the store calls it “our #1 Bestseller Martial Arts Magazine Worldwide.” Patreon members get editions at $12.", src:"https://deadlyartofsurvival.com/products/print-version-deadly-art-of-survival-magazine-20th-edition-the-1-martial-arts-magazine-worldwide"},
+    {n:21, feat:"Master Ken", named:true, note:"The 21st Edition features Master Ken.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:22, feat:"Terwilliger, Hassan, Rivera & Dagooc", named:true, note:"The 22nd Edition features Tom Terwilliger, Najee Hassan, Olando Rivera and Rodel Dagooc.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:23, feat:"Austin Trout & more", named:true, note:"The 23rd Edition features Yoel Judah, Sunnie Road, Austin Trout, Viking Samurai, Robin Black and more.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:24, feat:"Ernest “The Cat” Miller", named:true, note:"The 24th Edition features Ernest “The Cat” Miller, former WCW & WWE superstar — released January 2026.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:25, feat:"The Torres Family", named:true, note:"The 25th Edition features The Torres Family.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:26, feat:"Kai Leung", named:true, note:"The 26th Edition features Kai Leung.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {n:27, feat:"Shannon “The Cannon” Briggs", named:true, note:"The first official cover of the 27th Edition (announced July 26, 2026) features heavyweight boxing icon Shannon “The Cannon” Briggs, under the banner “THE NEW ERA OF DAOS.” Variant covers include Khaleeq Lewis, David Kovar, Helena Crevar and Maggie Messina.", src:"https://deadlyartofsurvival.com/blogs/news/the-champ-is-here-shannon-briggs"},
+    {n:28, feat:"Zoltan Bathory", named:true, note:"The 28th Edition (announced September 22, 2026) features Zoltan Bathory, guitarist and founding member of Five Finger Death Punch — shown in a white BJJ gi with his IBJJF American National gold medals. A variant cover features Dominick Brioche.", src:"https://deadlyartofsurvival.com/blogs/news/five-finger-death-punch-s-zoltan-bathory"}
+  ];
+  var edGrid=document.getElementById('edGrid');
+  var edDetail=document.getElementById('edDetail');
+  var edFilter='all';
+  var edCurrent=28;
+  function ord(n){ var s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+  function edFeat(e){ var d=D(); return (d && d.edFeat[e.n]) || e.feat; }
+  function edNote(e){ var d=D(); return (d && d.edNote[e.n]) || e.note; }
+  function edNum(n){ return LANG==='en' ? ord(n) : String(n); }
+  function renderEds(){
+    edGrid.innerHTML='';
+    EDS.forEach(function(e){
+      if(edFilter==='named' && !e.named) return;
+      var b=document.createElement('button');
+      b.type='button'; b.className='ed-card'; b.setAttribute('aria-pressed', e.n===edCurrent?'true':'false');
+      b.setAttribute('data-n', e.n);
+      b.innerHTML='<div class="cover"><div><div class="brandline">Deadly Art of Survival</div></div><div><div class="no">'+edNum(e.n)+'</div><div class="feat">'+edFeat(e)+'</div></div><div class="brandline">'+T().uiEdition+'</div></div><div class="meta">'+T().uiTap+'</div>';
+      b.addEventListener('click', function(){ showEd(e.n); });
+      edGrid.appendChild(b);
+    });
+  }
+  function showEd(n){
+    var e=null; EDS.forEach(function(x){ if(x.n===n) e=x; });
+    if(!e) return;
+    edCurrent=n;
+    var cards=edGrid.querySelectorAll('.ed-card');
+    cards.forEach(function(c){ c.setAttribute('aria-pressed', c.getAttribute('data-n')==String(n)?'true':'false'); });
+    var head = LANG==='en' ? (ord(n)+' Edition — '+edFeat(e)) : (n+' '+T().uiEdWord+' — '+edFeat(e));
+    edDetail.innerHTML='<div class="label">'+T().uiPlaque+'</div><h3>'+head+'</h3><p>'+edNote(e)+'</p><p class="src">'+T().uiSource+': <a href="'+e.src+'" target="_blank" rel="noopener">'+T().uiStoreSrc+'</a> &middot; <a href="https://deadlyartofsurvival.com/collections/ebooks" target="_blank" rel="noopener">'+T().uiBrowseAll+'</a></p>';
+  }
+  document.querySelectorAll('[data-edfilter]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('[data-edfilter]').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      edFilter=btn.getAttribute('data-edfilter');
+      renderEds(); showEd(edCurrent);
+    });
+  });
+  renderEds(); showEd(28);
+
+  /* ---------- People ---------- */
+  var PPL=[
+    {name:"Wesley Snipes", type:"cover", role:"Cover feature — 6th Edition", text:"Actor and martial artist. The 6th Edition is titled for him, and he is quoted inside the 15th Edition sharing his martial arts history with DAOS.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {name:"Taimak Guarriello", type:"cover", role:"Cover feature — 11th Edition", text:"Star of the 1985 film The Last Dragon. His 11th Edition interview anchors the issue; a boxed hardcover Collector's Edition of #11 — only 5 made — was also released.", src:"https://deadlyartofsurvival.com/en-ca/products/free-sample-read-taimak-the-last-dragon"},
+    {name:"Zoltan Bathory", type:"cover", role:"Cover feature — 28th Edition", text:"Guitarist and founding member of Five Finger Death Punch, and a BJJ black belt shown on the cover with his IBJJF American National gold medals.", src:"https://deadlyartofsurvival.com/blogs/news/five-finger-death-punch-s-zoltan-bathory"},
+    {name:"Shannon “The Cannon” Briggs", type:"cover", role:"Cover feature — 27th Edition", text:"Heavyweight boxing icon. His cover was the first official cover of the 27th Edition, announced July 26, 2026 under “THE NEW ERA OF DAOS.”", src:"https://deadlyartofsurvival.com/blogs/news/the-champ-is-here-shannon-briggs"},
+    {name:"Austin Trout", type:"cover", role:"Cover feature — 23rd Edition", text:"Boxer and BKFC champion, featured on the 23rd Edition alongside Yoel Judah, Robin Black and others.", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {name:"Ernest “The Cat” Miller", type:"cover", role:"Cover feature — 24th Edition", text:"Former WCW & WWE superstar and ring announcer, featured on the 24th Edition (January 2026).", src:"https://deadlyartofsurvival.com/collections/ebooks"},
+    {name:"Grandmaster Caz", type:"guest", role:"Special guest — DAOS CON 6", text:"Hip-hop pioneer of the Cold Crush Brothers. Special guest at DAOS CON 6, March 8, 2026, at The Hip Hop Museum, NYC — a guest appearance, not a magazine cover.", src:"https://deadlyartofsurvival.com/blogs/news/grandmaster-caz"},
+    {name:"Killah Priest", type:"guest", role:"Music collaborator", text:"Wu-Tang affiliate MC. Featured artist on Jake Northfa$e's “The Apartheid (Remix)” — a DAOS music collaboration, not a magazine cover feature.", src:"https://deadlyartofsurvival.com/blogs/news/jake-northfase-unveils-new-visuals"},
+    {name:"Queenzflip", type:"guest", role:"Interviewer & collaborator", text:"Hip-hop media personality (Flip Da Network) who interviewed Nathan Ingram on camera in Chinatown, NYC, with follow-up DAOS articles in November 2025.", src:"https://deadlyartofsurvival.com/blogs/news/before-wild-style-the-film-that-helped-shape-hip-hop"},
+    {name:"The Source Magazine", type:"guest", role:"Press coverage", text:"The hip-hop magazine featured Jake Northfa$e and DAOS on December 15, 2025: “How NYC's Jake Northfa$e Continues To Curate Hip Hop's True Art Form.”", src:"https://thesource.com/2025/12/15/how-nycs-jake-northfae-continues-to-curate-hip-hops-true-art-form/"}
+  ];
+  var pplGrid=document.getElementById('pplGrid');
+  var pFilter='all';
+  function renderPpl(){
+    pplGrid.innerHTML='';
+    var d=D();
+    PPL.forEach(function(p, idx){
+      if(pFilter!=='all' && p.type!==pFilter) return;
+      var role=(d && d.pplRole[idx]) || p.role;
+      var text=(d && d.pplText[idx]) || p.text;
+      var el=document.createElement('article');
+      el.className='person'+(p.type==='cover'?' cover':'');
+      el.innerHTML='<h3>'+p.name+'</h3><div class="role">'+role+'</div><p>'+text+'</p><p class="src" style="margin-top:10px">'+T().uiSource+': <a href="'+p.src+'" target="_blank" rel="noopener">'+T().uiView+'</a></p>';
+      pplGrid.appendChild(el);
+    });
+  }
+  document.querySelectorAll('[data-pfilter]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('[data-pfilter]').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      pFilter=btn.getAttribute('data-pfilter');
+      renderPpl();
+    });
+  });
+  renderPpl();
+
+
+  /* ---------- Accessibility settings (saved on this device only) ---------- */
+  var SETTINGS_KEY = 'daos-museum-settings-v1';
+  var settings = { theme:null, font:'sans', size:100, linespacing:false, contrast:false, motion:false, underline:false, lang:null };
+  try {
+    var savedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
+    if (savedSettings) { for (var sk in settings) { if (savedSettings[sk] !== undefined) settings[sk] = savedSettings[sk]; } }
+  } catch(e) {}
+  if (!settings.theme) {
+    settings.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function saveSettings(){ try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch(e) {} }
+  var themeBtn = document.getElementById('themeBtn');
+  function applySettings(){
+    var r = document.documentElement;
+    r.setAttribute('data-theme', settings.theme);
+    r.setAttribute('data-font', settings.font);
+    r.style.fontSize = settings.size + '%';
+    if (settings.linespacing) r.setAttribute('data-linespacing','roomy'); else r.removeAttribute('data-linespacing');
+    if (settings.contrast) r.setAttribute('data-contrast','high'); else r.removeAttribute('data-contrast');
+    if (settings.motion) r.setAttribute('data-motion','reduced'); else r.removeAttribute('data-motion');
+    if (settings.underline) r.setAttribute('data-underline','all'); else r.removeAttribute('data-underline');
+    document.querySelectorAll('.ts-pct').forEach(function(el){ el.textContent = settings.size + '%'; });
+    document.querySelectorAll('[data-fontopt]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-fontopt') === settings.font ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-setting]').forEach(function(b){
+      b.setAttribute('aria-checked', settings[b.getAttribute('data-setting')] ? 'true' : 'false');
+    });
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-pressed', settings.theme === 'dark' ? 'true' : 'false');
+      themeBtn.setAttribute('aria-label', settings.theme === 'dark' ? T().uiLight : T().uiDark);
+    }
+  }
+  applySettings();
+  if (themeBtn) themeBtn.addEventListener('click', function(){
+    settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
+    saveSettings(); applySettings();
+  });
+  document.querySelectorAll('[data-fontopt]').forEach(function(b){
+    b.addEventListener('click', function(){ settings.font = b.getAttribute('data-fontopt'); saveSettings(); applySettings(); });
+  });
+  document.querySelectorAll('[data-ts]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var a = b.getAttribute('data-ts');
+      if (a === 'inc') settings.size = Math.min(150, settings.size + 10);
+      else if (a === 'dec') settings.size = Math.max(80, settings.size - 10);
+      else settings.size = 100;
+      saveSettings(); applySettings();
+    });
+  });
+  document.querySelectorAll('[data-setting]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var k = b.getAttribute('data-setting');
+      settings[k] = !settings[k];
+      saveSettings(); applySettings();
+    });
+  });
+
+  /* ---------- Toolbar panels ---------- */
+  var PANELS = [
+    { btn: document.getElementById('searchBtn'), panel: document.getElementById('searchPanel'), plus: null },
+    { btn: document.getElementById('fontBtn'),   panel: document.getElementById('fontPanel'),   plus: null },
+    { btn: document.getElementById('a11yBtn'),   panel: document.getElementById('a11yPanel'),   plus: document.getElementById('a11yPlus') }
+  ];
+  function closePanels(except){
+    PANELS.forEach(function(p){
+      if (!p.panel || p === except) return;
+      p.panel.hidden = true;
+      if (p.btn) p.btn.setAttribute('aria-expanded','false');
+      if (p.plus) p.plus.textContent = '+';
+    });
+  }
+  PANELS.forEach(function(p){
+    if (!p.btn || !p.panel) return;
+    p.btn.addEventListener('click', function(){
+      var willOpen = p.panel.hidden;
+      closePanels(p);
+      p.panel.hidden = !willOpen;
+      p.btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      if (p.plus) p.plus.textContent = willOpen ? '−' : '+';
+      if (willOpen && p.panel.id === 'searchPanel') {
+        var inp = document.getElementById('searchInput');
+        if (inp) setTimeout(function(){ inp.focus(); }, 30);
+      }
+    });
+  });
+
+  /* ---------- Museum search ---------- */
+  var searchInput = document.getElementById('searchInput');
+  var searchResults = document.getElementById('searchResults');
+  function escHtml(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function snippetFor(text, q){
+    var lt = text.toLowerCase(), i = lt.indexOf(q);
+    if (i < 0) i = 0;
+    var a = Math.max(0, i - 55), b = Math.min(text.length, i + q.length + 75);
+    var sn = (a > 0 ? '…' : '') + text.slice(a, b) + (b < text.length ? '…' : '');
+    var ls = sn.toLowerCase(), j = ls.indexOf(q);
+    if (j >= 0) sn = escHtml(sn.slice(0, j)) + '<mark>' + escHtml(sn.slice(j, j + q.length)) + '</mark>' + escHtml(sn.slice(j + q.length));
+    else sn = escHtml(sn);
+    return sn;
+  }
+  function buildIndex(){
+    var idx = [];
+    document.querySelectorAll('.plaque, .film-hero, .appfeat').forEach(function(el){
+      var h = el.querySelector('h3, b');
+      if (!h) return;
+      var sec = el.closest('section');
+      var cat = sec ? (sec.querySelector('.wing-head h2') || {}).textContent || '' : '';
+      idx.push({ title: h.textContent.trim(), text: el.textContent.replace(/\s+/g,' ').trim(), cat: cat,
+        getTarget: function(){ return el; }, before: null });
+    });
+    document.querySelectorAll('.visit, .donate').forEach(function(el){
+      var h = el.querySelector('h2');
+      if (!h) return;
+      idx.push({ title: h.textContent.trim(), text: el.textContent.replace(/\s+/g,' ').trim(), cat: '',
+        getTarget: function(){ return el; }, before: null });
+    });
+    TL.forEach(function(t, i){
+      var d = D();
+      var title = (d && d.tlTitle[i]) || t.title;
+      var body = (d && d.tlBody[i]) || t.body;
+      idx.push({ title: t.yr + ' — ' + title, text: t.yr + ' ' + t.title + ' ' + t.body + ' ' + title + ' ' + body, cat: T().navOrigins,
+        before: function(){ showTl(i); },
+        getTarget: function(){ return document.querySelector('.timeline'); } });
+    });
+    EDS.forEach(function(e){
+      idx.push({ title: edNum(e.n) + ' ' + T().uiEdWord + ' — ' + edFeat(e),
+        text: e.n + ' edition ' + e.feat + ' ' + e.note + ' ' + edFeat(e) + ' ' + edNote(e), cat: T().navMagazine,
+        before: function(){
+          if (edFilter !== 'all') {
+            edFilter = 'all';
+            document.querySelectorAll('[data-edfilter]').forEach(function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-edfilter') === 'all' ? 'true' : 'false'); });
+            renderEds();
+          }
+          showEd(e.n);
+        },
+        getTarget: function(){ return edDetail; } });
+    });
+    PPL.forEach(function(p, i){
+      var d = D();
+      var role = (d && d.pplRole[i]) || p.role;
+      var text = (d && d.pplText[i]) || p.text;
+      idx.push({ title: p.name, text: p.name + ' ' + p.role + ' ' + p.text + ' ' + role + ' ' + text, cat: T().navPeople,
+        before: function(){
+          if (pFilter !== 'all') {
+            pFilter = 'all';
+            document.querySelectorAll('[data-pfilter]').forEach(function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-pfilter') === 'all' ? 'true' : 'false'); });
+          }
+          renderPpl();
+        },
+        getTarget: function(){
+          var cards = pplGrid.querySelectorAll('.person'), found = null;
+          cards.forEach(function(c){ if (c.querySelector('h3') && c.querySelector('h3').textContent === p.name) found = c; });
+          return found || pplGrid;
+        } });
+    });
+    return idx;
+  }
+  function jumpTo(entry){
+    if (entry.before) entry.before();
+    var el = entry.getTarget();
+    if (!el) return;
+    setTimeout(function(){
+      el.scrollIntoView({ behavior: settings.motion ? 'auto' : 'smooth', block: 'center' });
+      el.classList.remove('search-flash');
+      void el.offsetWidth;
+      el.classList.add('search-flash');
+      setTimeout(function(){ el.classList.remove('search-flash'); }, 2600);
+    }, 40);
+  }
+  function runSearch(){
+    if (!searchInput || !searchResults) return;
+    var q = searchInput.value.trim().toLowerCase();
+    if (q.length < 2) { searchResults.innerHTML = ''; return; }
+    var idx = buildIndex(), matches = [];
+    idx.forEach(function(en){
+      var lt = en.text.toLowerCase(), ltitle = en.title.toLowerCase();
+      if (ltitle.indexOf(q) >= 0 || lt.indexOf(q) >= 0) matches.push(en);
+    });
+    matches.sort(function(a, b){
+      return (b.title.toLowerCase().indexOf(q) >= 0 ? 1 : 0) - (a.title.toLowerCase().indexOf(q) >= 0 ? 1 : 0);
+    });
+    matches = matches.slice(0, 12);
+    if (!matches.length) {
+      searchResults.innerHTML = '<p class="sr-none">' + escHtml(T().uiNoResults) + '</p>';
+      return;
+    }
+    var countLabel = matches.length === 1 ? T().uiOneResult : (LANG === 'en' ? matches.length + ' ' + T().uiResults : (LANG === 'ja' || LANG === 'zh') ? matches.length + ' ' + T().uiResults : matches.length + ' ' + T().uiResults);
+    var html = '<p class="sr-count">' + escHtml(countLabel) + '</p>';
+    matches.forEach(function(en, i){
+      html += '<button type="button" class="sr-item" data-sr="' + i + '">' +
+        (en.cat ? '<span class="sr-cat">' + escHtml(en.cat) + '</span>' : '') +
+        '<span class="sr-title">' + escHtml(en.title) + '</span>' +
+        '<span class="sr-snip">' + snippetFor(en.text, q) + '</span></button>';
+    });
+    searchResults.innerHTML = html;
+    searchResults.querySelectorAll('[data-sr]').forEach(function(btn){
+      btn.addEventListener('click', function(){ jumpTo(matches[parseInt(btn.getAttribute('data-sr'), 10)]); });
+    });
+    searchResults._matches = matches;
+  }
+  if (searchInput) {
+    searchInput.addEventListener('input', runSearch);
+    searchInput.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        var m = searchResults._matches;
+        if (m && m.length) jumpTo(m[0]);
+      }
+    });
+  }
+  var searchClear = document.getElementById('searchClear');
+  if (searchClear) searchClear.addEventListener('click', function(){
+    searchInput.value = ''; searchResults.innerHTML = ''; searchInput.focus();
+  });
+
+  /* Persist + refresh toolbar when the language changes */
+  document.querySelectorAll('.langpill button').forEach(function(b){
+    b.addEventListener('click', function(){
+      settings.lang = b.getAttribute('data-lang');
+      saveSettings();
+      setTimeout(function(){ applySettings(); runSearch(); }, 0);
+    });
+  });
+  if (settings.lang && I18N[settings.lang] && settings.lang !== LANG) setLang(settings.lang);
+
+  /* ---------- Wing nav active state ---------- */
+  var navLinks=document.querySelectorAll('#wingNav a');
+  var sections=document.querySelectorAll('[data-wing], #visit');
+  function onScroll(){
+    var y=window.scrollY+140, current=null;
+    sections.forEach(function(s){ if(s.offsetTop<=y) current=s.id; });
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href')==='#'+current); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>
