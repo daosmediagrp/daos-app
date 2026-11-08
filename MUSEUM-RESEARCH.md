@@ -123,3 +123,7 @@ The 25th/26th wall-vs-Canva disagreements were not errors: DAOS publishes multip
 
 ## 9. FIRST DAOS PARTY — CORRECTION (Jake, Nov 8, 2026)
 - **The first DAOS Party was at Sour Mouse, New York City** (Jake's word; date not stated). This supersedes the Canva flyer read: a flyer in Canva advertises a DAOS Party "Saturday July 25th" at Hello Hello Bar & Cafe, 26th & 7th Ave, NYC (music by DJ J-Ronin and Jake Northfa$e) — its place in the sequence is unconfirmed. Dec 5, 2026 Row House may therefore be the second or third party, not necessarily the second. No public source found for the Sour Mouse party (search Nov 8, 2026 returned only Dec 5 Row House promo).
+
+## 10. COVER-STAR CORRECTIONS — JAKE (Nov 8, 2026)
+- 1st Edition: the wall now reads **Nathan Ingram — Odette Russell** (Nathan is center on the cover with his signature; Odette Russell top right; Mildred Tse Gonzalez top left, listed as an alternate cover).
+- 5th Edition: the wall now reads **Soke Haisan Kaleak** (the Canva thumbnail read had GM Thomas Gettling foreground, with Kaleak and Kevin Pereira Renshi; Jake names Kaleak as the feature — consistent with the DAOS store's Kaleak page, which points readers to the 5th Edition for his article).
