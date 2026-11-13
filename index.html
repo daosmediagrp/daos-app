@@ -259,11 +259,11 @@ select.finput{appearance:auto}
     <button class="btn" type="button" onclick="goEventPayStep()">Continue to payment &mdash; $5</button>
     <p id="evMsg" class="meta"></p>
     <div id="evPayStep" class="paystep" style="display:none">
-      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay with Stripe (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
-      <button class="btn" type="button" onclick="openEventPayLink()">Pay $5 with Stripe</button>
+      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay at checkout (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
+      <button class="btn" type="button" onclick="openEventPayLink()">Pay $5 at checkout</button>
       <input id="evPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
       <button class="btn" type="button" onclick="submitEvent()">I&rsquo;ve paid &mdash; submit my listing</button>
-      <p class="meta">DAOS checks the email against Stripe before your listing goes live.</p>
+      <p class="meta">DAOS checks the email against your order before your listing goes live.</p>
     </div>
   </div>
   <div class="card"><h3>Community Events</h3><div id="communityEvents"><p class="meta">Loading community events&hellip;</p></div></div>
@@ -317,11 +317,11 @@ select.finput{appearance:auto}
     <button class="btn" type="button" onclick="goSongPayStep()">Continue to payment &mdash; $5</button>
     <p id="sgMsg" class="meta"></p>
     <div id="sgPayStep" class="paystep" style="display:none">
-      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay with Stripe (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
-      <button class="btn" type="button" onclick="openSongPayLink()">Pay $5 with Stripe</button>
+      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay at checkout (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
+      <button class="btn" type="button" onclick="openSongPayLink()">Pay $5 at checkout</button>
       <input id="sgPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
       <button class="btn" type="button" onclick="submitSong()">I&rsquo;ve paid &mdash; submit my song</button>
-      <p class="meta">DAOS checks the email against Stripe before your song is picked.</p>
+      <p class="meta">DAOS checks the email against your order before your song is picked.</p>
     </div>
   </div>
   <div class="card"><h3>Selected songs</h3><div id="selectedSongs"><p class="meta">Songs picked by DAOS show up here.</p></div></div>
@@ -1115,8 +1115,8 @@ async function saveMyProfile(){
    v1: the member enters the email they paid with, and Jake matches
    it against Stripe when approving. Never claim a payment is
    verified — the site cannot check it. */
-var STRIPE_EVENT_PAYMENT_LINK = ''; /* TODO: paste the $5 Stripe payment link for event listings once Stripe is connected. */
-var STRIPE_SONG_PAYMENT_LINK = '';  /* TODO: paste the $5 Stripe payment link for song submissions once Stripe is connected. */
+var STRIPE_EVENT_PAYMENT_LINK = 'https://deadlyartofsurvival.com/cart/50873011306658:1'; /* $5 event listing — Shopify checkout permalink. Jake matches the payer email against the Shopify order when approving. */
+var STRIPE_SONG_PAYMENT_LINK = 'https://deadlyartofsurvival.com/cart/50873011732642:1';  /* $5 song submission — Shopify checkout permalink. Jake matches the payer email against the Shopify order when approving. */
 var EVENT_TYPE_LABELS = {event: 'Event', seminar: 'Seminar', tournament: 'Tournament'};
 function paidGuard(){
   if (!supabaseClient) { openAuthModal(); return false; }
@@ -1167,7 +1167,7 @@ function openEventPayLink(){
 async function submitEvent(){
   var msg = document.getElementById('evMsg');
   var email = document.getElementById('evPayerEmail').value.trim();
-  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter the email you paid with — DAOS matches it against Stripe.'; return; }
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter the email you paid with — DAOS matches it against your order.'; return; }
   if (!supabaseClient || !currentUser) { openAuthModal(); return; }
   var title = document.getElementById('evTitle').value.trim();
   var dateVal = document.getElementById('evDate').value;
@@ -1266,7 +1266,7 @@ function openSongPayLink(){
 async function submitSong(){
   var msg = document.getElementById('sgMsg');
   var email = document.getElementById('sgPayerEmail').value.trim();
-  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter the email you paid with — DAOS matches it against Stripe.'; return; }
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter the email you paid with — DAOS matches it against your order.'; return; }
   if (!supabaseClient || !currentUser) { openAuthModal(); return; }
   var title = document.getElementById('sgTitle').value.trim();
   var artist = document.getElementById('sgArtist').value.trim();
