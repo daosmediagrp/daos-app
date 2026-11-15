@@ -2,21 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>DAOS App — Deadly Art of Survival</title>
 <meta name="description" content="DAOS App — Community, Events, Tournaments, Magazine, Photos, Blog and Music from Deadly Art of Survival.">
 <style>
 *{box-sizing:border-box}:root{--bg:#000;--text:#fff;--card:#111;--card2:#1c1c1c;--border:#222;--muted:#bbb;--muted2:#999}
 body.light{--bg:#fff;--text:#000;--card:#fff;--card2:#f0f0f0;--border:#ddd;--muted:#555;--muted2:#777}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;padding-bottom:64px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+/* App screen-fit: never let the page grow wider than the phone screen.
+   overflow-x:clip keeps sticky headers/tabs working (hidden would break them). */
+html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
+img,video{max-width:100%}
 a{color:var(--text)}.red{color:#E10600}
-header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 12px;display:flex;align-items:center;gap:10px}
-header .logos{display:flex;align-items:center;gap:2px;flex:1}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 10px calc(12px + env(safe-area-inset-left,0px));display:flex;align-items:center;gap:10px;max-width:100vw}
+header .logos{display:flex;align-items:center;gap:2px;flex:1;min-width:0}
 header .logos img{height:38px;width:auto;display:block}
 header .logos img.script{height:24px}
 .iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;position:relative;flex:none}
 .badge{position:absolute;top:-2px;right:-2px;background:#E10600;color:#fff;font-size:11px;font-weight:bold;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
-nav.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--border);padding:6px 8px;position:sticky;top:58px;z-index:19}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--border);padding:6px 8px;position:sticky;top:calc(58px + env(safe-area-inset-top,0px));z-index:19;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
+nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{background:none;border:0;color:var(--muted);font-weight:bold;font-size:14px;padding:8px 12px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
 nav.tabs button.active{color:var(--text);border-bottom-color:#E10600}
 main{max-width:680px;margin:0 auto;padding:12px}
@@ -55,6 +60,11 @@ p{line-height:1.55;color:var(--muted);margin:0 0 10px}
 .ed-stages .now{color:#E10600;font-weight:700}
 .ed-stages .done{color:#34C759;font-weight:700}
 .ed-note{font-size:13px}
+#splash{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .45s}
+#splash.hide{opacity:0;pointer-events:none}
+#splash img{width:120px;height:auto}
+#splash b{color:#fff;font-size:18px;letter-spacing:2px;text-transform:uppercase;text-align:center;padding:0 20px}
+#splash span{color:#E10600;font-weight:700;font-size:13px;letter-spacing:3px;text-transform:uppercase}
 .meta{color:var(--muted2);font-size:13px}
 ul{line-height:1.6;color:var(--muted)}
 section.tabpane{display:none}section.tabpane.active{display:block}
@@ -63,7 +73,7 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .profilecover img.script{height:70px}
 .detail{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border);color:var(--muted)}
 .sidebar{display:none}
-.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 4px}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px calc(4px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(4px + env(safe-area-inset-left,0px))}
 .bottomnav button{background:none;border:0;color:var(--text);font-size:22px;cursor:pointer;position:relative}
 .bottomnav button.active{color:#E10600}
 @media(min-width:900px){
@@ -73,9 +83,20 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   .sidebar a:hover{background:var(--card)}
   main{flex:1;max-width:680px}
 }
+/* Narrow phones (the app): slim the header so every button fits on screen.
+   The Search button has no action, so it hides here; theme toggle also
+   lives in the drawer. */
+@media(max-width:560px){
+  header{gap:6px;padding-left:calc(8px + env(safe-area-inset-left,0px));padding-right:calc(8px + env(safe-area-inset-right,0px))}
+  header button[aria-label="Search"]{display:none}
+  header .logos img.script{height:20px}
+  #authBtn{padding:8px 10px !important}
+  nav.tabs button{padding:8px 10px;font-size:13px}
+  .hero h1{font-size:32px}
+}
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:49;opacity:0;pointer-events:none;transition:opacity .25s}
 .drawer-overlay.open{opacity:1;pointer-events:auto}
-#drawer{position:fixed;top:0;left:0;bottom:0;width:min(85vw,360px);background:var(--card2);z-index:50;transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:12px;box-shadow:2px 0 16px rgba(0,0,0,.4)}
+#drawer{position:fixed;top:0;left:0;bottom:0;width:min(85vw,360px);background:var(--card2);z-index:50;transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:2px 0 16px rgba(0,0,0,.4)}
 #drawer.open{transform:translateX(0)}
 .drawer-head{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px}
 .drawer-head img{height:40px;width:auto;flex:none}
@@ -107,6 +128,8 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .fighter-body h3{margin-bottom:2px}
 .fighter-body h3 a{color:var(--text);text-decoration:none}
 .fighter-votes{font-weight:bold;color:#E10600}
+html,body{touch-action:manipulation}
+input,textarea,select{font-size:16px}
 .finput{width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px;font-size:16px}
 textarea.finput{resize:vertical;min-height:90px}
 .fstatus{font-weight:bold;color:#E10600}
@@ -149,17 +172,58 @@ body.gated #loginGate{display:flex}
 .member-stats{display:flex;gap:16px;justify-content:center;margin:10px 0}
 .member-stats b{display:block;font-size:18px}
 .member-stats span{color:var(--muted2);font-size:13px}
+/* ---- Report / Block + Delete account (App Store compliance) ---- */
+.report-form{border-top:1px solid var(--border);margin-top:10px;padding-top:10px}
+.report-form select,.report-form textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px;font-size:15px}
+.danger-zone{border-top:1px solid var(--border);margin-top:14px;padding-top:12px}
+.danger-zone h3{color:#E10600}
 /* ---- Paid submissions: $5 event / tournament / song listings ---- */
 .radioquote{border-left:3px solid #E10600;padding:10px 12px;margin:10px 0;font-style:italic;color:var(--text)}
 .paystep{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px}
 .typebadge{display:inline-block;background:#E10600;color:#fff;font-size:11px;font-weight:bold;padding:3px 8px;border-radius:10px;letter-spacing:1px;text-transform:uppercase}
 select.finput{appearance:auto}
+/* ---- DAOS digital card + door check-in (Dec 5 Party) ---- */
+.dcard{background:var(--card);border:2px solid #E10600;border-radius:12px;padding:16px;margin:12px 0;text-align:center}
+.dcard h3{margin-bottom:2px}
+.qrbox{background:#fff;border-radius:10px;padding:12px;display:inline-block;margin:12px auto 8px;min-width:224px;min-height:224px}
+.qrbox{text-align:center}.qrbox img,.qrbox canvas,.qrbox table{display:block;margin:0 auto}
+.cardcode{font-family:monospace,monospace;font-size:22px;font-weight:bold;letter-spacing:3px;margin:8px 0 2px}
+.ticketbox{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;text-align:left}
+.ticketbox .big{font-size:18px;font-weight:bold}
+.dcard{padding:0 16px 16px;overflow:hidden}
+.dcard-band{background:#E10600;color:#fff;font-weight:bold;letter-spacing:4px;font-size:15px;padding:8px 0 7px;margin:0 -16px 14px}
+.dcard .avatar-ring{border:3px solid #E10600;border-radius:50%;display:inline-block;line-height:0}
+.cardchips{margin:10px 0 2px}
+.cardchip{display:inline-block;border:1px solid #E10600;color:#fff;border-radius:999px;padding:6px 14px;margin:3px 4px;font-size:14px;text-decoration:none}
+.cardchip:hover{background:#E10600}
+.cardactions{margin-top:12px}
+.cardactions .btn{margin:3px 4px}
+.ticket-yes{color:#2ecc71}.ticket-no{color:#E10600}
+#checkinReader video{width:100% !important;border-radius:10px}
+#checkinReader{max-width:480px;margin:0 auto}
+.checkin-result{margin-top:12px}
+/* ---- Rankings slice 1: categories, filters, share ---- */
+.catpills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.catpill{background:var(--card2);border:1px solid var(--border);color:var(--text);font-weight:bold;font-size:13px;padding:7px 12px;border-radius:16px;cursor:pointer}
+.catpill.active{background:#E10600;border-color:#E10600;color:#fff}
+.rankfilters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.rankfilters select{flex:1 1 120px;min-width:0;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:14px}
+.catbadge{display:inline-block;background:#E10600;color:#fff;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;letter-spacing:1px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.rank-share{margin-top:10px}
+
 </style>
 </head>
-<body>
+<body class="gated">
+<div id="splash"><img src="__CIRCLED__" alt="DAOS"><b>Deadly Art of Survival</b><span>Martial arts &middot; Music &amp; Culture</span></div>
+<script>
+window.addEventListener('load', function(){ var s=document.getElementById('splash'); if(s) s.classList.add('hide'); });
+setTimeout(function(){ var s=document.getElementById('splash'); if(s) s.classList.add('hide'); }, 2500);
+document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.getItem('daos-welcome-seen')){ var w=document.getElementById('welcomeCard'); if(w) w.style.display='block'; } }catch(e){} });
+</script>
 <div id="loginGate">
   <div class="logingate-inner">
     <img src="__CIRCLED__" alt="DAOS">
+    <div id="gateLoginStep">
     <p>Martial arts, music &amp; culture &mdash; members only. Log in or create your free account to join the community.</p>
     <input id="gateEmail" class="ginput" type="email" placeholder="Email" autocomplete="email">
     <input id="gatePass" class="ginput" type="password" placeholder="Password" autocomplete="current-password">
@@ -167,6 +231,19 @@ select.finput{appearance:auto}
     <button class="btn dark" type="button" onclick="gateAuth('signup')" style="width:100%">Create account</button>
     <p id="gateMsg" class="meta"></p>
     <p class="meta">Free to join. No paywall. Oss.</p>
+    </div>
+    <div id="gateProfileStep" style="display:none">
+    <p><b>One more step &mdash; create your profile.</b><br>Your profile is your DAOS identity: it creates your digital DAOS Card with your own QR code for events and check-ins.</p>
+    <input id="gateName" class="ginput" type="text" placeholder="Your name" maxlength="100">
+    <textarea id="gateBio" class="ginput" placeholder="Short bio — who you are, what you do, where you train" maxlength="2000"></textarea>
+    <input id="gateIg" class="ginput" type="text" placeholder="Instagram handle (optional)" maxlength="60">
+    <input id="gateWeb" class="ginput" type="text" placeholder="Website (optional)" maxlength="300">
+    <label class="meta" for="gateAvatar" style="display:block;text-align:left;margin:4px 0">Photo or logo (optional, jpg or png)</label>
+    <input id="gateAvatar" class="ginput" type="file" accept="image/*">
+    <button class="btn" type="button" onclick="gateSaveProfile()" style="width:100%">Create my profile</button>
+    <p id="gateProfileMsg" class="meta"></p>
+    <p class="meta"><a href="#" onclick="authSignOut();return false;">Log out and use a different account</a></p>
+    </div>
   </div>
 </div>
 <header>
@@ -191,6 +268,7 @@ select.finput{appearance:auto}
   <button onclick="showTab('fighters',this)">Fighters</button>
   <button onclick="showTab('network',this)">Network</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
+  <button onclick="showTab('checkin',this)">Check-in</button>
   <button onclick="location.href='museum.html'">Museum</button>
 </nav>
 <div class="layout">
@@ -206,8 +284,10 @@ select.finput{appearance:auto}
 <main>
 <section id="feed" class="tabpane active">
   <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">What's on your mind?</button></div>
+  <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your fighter, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',9)">Vote for a fighter</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
+  <div class="card" id="rankHero"><h3>&#129351; Top fighters this week</h3><div id="rankHeroBody"><p class="meta">Loading rankings&hellip;</p></div></div>
   <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',10)">Create my profile</button></div>
-  <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Public front page — posting is for signed-in members.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
+  <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Members only — log in to continue.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
   <div class="card" id="composerForm" style="display:none"><h3>New post</h3><textarea id="postText" rows="3" placeholder="What's on your mind?" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Post</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
   <div id="memberFeed"></div>
   <div class="members-bubble-overlay" id="membersBubble" onclick="hideMembersBubble()"><div class="members-bubble" onclick="event.stopPropagation()">This section is only for DAOS members.<br><button type="button" onclick="hideMembersBubble()">OK</button></div></div>
@@ -236,7 +316,7 @@ select.finput{appearance:auto}
 </section>
 <section id="events" class="tabpane">
   <div class="hero"><h1>DAOS <span>PARTY</span></h1><p style="color:#fff;font-weight:bold">Saturday, December 5, 2026 &middot; 5:00 PM &ndash; 10:00 PM<br>Row House, 2128 Frederick Douglass Blvd, Harlem, NYC</p><p id="partyCountdown" style="color:#fff;font-weight:bold;font-size:18px"></p><a class="btn white" href="https://deadlyartofsurvival.com/products/daos-party">Tickets</a><a class="btn dark" href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">Bandsintown</a> <button class="btn dark" type="button" onclick="downloadPartyICS()">Add to calendar</button></div>
-  <div class="card"><h3>RSVP — DAOS Party</h3><p>Going? Tell us you're in — tickets are still required via the link above, and this RSVP helps us plan the room.</p><form onsubmit="return submitRSVP(event)"><p><input id="rsvpName" type="text" placeholder="Your name" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpEmail" type="email" placeholder="Email" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpSize" type="number" min="1" max="20" value="1" aria-label="Party size" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"></p><button class="btn" type="submit">Send RSVP</button></form><p id="rsvpDone" class="meta" style="display:none">You're on the list — see you Dec 5 in Harlem. Don't forget your ticket above.</p></div>
+  <div class="card"><h3>RSVP — DAOS Party</h3><p>Going? Tell us you're in — tickets are still required via the link above, and this RSVP helps us plan the room.</p><p id="rsvpCount" class="meta"></p><form onsubmit="return submitRSVP(event, 'daos-party-2026-12-05')"><p><input id="rsvpName" type="text" placeholder="Your name" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpEmail" type="email" placeholder="Email" required style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpPhone" type="tel" placeholder="Phone (optional)" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"><input id="rsvpSize" type="number" min="1" max="20" value="1" aria-label="Party size" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px"></p><button class="btn" type="submit">Send RSVP</button></form><p id="rsvpDone" class="meta" style="display:none">You're on the list — see you Dec 5 in Harlem. Don't forget your ticket above.</p><p id="rsvpError" class="meta" style="display:none;color:#ff6b6b"></p></div>
   <div class="card"><h3>DAOS CON</h3><p>The DAOS Party is the official pre-party to DAOS CON.</p></div>
   <div class="card">
     <h3>Post your event</h3>
@@ -284,7 +364,7 @@ select.finput{appearance:auto}
 </section>
 <section id="magazine" class="tabpane">
   <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival Magazine &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
-  <div class="card"><h3>28th Edition &mdash; In Progress <span class="ed-pill">Processing</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; and it&apos;s still coming together. One cover is left to publish.</p><div class="ed-progress" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: processing, one cover left"><div class="ed-track"><div class="ed-fill"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="now">Processing</span><span>Published</span></div></div><p class="ed-note">Robert &lsquo;Lee&rsquo; Lewis cover published. &middot; 1 cover left to publish. &middot; Updated Nov 9, 2026.</p><a class="btn" href="https://daosmedia.com/museum.html#magazine">See the Edition Wall</a></div>
+  <div class="card"><h3>28th Edition &mdash; In Progress <span class="ed-pill">Processing</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; and it&apos;s still coming together. One cover is left to publish.</p><div class="ed-progress" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: processing, one cover left"><div class="ed-track"><div class="ed-fill"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="now">Processing</span><span>Published</span></div></div><p class="ed-note">Robert &lsquo;Lee&rsquo; Lewis cover published. &middot; 1 cover left to publish. &middot; Updated Nov 9, 2026.</p><a class="btn" href="museum.html#magazine">See the Edition Wall</a></div>
   <div class="card"><h3>Apply to be featured — application</h3><p>The application lives on the DAOS site — tap below and it opens the correct application page. Your profile becomes your feature application.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application</a></div>
   <div class="card"><h3>Martial Artist Vote</h3><p>See the fighters, vote for your favorite, or create your own fighter profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Fighters</button></div>
 </section>
@@ -339,6 +419,23 @@ select.finput{appearance:auto}
       <input id="fpSlug" class="finput" type="text" placeholder="Page name, e.g. jorge-borjas (letters, numbers, hyphens)">
       <input id="fpStyle" class="finput" type="text" placeholder="Style / rank, e.g. Shotokan Karate, 3rd Dan" maxlength="200">
       <textarea id="fpBio" class="finput" placeholder="Short bio — who you are, what you teach, where you are based" maxlength="2000"></textarea>
+      <select id="fpCategory" class="finput" aria-label="Ranking category">
+        <option value="">Ranking category — none yet</option>
+        <option value="mma">MMA</option>
+        <option value="bjj">Brazilian Jiu-Jitsu (BJJ)</option>
+        <option value="striker">Striker</option>
+        <option value="youth">Youth (under 18)</option>
+      </select>
+      <input id="fpStyleName" class="finput" type="text" placeholder="Style, e.g. Karate" list="styleList" maxlength="100">
+      <input id="fpRecord" class="finput" type="text" placeholder="Record, e.g. 12-2-0 (wins-losses-draws)" maxlength="50">
+      <input id="fpSchool" class="finput" type="text" placeholder="School / gym, e.g. Global Champs Karate" maxlength="200">
+      <input id="fpWeight" class="finput" type="text" placeholder="Weight class, e.g. Lightweight" list="weightList" maxlength="100">
+      <input id="fpRegion" class="finput" type="text" placeholder="Region, e.g. New York, NY" list="regionList" maxlength="200">
+      <input id="fpAge" class="finput" type="number" min="5" max="120" step="1" placeholder="Age (numbers only)">
+      <p class="meta">Ranking fields are optional. Leave the category blank to appear only in Top Martial Artists. Top Youth lists fighters in the Youth category who are under 18 — set your age to appear there. Changes to a live profile stay live and are flagged for DAOS review.</p>
+      <datalist id="styleList"><option value="Karate"></option><option value="Taekwondo"></option><option value="Brazilian Jiu-Jitsu"></option><option value="Judo"></option><option value="Kung Fu"></option><option value="MMA"></option><option value="Kickboxing"></option><option value="Muay Thai"></option><option value="Boxing"></option><option value="Hapkido"></option><option value="Aikido"></option></datalist>
+      <datalist id="weightList"><option value="Flyweight"></option><option value="Bantamweight"></option><option value="Featherweight"></option><option value="Lightweight"></option><option value="Welterweight"></option><option value="Middleweight"></option><option value="Light Heavyweight"></option><option value="Heavyweight"></option><option value="Open Weight"></option></datalist>
+      <datalist id="regionList"><option value="New York, NY"></option><option value="New Jersey"></option><option value="Connecticut"></option><option value="Florida"></option><option value="California"></option><option value="Texas"></option><option value="Illinois"></option><option value="Pennsylvania"></option></datalist>
       <label class="meta" for="fpPhoto">Photo (jpg or png)</label>
       <input id="fpPhoto" class="finput" type="file" accept="image/*">
       <p id="fpPhotoNote" class="meta"></p>
@@ -356,22 +453,57 @@ select.finput{appearance:auto}
     <input id="mpName" class="finput" type="text" placeholder="Display name" maxlength="100">
     <textarea id="mpBio" class="finput" placeholder="Short bio — who you are, what you do, where you train" maxlength="2000"></textarea>
     <label class="meta" for="mpAvatar">Photo or logo (jpg or png)</label>
+    <input id="mpInstagram" class="finput" type="text" placeholder="Instagram handle (optional) — e.g. @deadlyartofsurvival" maxlength="60">
+    <input id="mpWebsite" class="finput" type="text" placeholder="Website (optional) — e.g. deadlyartofsurvival.com" maxlength="300">
     <input id="mpAvatar" class="finput" type="file" accept="image/*">
     <p id="mpAvatarNote" class="meta"></p>
     <button class="btn" type="button" onclick="saveMemberProfile()">Save my profile</button>
     <p id="mpMsg" class="meta"></p>
+    <div id="myCardBox"></div>
+    <div id="myCardContacts"></div>
+    <div class="danger-zone" id="deleteAccountBox" style="display:none">
+      <h3>Delete account</h3>
+      <p class="meta">Permanently delete your DAOS account and everything tied to it.</p>
+      <button class="btn dark" id="deleteAccountBtn" type="button" onclick="showDeleteAccountConfirm()">Delete account</button>
+      <div id="deleteAccountConfirm" style="display:none;margin-top:10px">
+        <p><strong>This permanently deletes your profile, posts, likes, comments, follows and fighter profile. This cannot be undone.</strong></p>
+        <button class="btn" type="button" onclick="deleteMyAccount()">Yes, delete my account</button>
+        <button class="btn dark" type="button" onclick="hideDeleteAccountConfirm()">Cancel</button>
+      </div>
+      <p id="deleteAccountMsg" class="meta"></p>
+    </div>
   </div>
   <div class="card"><h3>People to connect with</h3><div id="suggestList"><p class="meta">Loading suggestions&hellip;</p></div></div>
   <div class="card"><h3>Newest members</h3><div id="memberDirectory"><p class="meta">Loading members&hellip;</p></div></div>
 </section>
 <section id="rankings" class="tabpane">
-  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top martial artists by votes, top artists by selected songs, and top members by followers.</p></div>
-  <div class="card"><h3>Top Martial Artists</h3><div id="rankFighters"><p class="meta">Loading&hellip;</p></div></div>
+  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top martial artists by votes, top artists by selected songs, and top members by followers. Pick a category, then narrow it by style, weight, region, or age.</p></div>
+  <div class="card">
+    <h3 id="rankFightersTitle">Top Martial Artists</h3>
+    <div class="catpills" id="rankCatPills"></div>
+    <div class="rankfilters">
+      <select id="rankFilterStyle" aria-label="Filter by style" onchange="onRankFilterChange()"><option value="">All styles</option></select>
+      <select id="rankFilterWeight" aria-label="Filter by weight class" onchange="onRankFilterChange()"><option value="">All weights</option></select>
+      <select id="rankFilterRegion" aria-label="Filter by region" onchange="onRankFilterChange()"><option value="">All regions</option></select>
+      <select id="rankFilterAge" aria-label="Filter by age" onchange="onRankFilterChange()"><option value="">All ages</option><option value="youth">Under 18</option><option value="adult">18 and over</option></select>
+    </div>
+    <p id="rankFilterNote" class="meta"></p>
+    <div id="rankFighters"><p class="meta">Loading&hellip;</p></div>
+    <div class="rank-share"><button class="btn dark" type="button" onclick="shareRankings(this)">Share these rankings</button></div>
+  </div>
   <div class="card"><h3>Top Artists</h3><div id="rankArtists"><p class="meta">Loading&hellip;</p></div></div>
   <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
 </section>
+<section id="checkin" class="tabpane">
+  <div class="card"><h3>Door Check-in — DAOS Party</h3><p>Dec 5, 2026 &middot; 5–10 PM &middot; Row House, Harlem. Staff only: scan a member's DAOS card QR code, or type their short code.</p></div>
+  <div id="checkinBody"><div class="card"><p class="meta">Loading…</p></div></div>
+</section>
+<section id="cardview" class="tabpane">
+  <div id="cardDetail"><div class="card"><p class="meta">Loading card…</p></div></div>
+</section>
 <section id="profile" class="tabpane">
   <div class="profilecover"><img class="script" src="__SCRIPT__" alt="daos"><h2>Deadly Art of Survival Magazine</h2><p>Local business &middot; New York, NY, United States &middot; Always open</p><a class="btn" href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a></div>
+  <div class="card"><h3>My DAOS Card</h3><p>Your digital DAOS card with QR code — your ticket and check-in for DAOS events, starting with the Dec 5 Party.</p><button class="btn" type="button" onclick="goTab('network',10)">View my DAOS card</button></div>
   <div class="card"><h3>Details</h3><div class="detail">&#128205; New York, NY, United States</div><div class="detail">&#128222; +1 917-304-7517</div><div class="detail">&#9993; daosmediagrp@gmail.com</div><div class="detail">&#128279; deadlyartofsurvival.com</div></div>
   <div class="card"><h3>Communities</h3><p>Latest Magazine Updates &mdash; Channel</p></div>
   <div class="card"><h3>Links</h3><p><a href="https://deadlyartofsurvival.com/products/daos-party">DAOS Party tickets</a><br><a href="https://open.spotify.com/artist/6xDnOObztkl0OsrihKaP5C">Jake Northfa$e on Spotify</a><br><a href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">DAOS Party on Bandsintown</a></p></div>
@@ -398,6 +530,7 @@ select.finput{appearance:auto}
   <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Fighters</button>
   <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>Network</button>
   <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
+  <button class="drawer-row" onclick="goTab('checkin',12)"><span class="ic">&#127915;</span>Door Check-in</button>
   <div id="drawerMore" style="display:none">
     <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic">&#128444;</span>Photos</button>
     <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic">&#128240;</span>Blog</button>
@@ -428,6 +561,7 @@ select.finput{appearance:auto}
   <button>&#128276;<span class="badge">1</span></button>
   <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
+<div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or fighter page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* Supabase config — filled in once Jake's project exists. Until then the
@@ -448,16 +582,20 @@ function openAuthModal(){
 }
 function closeAuthModal(){ document.getElementById('authModal').classList.remove('open'); }
 /* ---- Social layer: profiles, feed, network, rankings ----
-   Public-first (Nov 7, 2026): the site is browsable without a login —
-   no login gate on first load. Signing in (Supabase email auth, header
-   Log in button) unlocks posting, following, and member features. After
-   first login, members are prompted to create a profile (display name,
-   bio, photo/logo in the avatars bucket) — posting and following need a
-   profile. The #loginGate markup stays in the page but is never shown
-   by default. Tables live in Supabase (see supabase/social-layer.sql). */
+   Members-only gate (Jake, Nov 15, 2026 — reverses the Nov 7, 2026
+   public-first call): on first open the #loginGate covers the app.
+   Step 1 is Supabase email log in / sign up; step 2 forces profile
+   creation (display name required; bio, photo/logo, Instagram and
+   website optional) before the app opens. Creating the profile is
+   also what issues the member's DAOS Card + unique QR. Public card
+   and fighter links route through the same gate when logged out.
+   Tables live in Supabase (see supabase/social-layer.sql). */
 var currentUser = null;
 var myProfile = null;
+var myIsStaff = false;
 var myFollowIds = {};
+var myBlockedIds = {};
+var accountDeleted = false;
 async function refreshAuth(){
   var btn = document.getElementById('authBtn');
   if (!supabaseClient) {
@@ -476,21 +614,34 @@ async function refreshAuth(){
     btn.textContent = 'Log out';
     btn.onclick = authSignOut;
     document.getElementById('composerForm').style.display = 'block';
+    accountDeleted = false;
     await loadMyMemberProfile();
     await loadMyFollows();
+    await loadMyBlocks();
+    var delBox = document.getElementById('deleteAccountBox');
+    if (delBox) delBox.style.display = 'block';
     loadMemberPosts();
     loadSuggestions();
     loadRankings();
     loadMyProfile();
+    applyGate();
     if (typeof openDeepLink === 'function') openDeepLink();
   } else {
-    /* Public-first: logged-out visitors browse freely; the login gate
-       never appears. The header Log in button opens the auth modal. */
-    document.body.classList.remove('gated');
+    /* Members-only gate (Jake, Nov 15, 2026): logged-out visitors get
+       the gate — log in or create an account first. */
+    applyGate();
     btn.textContent = 'Log in';
     btn.onclick = openAuthModal;
     document.getElementById('composerForm').style.display = 'none';
-    myProfile = null; myFollowIds = {};
+    myProfile = null; myFollowIds = {}; myBlockedIds = {}; myIsStaff = false;
+    /* After an account deletion the success state stays visible in the
+       Network tab card — do not hide the delete box in that case. */
+    if (!accountDeleted) {
+      var delBox2 = document.getElementById('deleteAccountBox');
+      if (delBox2) delBox2.style.display = 'none';
+      var delConfirm = document.getElementById('deleteAccountConfirm');
+      if (delConfirm) delConfirm.style.display = 'none';
+    }
   }
 }
 async function gateAuth(mode){
@@ -509,6 +660,52 @@ async function gateAuth(mode){
     return;
   }
   if (msg) msg.textContent = '';
+  refreshAuth();
+}
+/* Gate state (Nov 15, 2026): no session -> step 1 (log in / sign up);
+   session but no profile -> step 2 (create profile — forced, the app
+   stays closed until it exists); session + profile -> gate lifts. */
+function applyGate(){
+  var stepLogin = document.getElementById('gateLoginStep');
+  var stepProfile = document.getElementById('gateProfileStep');
+  if (currentUser && myProfile) {
+    document.body.classList.remove('gated');
+  } else if (currentUser) {
+    document.body.classList.add('gated');
+    if (stepLogin) stepLogin.style.display = 'none';
+    if (stepProfile) stepProfile.style.display = 'block';
+  } else {
+    document.body.classList.add('gated');
+    if (stepLogin) stepLogin.style.display = 'block';
+    if (stepProfile) stepProfile.style.display = 'none';
+  }
+}
+async function gateSaveProfile(){
+  var msg = document.getElementById('gateProfileMsg');
+  var name = document.getElementById('gateName').value.trim();
+  var bio = document.getElementById('gateBio').value.trim();
+  var igEl = document.getElementById('gateIg');
+  var webEl = document.getElementById('gateWeb');
+  var instagram = igEl ? igEl.value.trim().replace(/^@+/, '').replace(/\s+/g, '') : '';
+  var website = webEl ? webEl.value.trim() : '';
+  if (!name) { if (msg) msg.textContent = 'Add your name — that is how the community knows you.'; return; }
+  if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first.'; return; }
+  if (msg) msg.textContent = 'Creating your profile…';
+  var avatarUrl = null;
+  var fileInput = document.getElementById('gateAvatar');
+  var file = fileInput && fileInput.files && fileInput.files[0];
+  if (file) {
+    if (file.size > 5 * 1024 * 1024) { if (msg) msg.textContent = 'Photo must be under 5 MB.'; return; }
+    var cleanName = file.name.replace(/[^A-Za-z0-9._-]+/g, '_');
+    var path = currentUser.id + '/' + Date.now() + '-' + cleanName;
+    var up = await supabaseClient.storage.from('avatars').upload(path, file, {upsert: false});
+    if (up.error) { if (msg) msg.textContent = 'Photo upload failed: ' + up.error.message; return; }
+    var pub = supabaseClient.storage.from('avatars').getPublicUrl(path);
+    avatarUrl = pub.data && pub.data.publicUrl;
+  }
+  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl, instagram: instagram || null, website: website || null};
+  var res = await supabaseClient.from('profiles').upsert(row);
+  if (res.error) { if (msg) msg.textContent = res.error.message; return; }
   refreshAuth();
 }
 async function authSignIn(){
@@ -594,7 +791,10 @@ function renderPostCard(p, pmap, origMap, liked, reposted, highlightId){
     '<button class="pact" type="button" onclick="toggleComments(' + p.id + ',this)">&#128172; Comment' + (p.comment_count ? ' (' + p.comment_count + ')' : '') + '</button>' +
     '<button class="pact" type="button" onclick="shareMemberPost(' + p.id + ',this)">&#128279; Share</button>' +
     '<button class="pact' + (reposted[p.id] ? ' liked' : '') + '" type="button" onclick="toggleRepost(' + p.id + ',this)">&#128260; Repost' + (p.repost_count ? ' (' + p.repost_count + ')' : '') + '</button>' +
+    '<button class="pact" type="button" onclick="openReportForm(' + p.id + ',this)">&#9888; Report</button>' +
+    (currentUser && p.user_id !== currentUser.id ? '<button class="pact" type="button" onclick="blockAuthor(\'' + escapeHtml(p.user_id) + '\',this)">Block</button>' : '') +
     '</div>' +
+    '<div class="report-form" id="report-' + p.id + '" style="display:none"></div>' +
     '<div class="comments" id="comments-' + p.id + '" style="display:none"></div>';
   d.innerHTML = inner;
   return d.outerHTML;
@@ -611,6 +811,10 @@ async function loadMemberPosts(highlightId){
     var hp = await supabaseClient.from('posts').select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of').eq('id', highlightId).maybeSingle();
     if (hp.data && !posts.some(function(p){ return String(p.id) === String(hp.data.id); })) posts.unshift(hp.data);
   }
+  // Hide posts from members the current user has blocked (Report + Block,
+  // App Store Guideline 1.2). The block list is loaded in refreshAuth
+  // before this runs; an empty list filters nothing.
+  posts = posts.filter(function(p){ return !myBlockedIds[p.user_id]; });
   var ids = [];
   posts.forEach(function(p){ if (ids.indexOf(p.user_id) === -1) ids.push(p.user_id); });
   var origIds = [];
@@ -740,6 +944,156 @@ async function loadMyFollows(){
   var res = await supabaseClient.from('follows').select('following_id').eq('follower_id', currentUser.id);
   (res.data || []).forEach(function(r){ myFollowIds[r.following_id] = true; });
 }
+/* ---- Report + Block (App Store Guideline 1.2) ----
+   Tables live in Supabase (see supabase/report-block.sql).
+   Report: a member flags a post (spam / harassment / inappropriate /
+   other + optional details). Reports are only readable by the reporter
+   and by Jake in the dashboard Table Editor — no admin UI in the app.
+   Block: a member blocks another member. Blocked authors' posts are
+   hidden from the feed (filtered in loadMemberPosts) and blocked
+   members disappear from suggestions and the member directory. */
+async function loadMyBlocks(){
+  myBlockedIds = {};
+  if (!supabaseClient || !currentUser) return;
+  var res = await supabaseClient.from('user_blocks').select('blocked_id').eq('blocker_id', currentUser.id);
+  if (res.error) return;
+  (res.data || []).forEach(function(r){ myBlockedIds[r.blocked_id] = true; });
+}
+function openReportForm(postId, btn){
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  var box = document.getElementById('report-' + postId);
+  if (!box) return;
+  if (box.style.display === 'block') { box.style.display = 'none'; return; }
+  box.innerHTML = '<label class="meta" for="report-reason-' + postId + '">Why are you reporting this post?</label>' +
+    '<select id="report-reason-' + postId + '" aria-label="Report reason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="inappropriate">Inappropriate</option><option value="other">Other</option></select>' +
+    '<textarea id="report-details-' + postId + '" rows="2" placeholder="Details (optional)" maxlength="2000"></textarea>' +
+    '<button class="btn" type="button" onclick="submitReport(' + postId + ')">Send report</button> ' +
+    '<button class="btn dark" type="button" onclick="cancelReportForm(' + postId + ')">Cancel</button>' +
+    '<p id="report-msg-' + postId + '" class="meta"></p>';
+  box.style.display = 'block';
+}
+function cancelReportForm(postId){
+  var box = document.getElementById('report-' + postId);
+  if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+}
+async function submitReport(postId){
+  var msg = document.getElementById('report-msg-' + postId);
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  var reasonEl = document.getElementById('report-reason-' + postId);
+  var detailsEl = document.getElementById('report-details-' + postId);
+  var reason = reasonEl ? reasonEl.value : 'other';
+  var details = detailsEl ? detailsEl.value.trim() : '';
+  if (msg) msg.textContent = 'Sending…';
+  var res = await supabaseClient.from('post_reports').insert({reporter_id: currentUser.id, post_id: postId, reason: reason, details: details || null});
+  if (res.error) { if (msg) msg.textContent = 'Could not send report: ' + res.error.message; return; }
+  var box = document.getElementById('report-' + postId);
+  if (box) box.innerHTML = '<p class="meta">Report sent — thanks. DAOS will review it.</p>';
+}
+function blockButtonHtml(userId){
+  if (!currentUser || userId === currentUser.id) return '';
+  if (myBlockedIds[userId]) return '<button class="btn dark" type="button" onclick="unblockMember(\'' + escapeHtml(userId) + '\',this)">Blocked — tap to unblock</button>';
+  return '<button class="btn dark" type="button" onclick="blockMember(\'' + escapeHtml(userId) + '\',this)">Block user</button>';
+}
+async function blockAuthor(userId, btn){
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  if (userId === currentUser.id) return;
+  if (!confirm('Block this member? You will no longer see their posts in your feed.')) return;
+  var res = await supabaseClient.from('user_blocks').insert({blocker_id: currentUser.id, blocked_id: userId});
+  // 23505 = already blocked (unique pair) — treat as blocked, not an error.
+  if (res.error && res.error.code !== '23505') {
+    if (btn) btn.textContent = 'Could not block — try again';
+    return;
+  }
+  myBlockedIds[userId] = true;
+  if (btn) btn.textContent = 'Blocked ✓';
+  loadMemberPosts();
+  loadSuggestions();
+}
+async function blockMember(userId, btn){
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  if (userId === currentUser.id) return;
+  if (!confirm('Block this member? You will no longer see their posts in your feed.')) return;
+  var msg = document.getElementById('memberBlockMsg');
+  var res = await supabaseClient.from('user_blocks').insert({blocker_id: currentUser.id, blocked_id: userId});
+  if (res.error && res.error.code !== '23505') {
+    if (msg) msg.textContent = 'Could not block: ' + res.error.message;
+    return;
+  }
+  myBlockedIds[userId] = true;
+  if (btn) { btn.textContent = 'Blocked — tap to unblock'; btn.onclick = function(){ unblockMember(userId, btn); }; }
+  if (msg) msg.textContent = 'Blocked — their posts will no longer appear in your feed.';
+  loadMemberPosts();
+  loadSuggestions();
+}
+async function unblockMember(userId, btn){
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  var msg = document.getElementById('memberBlockMsg');
+  var res = await supabaseClient.from('user_blocks').delete().eq('blocker_id', currentUser.id).eq('blocked_id', userId);
+  if (res.error) {
+    if (msg) msg.textContent = 'Could not unblock: ' + res.error.message;
+    return;
+  }
+  delete myBlockedIds[userId];
+  if (btn) { btn.textContent = 'Block user'; btn.onclick = function(){ blockMember(userId, btn); }; }
+  if (msg) msg.textContent = 'Unblocked.';
+  loadMemberPosts();
+  loadSuggestions();
+}
+/* ---- Delete account (App Store Guideline 5.1.1(v)) ----
+   Two-tap confirm in the Network tab "My Profile" card, then the
+   delete-account Edge Function (supabase/functions/delete-account)
+   deletes the profile, posts, likes, comments, follows, reposts and
+   fighter profile, then the auth user. On success the user is signed
+   out and a success state stays visible in the card. On ANY failure
+   the error is shown plainly — the app never claims the account was
+   deleted when it was not. */
+function showDeleteAccountConfirm(){
+  var c = document.getElementById('deleteAccountConfirm');
+  var m = document.getElementById('deleteAccountMsg');
+  if (c) c.style.display = 'block';
+  if (m) m.textContent = '';
+}
+function hideDeleteAccountConfirm(){
+  var c = document.getElementById('deleteAccountConfirm');
+  if (c) c.style.display = 'none';
+}
+async function deleteMyAccount(){
+  var msg = document.getElementById('deleteAccountMsg');
+  if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first.'; return; }
+  if (msg) msg.textContent = 'Deleting your account…';
+  var sess = await supabaseClient.auth.getSession();
+  var token = sess.data && sess.data.session && sess.data.session.access_token;
+  if (!token) { if (msg) msg.textContent = 'Your session expired — log in again and retry.'; return; }
+  var res = await supabaseClient.functions.invoke('delete-account', {
+    headers: { Authorization: 'Bearer ' + token },
+    body: {}
+  });
+  if (res.error) {
+    if (msg) msg.textContent = 'Could not delete your account: ' + (res.error.message || 'request failed') + ' — nothing was deleted. Try again, or contact DAOS.';
+    return;
+  }
+  if (res.data && res.data.error) {
+    if (msg) msg.textContent = 'Could not delete your account: ' + res.data.error;
+    return;
+  }
+  // Success: hide the confirm + button, show the success state, then
+  // sign out. The success text stays visible in this card afterwards
+  // (refreshAuth keeps the box shown when accountDeleted is set).
+  accountDeleted = true;
+  var confirmBox = document.getElementById('deleteAccountConfirm');
+  if (confirmBox) confirmBox.style.display = 'none';
+  var delBtn = document.getElementById('deleteAccountBtn');
+  if (delBtn) delBtn.style.display = 'none';
+  if (msg) msg.textContent = 'Your account has been deleted.';
+  var box = document.getElementById('deleteAccountBox');
+  if (box) {
+    var done = document.createElement('p');
+    done.innerHTML = '<strong>Your account has been deleted.</strong> Your profile, posts, likes, comments, follows and fighter profile are gone.';
+    box.appendChild(done);
+  }
+  await supabaseClient.auth.signOut();
+  refreshAuth();
+}
 /* ---- Member profiles (Network) ----
    One profile per member (id = auth user id). Avatars upload to the
    'avatars' storage bucket, into a folder named after the user's own id. */
@@ -747,25 +1101,36 @@ async function loadMyMemberProfile(){
   var statusEl = document.getElementById('mpStatus');
   var setupCard = document.getElementById('profileSetupCard');
   if (!supabaseClient || !currentUser) { myProfile = null; return; }
-  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received').eq('id', currentUser.id).maybeSingle();
+  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received,card_token,card_code,is_staff,instagram,website,card_views').eq('id', currentUser.id).maybeSingle();
   if (res.error) { if (statusEl) statusEl.textContent = 'Could not load your profile: ' + res.error.message; return; }
   myProfile = res.data || null;
+  myIsStaff = !!(myProfile && myProfile.is_staff);
   if (myProfile) {
     document.getElementById('mpName').value = myProfile.display_name || '';
     document.getElementById('mpBio').value = myProfile.bio || '';
+    var igEl = document.getElementById('mpInstagram'); if (igEl) igEl.value = myProfile.instagram || '';
+    var webEl = document.getElementById('mpWebsite'); if (webEl) webEl.value = myProfile.website || '';
     var note = document.getElementById('mpAvatarNote');
     if (note) note.textContent = myProfile.avatar_url ? 'Current photo/logo is set — choose a new file to replace it.' : 'No photo or logo yet — add one so people recognize you.';
     if (statusEl) statusEl.textContent = myProfile.followers_count + ' followers · ' + myProfile.following_count + ' following · ' + myProfile.likes_received + ' likes received';
     if (setupCard) setupCard.style.display = 'none';
+    renderMyCardBox();
   } else {
+    myIsStaff = false;
     if (statusEl) statusEl.textContent = 'No profile yet — create one so people can find and follow you.';
     if (setupCard) setupCard.style.display = 'block';
+    var myCard = document.getElementById('myCardBox');
+    if (myCard) myCard.innerHTML = '';
   }
 }
 async function saveMemberProfile(){
   var msg = document.getElementById('mpMsg');
   var name = document.getElementById('mpName').value.trim();
   var bio = document.getElementById('mpBio').value.trim();
+  var igInput = document.getElementById('mpInstagram');
+  var webInput = document.getElementById('mpWebsite');
+  var instagram = igInput ? igInput.value.trim().replace(/^@+/, '').replace(/\s+/g, '') : '';
+  var website = webInput ? webInput.value.trim() : '';
   if (!name) { if (msg) msg.textContent = 'Add your display name first.'; return; }
   if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first.'; return; }
   if (msg) msg.textContent = 'Saving…';
@@ -781,7 +1146,7 @@ async function saveMemberProfile(){
     var pub = supabaseClient.storage.from('avatars').getPublicUrl(path);
     avatarUrl = pub.data && pub.data.publicUrl;
   }
-  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl};
+  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl, instagram: instagram || null, website: website || null};
   var res = myProfile
     ? await supabaseClient.from('profiles').update(row).eq('id', currentUser.id)
     : await supabaseClient.from('profiles').insert(row);
@@ -806,7 +1171,7 @@ async function loadSuggestions(){
   var top = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count').order('followers_count', {ascending: false}).limit(10);
   var seen = {}, cands = [];
   (top.data || []).concat(newest.data || []).forEach(function(p){
-    if (p.id === currentUser.id || myFollowIds[p.id] || seen[p.id]) return;
+    if (p.id === currentUser.id || myFollowIds[p.id] || myBlockedIds[p.id] || seen[p.id]) return;
     seen[p.id] = true; cands.push(p);
   });
   cands = cands.slice(0, 8);
@@ -815,25 +1180,243 @@ async function loadSuggestions(){
   if (side) side.innerHTML = cands.slice(0, 3).map(suggestRowHtml).join('');
   if (sideCard) sideCard.style.display = cands.length ? 'block' : 'none';
   if (dir) {
-    var all = (newest.data || []).slice(0, 12);
+    var all = (newest.data || []).filter(function(p){ return !myBlockedIds[p.id]; }).slice(0, 12);
     dir.innerHTML = all.length ? all.map(suggestRowHtml).join('') : '<p class="meta">No members yet.</p>';
   }
 }
-async function loadRankings(){
+/* ---- Rankings slice 1: categories + filters + share ----
+   Categories: Top Martial Artists (all live fighters, by votes) plus
+   Top MMA Fighters, Top BJJ, Top Strikers, Top Youth — each ranked by
+   votes within its category. A fighter appears in a category ONLY when
+   its category field is set to that category; uncategorized fighters
+   show in Top Martial Artists only. Top Youth additionally requires
+   age < 18 by the age field — a 'youth' category with no age (or 18+)
+   does not list there. Filters (style / weight / region / age) narrow
+   the ranked list client-side, within the selected category.
+   NO invented facts: the site never assigns a category from a bio.
+   The new fighter_profiles columns land with
+   supabase/fighter-rankings.sql; until that migration runs, the fetch
+   below falls back to the old column set so the leaderboard keeps
+   working (rows just have no category / style / record / school /
+   weight / region / age until then). */
+var RANKING_CATEGORIES = [
+  {key: 'all', label: 'Top Martial Artists'},
+  {key: 'mma', label: 'Top MMA Fighters'},
+  {key: 'bjj', label: 'Top BJJ'},
+  {key: 'striker', label: 'Top Strikers'},
+  {key: 'youth', label: 'Top Youth'}
+];
+var RANKING_CATEGORY_LABELS = {mma: 'MMA', bjj: 'BJJ', striker: 'Striker', youth: 'Youth'};
+var FIGHTER_RANKING_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count,category,style,record,school,weight_class,region,age';
+var FIGHTER_BASE_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count';
+var rankingCategory = 'all';
+var rankingFilters = {style: '', weight: '', region: '', age: ''};
+var allRankedFighters = [];
+function rankingCategoryDef(key){
+  for (var i = 0; i < RANKING_CATEGORIES.length; i++) if (RANKING_CATEGORIES[i].key === key) return RANKING_CATEGORIES[i];
+  return RANKING_CATEGORIES[0];
+}
+function fighterCategoryLabel(f){ return RANKING_CATEGORY_LABELS[f.category] || ''; }
+function fighterDetailLine(f){
+  var parts = [];
+  if (f.style) parts.push(f.style);
+  if (f.record) parts.push('Record ' + f.record);
+  if (f.school) parts.push(f.school);
+  if (f.weight_class) parts.push(f.weight_class);
+  if (f.region) parts.push(f.region);
+  if (f.age != null && f.age !== '') parts.push('Age ' + f.age);
+  return parts.join(' · ');
+}
+function fighterMetaHtml(f){
+  var line = fighterDetailLine(f);
+  var badge = fighterCategoryLabel(f);
+  var styleLine = f.style_rank ? escapeHtml(f.style_rank) : '';
+  var html = '';
+  if (styleLine) html += '<p class="meta">' + styleLine + (badge ? '<span class="catbadge">' + escapeHtml(badge) + '</span>' : '') + '</p>';
+  else if (badge) html += '<p class="meta"><span class="catbadge">' + escapeHtml(badge) + '</span></p>';
+  if (line) html += '<p class="meta">' + escapeHtml(line) + '</p>';
+  return html;
+}
+async function fetchLiveFighters(){
+  if (!supabaseClient) return null;
+  var res = await supabaseClient.from('fighter_profiles').select(FIGHTER_RANKING_COLS).eq('status', 'live');
+  if (res.error) {
+    // Rankings columns not live yet (migration not run) — fall back to
+    // the old column set so the leaderboard keeps working.
+    res = await supabaseClient.from('fighter_profiles').select(FIGHTER_BASE_COLS).eq('status', 'live');
+  }
+  if (res.error) return null;
+  return res.data || [];
+}
+function rankingVisibleFighters(){
+  var list = allRankedFighters.slice();
+  if (rankingCategory === 'youth') {
+    list = list.filter(function(f){ return f.category === 'youth' && f.age != null && f.age !== '' && f.age < 18; });
+  } else if (rankingCategory !== 'all') {
+    list = list.filter(function(f){ return f.category === rankingCategory; });
+  }
+  if (rankingFilters.style) list = list.filter(function(f){ return (f.style || '') === rankingFilters.style; });
+  if (rankingFilters.weight) list = list.filter(function(f){ return (f.weight_class || '') === rankingFilters.weight; });
+  if (rankingFilters.region) list = list.filter(function(f){ return (f.region || '') === rankingFilters.region; });
+  if (rankingFilters.age === 'youth') list = list.filter(function(f){ return f.age != null && f.age !== '' && f.age < 18; });
+  if (rankingFilters.age === 'adult') list = list.filter(function(f){ return f.age != null && f.age !== '' && f.age >= 18; });
+  list.sort(function(a, b){ return (b.votes_count || 0) - (a.votes_count || 0) || ((a.display_name || '') < (b.display_name || '') ? -1 : (a.display_name || '') > (b.display_name || '') ? 1 : 0); });
+  return list;
+}
+function distinctRankValues(field){
+  var seen = {}, out = [];
+  allRankedFighters.forEach(function(f){
+    var v = f[field];
+    if (v != null && v !== '' && !seen[v]) { seen[v] = true; out.push(v); }
+  });
+  return out.sort();
+}
+function fillRankFilterSelect(id, values, current){
+  var sel = document.getElementById(id);
+  if (!sel) return;
+  var first = sel.options.length ? sel.options[0] : null;
+  sel.innerHTML = '';
+  if (first) sel.appendChild(first);
+  values.forEach(function(v){
+    var o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+  sel.value = values.indexOf(current) !== -1 ? current : '';
+}
+function fillRankFilterOptions(){
+  fillRankFilterSelect('rankFilterStyle', distinctRankValues('style'), rankingFilters.style);
+  fillRankFilterSelect('rankFilterWeight', distinctRankValues('weight_class'), rankingFilters.weight);
+  fillRankFilterSelect('rankFilterRegion', distinctRankValues('region'), rankingFilters.region);
+  var ageSel = document.getElementById('rankFilterAge');
+  if (ageSel) ageSel.value = rankingFilters.age || '';
+}
+function renderRankCatPills(){
+  var box = document.getElementById('rankCatPills');
+  if (!box) return;
+  box.innerHTML = RANKING_CATEGORIES.map(function(c){
+    return '<button class="catpill' + (c.key === rankingCategory ? ' active' : '') + '" type="button" onclick="setRankingCategory(\'' + c.key + '\')">' + escapeHtml(c.label) + '</button>';
+  }).join('');
+}
+function setRankingCategory(key){
+  rankingCategory = rankingCategoryDef(key).key;
+  try {
+    if (window.history && window.history.replaceState) history.replaceState(null, '', '#/rankings/' + rankingCategory);
+  } catch (e) {}
+  renderRankCatPills();
+  renderRankings();
+}
+function onRankFilterChange(){
+  var s = document.getElementById('rankFilterStyle');
+  var w = document.getElementById('rankFilterWeight');
+  var r = document.getElementById('rankFilterRegion');
+  var a = document.getElementById('rankFilterAge');
+  rankingFilters.style = s ? s.value : '';
+  rankingFilters.weight = w ? w.value : '';
+  rankingFilters.region = r ? r.value : '';
+  rankingFilters.age = a ? a.value : '';
+  renderRankings();
+}
+function renderRankings(){
   var rf = document.getElementById('rankFighters');
-  var rm = document.getElementById('rankMembers');
-  if (!supabaseClient) return;
-  if (rf) {
-    var fres = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,photo_url,votes_count').eq('status', 'live').order('votes_count', {ascending: false}).order('display_name').limit(10);
-    if (fres.error || !fres.data || !fres.data.length) { rf.innerHTML = '<p class="meta">No live fighter profiles yet.</p>'; }
-    else {
-      rf.innerHTML = fres.data.map(function(p, i){
-        return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml(p) +
-          '<div class="who"><b><a href="#/fighter/' + escapeHtml(p.slug) + '">' + escapeHtml(p.display_name) + '</a></b><span>' + escapeHtml(p.style_rank || '') + '</span></div>' +
-          '<span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></div>';
-      }).join('');
+  if (!rf) return;
+  var title = document.getElementById('rankFightersTitle');
+  if (title) title.textContent = rankingCategoryDef(rankingCategory).label;
+  var note = document.getElementById('rankFilterNote');
+  var list = rankingVisibleFighters();
+  if (note) {
+    if (!list.length && allRankedFighters.length) {
+      note.textContent = 'No fighters match this category and these filters yet — try clearing a filter.';
+    } else if (rankingCategory === 'youth') {
+      note.textContent = 'Top Youth lists fighters in the Youth category who are under 18.';
+    } else if (rankingCategory !== 'all') {
+      note.textContent = 'Only fighters who set this category appear here — uncategorized fighters show in Top Martial Artists.';
+    } else {
+      note.textContent = '';
     }
   }
+  if (!list.length) {
+    rf.innerHTML = allRankedFighters.length
+      ? '<p class="meta">No fighters in this ranking yet.</p>'
+      : '<p class="meta">No live fighter profiles yet.</p>';
+    return;
+  }
+  rf.innerHTML = list.map(function(p, i){
+    return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml(p) +
+      '<div class="who"><b><a href="#/fighter/' + escapeHtml(p.slug) + '">' + escapeHtml(p.display_name) + '</a>' + (fighterCategoryLabel(p) ? '<span class="catbadge">' + escapeHtml(fighterCategoryLabel(p)) + '</span>' : '') + '</b><span>' + escapeHtml(fighterDetailLine(p) || p.style_rank || '') + '</span></div>' +
+      '<span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span> ' +
+      '<button class="btn dark" type="button" onclick="shareFighter(\'' + escapeHtml(p.slug) + '\',this)">Share</button></div>';
+  }).join('');
+}
+/* ---- Share a ranking or fighter page ----
+   Web Share API first (native sheet on phones, including the app
+   webview when the OS exposes it). Fallback is an in-app share sheet:
+   WhatsApp (wa.me link), Facebook (sharer.php), copy link, and
+   Instagram — Instagram has NO web share intent for posts, so that
+   button copies the link and opens instagram.com for a manual paste.
+   Never claim a direct Instagram share. In the Capacitor webview
+   navigator.share may be absent — the sheet still works there, and
+   copy link always works. */
+function rankingShareUrl(){ return 'https://daosmedia.com/#/rankings/' + rankingCategory; }
+function rankingShareTitle(){ return 'DAOS Rankings — ' + rankingCategoryDef(rankingCategory).label; }
+function shareLink(title, text, url, btn){
+  var openSheet = function(){ openShareSheet(title, text, url); };
+  try {
+    if (navigator.share) {
+      navigator.share({title: title, text: text, url: url}).catch(function(){ openSheet(); });
+      return;
+    }
+  } catch (e) {}
+  openSheet();
+}
+function openShareSheet(title, text, url){
+  var sheet = document.getElementById('shareSheet');
+  if (!sheet) return;
+  var wa = document.getElementById('shareWa');
+  if (wa) wa.href = 'https://wa.me/?text=' + encodeURIComponent((text ? text + ' ' : '') + url);
+  var fb = document.getElementById('shareFb');
+  if (fb) fb.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+  var cp = document.getElementById('shareCopy');
+  if (cp) cp.onclick = function(){ copyShareLink(url, cp); };
+  var ig = document.getElementById('shareIg');
+  if (ig) ig.onclick = function(){ copyShareLink(url, ig); openExternal('https://www.instagram.com/'); };
+  var t = document.getElementById('shareSheetTitle');
+  if (t) t.textContent = title || 'Share';
+  sheet.classList.add('open');
+}
+function closeShareSheet(){
+  var sheet = document.getElementById('shareSheet');
+  if (sheet) sheet.classList.remove('open');
+}
+function copyShareLink(url, btn){
+  var done = function(){
+    if (!btn) return;
+    var old = btn.textContent;
+    btn.textContent = 'Link copied \u2713';
+    setTimeout(function(){ btn.textContent = old; }, 2000);
+  };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, function(){ fallbackCopy(url); done(); });
+    } else { fallbackCopy(url); done(); }
+  } catch (e) { fallbackCopy(url); done(); }
+}
+function shareRankings(btn){
+  shareLink(rankingShareTitle(), 'See the DAOS ' + rankingCategoryDef(rankingCategory).label + ' rankings:', rankingShareUrl(), btn);
+}
+async function loadRankings(){
+  var rm = document.getElementById('rankMembers');
+  var fighters = await fetchLiveFighters();
+  if (fighters === null) {
+    var rfErr = document.getElementById('rankFighters');
+    if (rfErr) rfErr.innerHTML = '<p class="meta">Could not load rankings.</p>';
+  } else {
+    allRankedFighters = fighters;
+    fillRankFilterOptions();
+    renderRankCatPills();
+    renderRankings();
+  }
+  if (!supabaseClient) return;
   var ra = document.getElementById('rankArtists');
   if (ra) {
     var ares = await supabaseClient.from('song_submissions').select('artist_name,song_title,created_at').eq('status', 'selected').order('created_at', {ascending: false}).limit(50);
@@ -876,7 +1459,7 @@ async function openMember(userId){
   box.style.display = 'block';
   box.innerHTML = '<div class="card"><p class="meta">Loading profile…</p></div>';
   if (!supabaseClient) { box.innerHTML = '<div class="card"><p class="meta">This profile is not available yet.</p></div>'; return; }
-  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received,created_at').eq('id', userId).maybeSingle();
+  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received,created_at,card_token,card_code,instagram,website').eq('id', userId).maybeSingle();
   if (res.error || !res.data) { box.innerHTML = '<div class="card"><p>This member profile does not exist yet.</p><button class="btn dark" type="button" onclick="closeMember()">Back</button></div>'; return; }
   var p = res.data;
   var pres = await supabaseClient.from('posts').select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of').eq('user_id', userId).order('created_at', {ascending: false}).limit(10);
@@ -905,8 +1488,18 @@ async function openMember(userId){
     '<h2>' + escapeHtml(p.display_name) + '</h2>' +
     '<p>' + escapeHtml(p.bio || '') + '</p></div>' +
     '<div class="member-stats"><div><b>' + p.followers_count + '</b><span>Followers</span></div><div><b>' + p.following_count + '</b><span>Following</span></div><div><b>' + p.likes_received + '</b><span>Likes</span></div></div>' +
-    '<div style="text-align:center">' + followButtonHtml(p.id) + ' <button class="btn dark" type="button" onclick="closeMember()">Back</button></div>';
+    '<div style="text-align:center">' + followButtonHtml(p.id) + ' ' + blockButtonHtml(p.id) + ' <button class="btn dark" type="button" onclick="closeMember()">Back</button></div>' +
+    '<p id="memberBlockMsg" class="meta" style="text-align:center"></p>';
   box.innerHTML = ''; box.appendChild(d);
+  // DAOS digital card: public QR + short code for everyone; ticket
+  // status + check-in only when the viewer is staff.
+  if (p.card_token) {
+    var cardWrap = document.createElement('div');
+    cardWrap.innerHTML = cardBoxHtml(p, {qrId: 'memberCardQr', ticketId: 'memberCardTicket', showLink: true});
+    box.appendChild(cardWrap);
+    renderCardQr('memberCardQr', p.card_token, p.card_code);
+    if (myIsStaff) loadTicketIntoBox('memberCardTicket', {token: p.card_token});
+  }
   if (posts.length) {
     var list = document.createElement('div');
     list.innerHTML = '<h3 style="margin:12px 0 8px">Posts by ' + escapeHtml(p.display_name) + '</h3>' + posts.map(function(x){ return renderPostCard(x, pmap, origMap, liked, reposted, null); }).join('');
@@ -939,17 +1532,27 @@ function fighterPhotoHtml(p, big){
   if (p.photo_url) return '<div class="' + cls + '"><img src="' + escapeHtml(p.photo_url) + '" alt="' + escapeHtml(p.display_name) + '"></div>';
   return '<div class="' + cls + '">' + escapeHtml((p.display_name || '?').charAt(0)) + '</div>';
 }
+function renderRankHero(fighters){
+  var hero = document.getElementById('rankHeroBody'); if (!hero) return;
+  if (!fighters || !fighters.length) { hero.innerHTML = '<p class="meta">Rankings open soon — be the first to create a fighter profile.</p><button class="btn" type="button" onclick="goTab(\'fighters\',9)">Fighters</button>'; return; }
+  var top = fighters.slice(0, 3);
+  hero.innerHTML = top.map(function(p, i){
+    return '<div style="padding:8px 0;border-top:1px solid var(--border)"><strong>' + (i + 1) + '. ' + escapeHtml(p.display_name) + '</strong> &mdash; ' + (p.votes_count || 0) + ' vote' + ((p.votes_count || 0) === 1 ? '' : 's') + ' <button class="btn" type="button" onclick="openFighter(\'' + escapeHtml(p.slug) + '\')">Vote</button></div>';
+  }).join('') + '<p style="margin-top:8px"><button class="btn dark" type="button" onclick="goTab(\'rankings\',11)">See full rankings</button></p>';
+}
 async function loadFighters(){
   var box = document.getElementById('fighterList'); if (!box) return;
   if (!supabaseClient) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; return; }
-  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,votes_count').eq('status', 'live').order('votes_count', {ascending: false}).order('display_name');
-  if (res.error) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; return; }
-  if (!res.data || !res.data.length) { box.innerHTML = '<p class="meta">No live fighter profiles yet — be the first to create one below.</p>'; return; }
-  box.innerHTML = res.data.map(function(p, i){
+  var fighters = await fetchLiveFighters();
+  if (fighters === null) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; renderRankHero(null); return; }
+  if (!fighters.length) { box.innerHTML = '<p class="meta">No live fighter profiles yet — be the first to create one below.</p>'; renderRankHero([]); return; }
+  fighters.sort(function(a, b){ return (b.votes_count || 0) - (a.votes_count || 0) || ((a.display_name || '') < (b.display_name || '') ? -1 : 1); });
+  renderRankHero(fighters);
+  box.innerHTML = fighters.map(function(p, i){
     var d = document.createElement('div'); d.className = 'card fighter-card';
     d.innerHTML = '<div class="fighter-rank">' + (i + 1) + '</div>' + fighterPhotoHtml(p) +
       '<div class="fighter-body"><h3><a href="#/fighter/' + escapeHtml(p.slug) + '">' + escapeHtml(p.display_name) + '</a></h3>' +
-      '<p class="meta">' + escapeHtml(p.style_rank || '') + '</p>' +
+      fighterMetaHtml(p) +
       '<p><span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></p>' +
       '<button class="btn" type="button" onclick="openFighter(\'' + escapeHtml(p.slug) + '\')">Vote</button>' +
       '<button class="btn dark" type="button" onclick="shareFighter(\'' + escapeHtml(p.slug) + '\',this)">Share</button></div>';
@@ -963,13 +1566,14 @@ async function openFighter(slug){
   box.style.display = 'block';
   box.innerHTML = '<div class="card"><p class="meta">Loading profile&hellip;</p></div>';
   if (!supabaseClient) { box.innerHTML = '<div class="card"><p class="meta">This profile is not available yet.</p></div>'; return; }
-  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,votes_count').eq('slug', slug).eq('status', 'live').maybeSingle();
+  var res = await supabaseClient.from('fighter_profiles').select(FIGHTER_RANKING_COLS + ',user_id').eq('slug', slug).eq('status', 'live').maybeSingle();
+  if (res.error) res = await supabaseClient.from('fighter_profiles').select('id,user_id,slug,display_name,style_rank,bio,photo_url,votes_count').eq('slug', slug).eq('status', 'live').maybeSingle();
   if (res.error || !res.data) { box.innerHTML = '<div class="card"><p>This fighter profile is not live yet.</p><button class="btn dark" type="button" onclick="closeFighter()">Back to the leaderboard</button></div>'; return; }
   var p = res.data;
   var d = document.createElement('div'); d.className = 'card';
   d.innerHTML = fighterPhotoHtml(p, true) +
     '<h2>' + escapeHtml(p.display_name) + '</h2>' +
-    '<p class="meta">' + escapeHtml(p.style_rank || '') + '</p>' +
+    fighterMetaHtml(p) +
     '<p>' + escapeHtml(p.bio || '') + '</p>' +
     '<p><span class="fighter-votes">' + p.votes_count + ' vote' + (p.votes_count === 1 ? '' : 's') + '</span></p>' +
     '<input id="voteEmail" class="finput" type="email" placeholder="Your email — one vote per email">' +
@@ -979,6 +1583,18 @@ async function openFighter(slug){
     '<button class="btn dark" type="button" onclick="closeFighter()">Back to the leaderboard</button>' +
     '<p id="voteMsg" class="meta"></p>';
   box.innerHTML = ''; box.appendChild(d);
+  // DAOS digital card for this fighter (their member profile's token).
+  // Public QR + short code + votes; ticket status only for staff.
+  if (p.user_id) {
+    var fpr = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,card_token,card_code').eq('id', p.user_id).maybeSingle();
+    if (fpr.data && fpr.data.card_token) {
+      var fcard = document.createElement('div');
+      fcard.innerHTML = cardBoxHtml(fpr.data, {qrId: 'fighterCardQr', ticketId: 'fighterCardTicket', showLink: true, votes: p.votes_count});
+      box.appendChild(fcard);
+      renderCardQr('fighterCardQr', fpr.data.card_token, fpr.data.card_code);
+      if (myIsStaff) loadTicketIntoBox('fighterCardTicket', {token: fpr.data.card_token});
+    }
+  }
   if (box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
 }
 function closeFighter(){
@@ -1008,18 +1624,7 @@ async function castVote(fighterId, slug){
   if (fresh) fresh.textContent = 'Vote counted — thank you.';
 }
 function shareFighter(slug, btn){
-  var url = fighterUrl(slug);
-  var done = function(){
-    if (!btn) return;
-    var old = btn.textContent;
-    btn.textContent = 'Link copied \u2713';
-    setTimeout(function(){ btn.textContent = old; }, 2000);
-  };
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(done, function(){ fallbackCopy(url); done(); });
-    } else { fallbackCopy(url); done(); }
-  } catch (e) { fallbackCopy(url); done(); }
+  shareLink('DAOS Fighter', 'Vote for this martial artist on DAOS:', fighterUrl(slug), btn);
 }
 var myProfileId = null;
 var myProfilePhotoUrl = null;
@@ -1032,7 +1637,8 @@ async function loadMyProfile(){
   var user = sess.data && sess.data.session && sess.data.session.user;
   if (!user) { loginBox.style.display = 'block'; formBox.style.display = 'none'; myProfileId = null; return; }
   loginBox.style.display = 'none'; formBox.style.display = 'block';
-  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,status,needs_review').eq('user_id', user.id).maybeSingle();
+  var res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,status,needs_review,category,style,record,school,weight_class,region,age').eq('user_id', user.id).maybeSingle();
+  if (res.error) res = await supabaseClient.from('fighter_profiles').select('id,slug,display_name,style_rank,bio,photo_url,status,needs_review').eq('user_id', user.id).maybeSingle();
   var statusEl = document.getElementById('myProfileStatus');
   if (res.error) { if (statusEl) statusEl.textContent = 'Could not load your profile: ' + res.error.message; return; }
   var p = res.data;
@@ -1042,6 +1648,20 @@ async function loadMyProfile(){
     document.getElementById('fpSlug').value = p.slug || '';
     document.getElementById('fpStyle').value = p.style_rank || '';
     document.getElementById('fpBio').value = p.bio || '';
+    var catEl = document.getElementById('fpCategory');
+    if (catEl) catEl.value = p.category || '';
+    var styleEl = document.getElementById('fpStyleName');
+    if (styleEl) styleEl.value = p.style || '';
+    var recEl = document.getElementById('fpRecord');
+    if (recEl) recEl.value = p.record || '';
+    var schEl = document.getElementById('fpSchool');
+    if (schEl) schEl.value = p.school || '';
+    var wtEl = document.getElementById('fpWeight');
+    if (wtEl) wtEl.value = p.weight_class || '';
+    var regEl = document.getElementById('fpRegion');
+    if (regEl) regEl.value = p.region || '';
+    var ageEl = document.getElementById('fpAge');
+    if (ageEl) ageEl.value = (p.age != null && p.age !== '') ? p.age : '';
     var labels = {submitted: 'Submitted — waiting for DAOS review.', in_review: 'In review — DAOS is looking at your profile.', live: 'Live — your page is public.', rejected: 'Not approved — update your profile and submit again.'};
     var txt = 'Status: ' + (labels[p.status] || p.status);
     if (p.status === 'live' && p.needs_review) txt += ' Your latest edits are waiting for review.';
@@ -1065,6 +1685,20 @@ async function saveMyProfile(){
   var bio = document.getElementById('fpBio').value.trim();
   if (!name) { if (msg) msg.textContent = 'Add your name first.'; return; }
   if (!slug) { if (msg) msg.textContent = 'Add a page name (letters, numbers, hyphens).'; return; }
+  // Rankings slice 1 fields (optional — blank means unset). Age must be
+  // 5–120 when given; Youth rankings need age < 18.
+  var category = document.getElementById('fpCategory').value || '';
+  var styleName = document.getElementById('fpStyleName').value.trim();
+  var recordVal = document.getElementById('fpRecord').value.trim();
+  var school = document.getElementById('fpSchool').value.trim();
+  var weight = document.getElementById('fpWeight').value.trim();
+  var region = document.getElementById('fpRegion').value.trim();
+  var ageRaw = document.getElementById('fpAge').value.trim();
+  var age = null;
+  if (ageRaw !== '') {
+    age = parseInt(ageRaw, 10);
+    if (isNaN(age) || age < 5 || age > 120) { if (msg) msg.textContent = 'Age must be between 5 and 120, or left blank.'; return; }
+  }
   if (!supabaseClient) { if (msg) msg.textContent = 'Profiles are not connected yet.'; return; }
   var sess = await supabaseClient.auth.getSession();
   var user = sess.data && sess.data.session && sess.data.session.user;
@@ -1082,7 +1716,9 @@ async function saveMyProfile(){
     var pub = supabaseClient.storage.from('profile-photos').getPublicUrl(path);
     photoUrl = pub.data && pub.data.publicUrl;
   }
-  var row = {user_id: user.id, slug: slug, display_name: name, style_rank: style, bio: bio, photo_url: photoUrl};
+  var row = {user_id: user.id, slug: slug, display_name: name, style_rank: style, bio: bio, photo_url: photoUrl,
+    category: category || null, style: styleName || null, record: recordVal || null, school: school || null,
+    weight_class: weight || null, region: region || null, age: age};
   var res;
   if (myProfileId) {
     res = await supabaseClient.from('fighter_profiles').update(row).eq('id', myProfileId);
@@ -1092,6 +1728,26 @@ async function saveMyProfile(){
     if (!res.error && res.data) myProfileId = res.data.id;
   }
   if (res.error) {
+    // Rankings columns not live yet (migration not run): save the base
+    // profile without them instead of failing the whole save.
+    if (/column .* does not exist|could not find the .* column/i.test(res.error.message || '')) {
+      var baseRow = {user_id: user.id, slug: slug, display_name: name, style_rank: style, bio: bio, photo_url: photoUrl};
+      if (myProfileId) {
+        res = await supabaseClient.from('fighter_profiles').update(baseRow).eq('id', myProfileId);
+      } else {
+        baseRow.status = 'submitted';
+        res = await supabaseClient.from('fighter_profiles').insert(baseRow).select('id').single();
+        if (!res.error && res.data) myProfileId = res.data.id;
+      }
+      if (!res.error) {
+        if (msg) msg.textContent = 'Saved — ranking fields (category, record, school, weight, region, age) will save once the DAOS rankings update runs.';
+        if (fileInput) fileInput.value = '';
+        myProfilePhotoUrl = photoUrl;
+        loadMyProfile();
+        loadFighters();
+        return;
+      }
+    }
     if (msg) msg.textContent = (res.error.code === '23505') ? 'That page name is taken — try another.' : res.error.message;
     return;
   }
@@ -1100,6 +1756,489 @@ async function saveMyProfile(){
   myProfilePhotoUrl = photoUrl;
   loadMyProfile();
   loadFighters();
+}
+
+/* ---- DAOS digital card + door check-in (Dec 5 Party) ----
+   Tables + Edge Function live in Supabase (see supabase/card-checkin.sql
+   and supabase/functions/check-ticket). The card's QR encodes ONLY the
+   opaque card URL https://daosmedia.com/#/card/<token> — never an email
+   or phone. The short code under the QR (XXXX-XXXX, first 8 hex chars
+   of the token) is the manual-entry fallback when a QR will not scan.
+   QR generation uses qrcodejs and door scanning uses html5-qrcode,
+   both loaded lazily from the SAME jsDelivr CDN the site already uses
+   for supabase-js — if either library fails to load, the card still
+   shows the manual code and the check-in page still takes typed codes,
+   never a blank or broken box.
+   PRIVACY: a public scan shows name / photo / bio / votes only. Ticket
+   status and the check-in button appear ONLY for a logged-in staff
+   viewer (profiles.is_staff) — the check-ticket function enforces
+   that server-side, and the site never asks for ticket info unless
+   myIsStaff is true. No email or phone is ever displayed anywhere
+   in this flow. */
+var DAOS_PARTY_EVENT = 'daos-party-2026-12-05';
+var QR_LIB_URL = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+var SCANNER_LIB_URL = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
+var loadedScripts = {};
+function loadScriptOnce(src){
+  if (loadedScripts[src]) return loadedScripts[src];
+  loadedScripts[src] = new Promise(function(resolve){
+    var done = false;
+    var finish = function(ok){ if (!done) { done = true; resolve(ok); } };
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = function(){ finish(true); };
+    s.onerror = function(){ finish(false); };
+    document.head.appendChild(s);
+    // A stalled CDN must never hang the card: fall back to the manual
+    // code after 10s even if the script tag never fires onload/onerror.
+    setTimeout(function(){ finish(false); }, 10000);
+  });
+  return loadedScripts[src];
+}
+function cardUrl(token){ return 'https://daosmedia.com/#/card/' + token; }
+function shortCodeFromToken(token){
+  var hex = String(token || '').replace(/-/g, '').toUpperCase();
+  return hex.length >= 8 ? hex.slice(0, 4) + '-' + hex.slice(4, 8) : '';
+}
+function normalizeCardCode(raw){
+  var hex = String(raw || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  return hex.length === 8 ? hex.slice(0, 4) + '-' + hex.slice(4, 8) : null;
+}
+/* A scanned QR holds the card URL; a typed/pasted value may be the URL,
+   the bare token, or the short code. Returns {token} or {code} or null. */
+function parseCardScan(text){
+  var t = String(text || '').trim();
+  if (!t) return null;
+  var m = t.match(/#\/card\/([0-9a-fA-F-]{36})/);
+  if (m) return {token: m[1].toLowerCase()};
+  if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(t)) return {token: t.toLowerCase()};
+  var code = normalizeCardCode(t);
+  if (code) return {code: code};
+  return null;
+}
+/* Render the QR into #<boxId>. Always renders the manual code too, so
+   the card is usable even when the QR library fails to load. */
+async function renderCardQr(boxId, token, code){
+  var box = document.getElementById(boxId);
+  if (!box) return;
+  var url = cardUrl(token);
+  box.innerHTML = '';
+  var ok = false;
+  try {
+    if (typeof QRCode === 'undefined') ok = await loadScriptOnce(QR_LIB_URL);
+    else ok = true;
+    if (ok && typeof QRCode !== 'undefined') {
+      new QRCode(box, {text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M});
+      ok = true;
+    } else ok = false;
+  } catch (e) { ok = false; }
+  if (!ok) {
+    box.innerHTML = '<p style="color:#000;font-weight:bold;padding:60px 10px">QR code could not load —<br>use the code below.</p>';
+  }
+}
+/* HiHello-style card (Nov 15, 2026): the DAOS Card is a shareable
+   digital business card — photo, name, bio, the member's own public
+   links (Instagram / website, both optional and set by the member),
+   Save Contact (vCard) and Share buttons — on top of the same QR +
+   short code door check-in. The QR still encodes ONLY the card URL;
+   no email or phone is ever shown or encoded. */
+var DAOS_CARD_PROFILES = {};
+function cardIgHandle(p){
+  return ((p && p.instagram) || '').replace(/^@+/, '').replace(/[^A-Za-z0-9._]/g, '');
+}
+function cardWebsiteHref(p){
+  var w = ((p && p.website) || '').trim();
+  if (!w) return '';
+  return /^https?:\/\//i.test(w) ? w : 'https://' + w;
+}
+function cardWebsiteLabel(p){
+  return ((p && p.website) || '').trim().replace(/^https?:\/\//i, '').replace(/\/$/, '');
+}
+function saveCardContact(token, btn){
+  var p = DAOS_CARD_PROFILES[token];
+  if (!p) return;
+  var lines = ['BEGIN:VCARD', 'VERSION:3.0', 'FN:' + p.name, 'ORG:DAOS — The Deadly Art of Survival', 'URL:' + p.url];
+  if (p.ig) lines.push('URL;type=Instagram:https://instagram.com/' + p.ig);
+  if (p.web) lines.push('URL;type=Website:' + p.web);
+  lines.push('NOTE:DAOS Digital Card — door code ' + p.code);
+  lines.push('END:VCARD');
+  var blob = new Blob([lines.join('\r\n')], {type: 'text/vcard'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (p.name || 'daos-card').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase() + '.vcf';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  if (btn) { var t = btn.textContent; btn.textContent = 'Saved ✓'; setTimeout(function(){ btn.textContent = t; }, 1600); }
+}
+async function shareCardLink(token, btn){
+  var p = DAOS_CARD_PROFILES[token];
+  if (!p) return;
+  if (navigator.share) {
+    try { await navigator.share({title: p.name + ' — DAOS Card', text: p.name + ' on DAOS', url: p.url}); return; } catch (e) { return; }
+  }
+  try {
+    await navigator.clipboard.writeText(p.url);
+    if (btn) { var t = btn.textContent; btn.textContent = 'Link copied ✓'; setTimeout(function(){ btn.textContent = t; }, 1600); }
+  } catch (e) { window.prompt('Copy this card link:', p.url); }
+}
+function cardBoxHtml(p, opts){
+  opts = opts || {};
+  var code = p.card_code || shortCodeFromToken(p.card_token);
+  var ig = cardIgHandle(p);
+  var webHref = cardWebsiteHref(p);
+  if (p.card_token) {
+    DAOS_CARD_PROFILES[p.card_token] = {
+      name: p.display_name || 'DAOS member', ig: ig,
+      web: webHref, code: code, url: cardUrl(p.card_token)
+    };
+  }
+  var chips = '';
+  if (ig) chips += '<a class="cardchip" href="https://instagram.com/' + escapeHtml(ig) + '" target="_blank" rel="noopener">Instagram @' + escapeHtml(ig) + '</a>';
+  if (webHref) chips += '<a class="cardchip" href="' + escapeHtml(webHref) + '" target="_blank" rel="noopener">' + escapeHtml(cardWebsiteLabel(p)) + '</a>';
+  var html = '<div class="dcard">' +
+    '<div class="dcard-band">DAOS</div>' +
+    '<div style="text-align:center"><span class="avatar-ring">' + postAvatarHtml(p, 96) + '</span></div>' +
+    '<h3>' + escapeHtml(p.display_name) + '</h3>' +
+    (p.bio ? '<p>' + escapeHtml(p.bio) + '</p>' : '') +
+    (opts.votes != null ? '<p><span class="fighter-votes">' + opts.votes + ' vote' + (opts.votes === 1 ? '' : 's') + '</span></p>' : '') +
+    (chips ? '<div class="cardchips">' + chips + '</div>' : '') +
+    '<p class="meta">DAOS Digital Card &middot; Dec 5 Party, Row House, Harlem</p>' +
+    '<div class="qrbox" id="' + opts.qrId + '"></div>' +
+    '<p class="cardcode">' + escapeHtml(code) + '</p>' +
+    '<p class="meta">Show this code at the door if the QR will not scan.</p>' +
+    (p.card_token ? '<div class="cardactions"><button class="btn" type="button" onclick="saveCardContact(\'' + escapeHtml(p.card_token) + '\', this)">Save Contact</button> <button class="btn dark" type="button" onclick="shareCardLink(\'' + escapeHtml(p.card_token) + '\', this)">Share Card</button></div>' : '') +
+    (opts.showLink ? '<p><a href="' + escapeHtml(cardUrl(p.card_token)) + '">Open this card</a></p>' : '') +
+    '<div class="ticketbox" id="' + opts.ticketId + '" style="display:none"></div>' +
+    '</div>';
+  return html;
+}
+function renderMyCardBox(){
+  var box = document.getElementById('myCardBox');
+  if (!box) return;
+  if (!myProfile || !myProfile.card_token) { box.innerHTML = ''; return; }
+  box.innerHTML = '<h3 style="margin-top:16px">My DAOS Card</h3>' +
+    '<p class="meta">Show this at the door on Dec 5 — it is your ticket check-in card.</p>' +
+    cardBoxHtml(myProfile, {qrId: 'myCardQr', ticketId: 'myCardTicket', showLink: true}) +
+    '<p class="meta">' + (myProfile.card_views || 0) + ' card view' + ((myProfile.card_views || 0) === 1 ? '' : 's') + '</p>';
+  renderCardQr('myCardQr', myProfile.card_token, myProfile.card_code);
+  loadMyCardContacts();
+  if (myIsStaff) loadTicketIntoBox('myCardTicket', {token: myProfile.card_token});
+}
+/* Staff-only ticket lookup. Called ONLY when myIsStaff is true — the
+   function itself re-checks staff server-side, so a non-staff caller
+   never gets ticket data even if this is called by mistake. */
+async function staffTicketLookup(key){
+  if (!supabaseClient || !currentUser || !myIsStaff) return null;
+  var sess = await supabaseClient.auth.getSession();
+  var jwt = sess.data && sess.data.session && sess.data.session.access_token;
+  if (!jwt) return null;
+  var res = await supabaseClient.functions.invoke('check-ticket', {
+    headers: { Authorization: 'Bearer ' + jwt },
+    body: {action: 'lookup', token: key.token, code: key.code}
+  });
+  if (res.error) return {error: res.error.message || 'Ticket lookup failed.'};
+  if (res.data && res.data.error) return {error: res.data.error};
+  return res.data || null;
+}
+function ticketHtml(data, token){
+  if (!data || !data.ticket) return '';
+  var t = data.ticket;
+  var html = '';
+  if (t.has_ticket) {
+    html += '<p class="big ticket-yes">&#10003; Has a ticket' + (t.ticket_type ? ' — ' + escapeHtml(t.ticket_type) : '') + '</p>';
+    if (t.order_name) html += '<p class="meta">Order ' + escapeHtml(t.order_name) + (t.order_date ? ' &middot; ' + new Date(t.order_date).toLocaleDateString() : '') + '</p>';
+  } else {
+    html += '<p class="big ticket-no">No ticket — sell at door</p>';
+  }
+  if (t.already_checked_in) {
+    html += '<p><strong>Already checked in' + (t.checked_in_at ? ' at ' + new Date(t.checked_in_at).toLocaleTimeString() : '') + '.</strong></p>';
+  } else if (t.has_ticket) {
+    html += '<button class="btn" type="button" onclick="doCheckIn(\'' + escapeHtml(token) + '\',this)">Check in</button>';
+  }
+  html += '<p id="checkinMsg-' + escapeHtml(token) + '" class="meta"></p>';
+  return html;
+}
+async function loadTicketIntoBox(boxId, key){
+  var box = document.getElementById(boxId);
+  if (!box) return;
+  var data = await staffTicketLookup(key);
+  if (!data) return;
+  if (data.error) {
+    box.style.display = 'block';
+    box.innerHTML = '<p class="meta">Ticket status unavailable: ' + escapeHtml(data.error) + '</p>';
+    return;
+  }
+  var token = key.token || (data.profile && data.profile.id ? '' : '');
+  // The check-in button needs the card token: resolve it from the key,
+  // or from the profile row we already have on this page.
+  if (!token && key.code) {
+    var pr = await supabaseClient.from('profiles').select('card_token').eq('card_code', key.code).maybeSingle();
+    token = pr.data ? pr.data.card_token : '';
+  }
+  box.style.display = 'block';
+  box.innerHTML = ticketHtml(data, token);
+}
+async function doCheckIn(token, btn){
+  if (!supabaseClient || !currentUser || !myIsStaff) {
+    var earlyMsg = document.getElementById('checkinMsg-' + token);
+    if (earlyMsg) earlyMsg.textContent = 'Not authorized — staff only.';
+    return;
+  }
+  var msg = document.getElementById('checkinMsg-' + token);
+  if (msg) msg.textContent = 'Checking in…';
+  if (btn) btn.disabled = true;
+  var sess = await supabaseClient.auth.getSession();
+  var jwt = sess.data && sess.data.session && sess.data.session.access_token;
+  if (!jwt) {
+    if (msg) msg.textContent = 'Your session expired — log in again and retry.';
+    if (btn) btn.disabled = false;
+    return;
+  }
+  var res = await supabaseClient.functions.invoke('check-ticket', {
+    headers: { Authorization: 'Bearer ' + jwt },
+    body: {action: 'checkin', token: token}
+  });
+  if (btn) btn.disabled = false;
+  var outcome = '';
+  if (res.error) outcome = 'Could not check in: ' + (res.error.message || 'request failed');
+  else if (res.data && res.data.error) outcome = res.data.error;
+  else {
+    var d = res.data || {};
+    if (d.already_checked_in) outcome = 'Already checked in' + (d.checked_in_at ? ' at ' + new Date(d.checked_in_at).toLocaleTimeString() : '') + '.';
+    else if (d.checked_in) outcome = 'Checked in ✓' + (d.checked_in_at ? ' at ' + new Date(d.checked_in_at).toLocaleTimeString() : '') + '.';
+  }
+  // Refresh every visible ticket box AND the door-page result card so
+  // they show the checked-in state — then write the outcome message
+  // LAST, on the freshly rendered element, so the refresh cannot wipe it.
+  var refreshes = [];
+  var boxes = document.querySelectorAll('[id$="Ticket"]');
+  for (var i = 0; i < boxes.length; i++) {
+    if (boxes[i].style.display === 'block') refreshes.push(loadTicketIntoBox(boxes[i].id, {token: token}));
+  }
+  var cr = document.getElementById('checkinResult');
+  if (cr && cr.dataset && cr.dataset.token === token) refreshes.push(lookupCardForCheckin({token: token}));
+  await Promise.all(refreshes);
+  var freshMsg = document.getElementById('checkinMsg-' + token);
+  if (freshMsg && outcome) freshMsg.textContent = outcome;
+}
+/* ---- Card exchange (HiHello-style): a visitor who opens a card can
+   share their own info back. The row lands in card_contacts, owned by
+   the card's member, via the exchange_contact() function — the site
+   never writes the table directly. Owners read their contacts under
+   their own card (RLS: own rows only). ---- */
+function exchangeFormHtml(p){
+  if (currentUser && currentUser.id === p.id) return '';
+  return '<div class="card" style="text-align:center"><h3>Exchange contacts</h3>' +
+    '<p class="meta">Send ' + escapeHtml((p.display_name || 'this member').split(' ')[0]) + ' your info so you stay connected.</p>' +
+    '<input id="exName" class="finput" type="text" placeholder="Your name" maxlength="100">' +
+    '<input id="exEmail" class="finput" type="email" placeholder="Your email" maxlength="200">' +
+    '<input id="exPhone" class="finput" type="tel" placeholder="Your phone" maxlength="40">' +
+    '<input id="exNote" class="finput" type="text" placeholder="Note (optional) — where you met, what you do" maxlength="500">' +
+    '<button class="btn" type="button" onclick="submitExchange(\'' + escapeHtml(p.card_token) + '\', this)">Send my info</button>' +
+    '<p id="exMsg" class="meta"></p></div>';
+}
+async function submitExchange(token, btn){
+  var msg = document.getElementById('exMsg');
+  var name = (document.getElementById('exName').value || '').trim();
+  var email = (document.getElementById('exEmail').value || '').trim();
+  var phone = (document.getElementById('exPhone').value || '').trim();
+  var note = (document.getElementById('exNote').value || '').trim();
+  if (!name) { if (msg) msg.textContent = 'Add your name first.'; return; }
+  if (!email && !phone) { if (msg) msg.textContent = 'Add an email or phone so they can reach you.'; return; }
+  if (btn) btn.disabled = true;
+  if (msg) msg.textContent = 'Sending…';
+  var res = await supabaseClient.rpc('exchange_contact', {p_token: token, p_name: name, p_email: email || null, p_phone: phone || null, p_note: note || null});
+  if (res.error) {
+    if (msg) msg.textContent = 'Could not send: ' + res.error.message;
+    if (btn) btn.disabled = false;
+    return;
+  }
+  var form = btn ? btn.closest('.card') : null;
+  if (form) form.innerHTML = '<h3>You\'re connected ✓</h3><p class="meta">Your info was sent. They\'ll see it in their DAOS contacts.</p>';
+}
+async function loadMyCardContacts(){
+  var box = document.getElementById('myCardContacts');
+  if (!box || !supabaseClient || !currentUser) return;
+  var res = await supabaseClient.from('card_contacts').select('id,name,email,phone,note,created_at').order('created_at', {ascending: false}).limit(50);
+  if (res.error) { box.innerHTML = ''; return; }
+  var rows = res.data || [];
+  if (!rows.length) {
+    box.innerHTML = '<h3 style="margin-top:16px">Contacts from my card</h3><p class="meta">Nobody has exchanged with you yet — share your card link or QR and their info will land here.</p>';
+    return;
+  }
+  var html = '<h3 style="margin-top:16px">Contacts from my card (' + rows.length + ')</h3>';
+  rows.forEach(function(c){
+    html += '<div class="who" style="display:block;padding:8px 0;border-bottom:1px solid var(--border)"><b>' + escapeHtml(c.name) + '</b>' +
+      '<span>' + new Date(c.created_at).toLocaleDateString() +
+      (c.email ? ' · ' + escapeHtml(c.email) : '') +
+      (c.phone ? ' · ' + escapeHtml(c.phone) : '') +
+      (c.note ? '<br>' + escapeHtml(c.note) : '') + '</span></div>';
+  });
+  box.innerHTML = html;
+}
+/* ---- Public card route #/card/<token> ----
+   Anyone can open it; it shows name / photo / bio / votes only. A
+   logged-in staff viewer additionally sees ticket status + check-in. */
+async function openCard(token){
+  showTab('cardview', null);
+  var box = document.getElementById('cardDetail');
+  if (!box) return;
+  box.innerHTML = '<div class="card"><p class="meta">Loading card…</p></div>';
+  if (!supabaseClient) { box.innerHTML = '<div class="card"><p>This card is not available yet.</p></div>'; return; }
+  var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,card_token,card_code,instagram,website').eq('card_token', token).maybeSingle();
+  if (res.error || !res.data) {
+    box.innerHTML = '<div class="card"><h3>Card not found</h3><p>This DAOS card link does not match a member. Check the QR code or type the short code on the Check-in page.</p><button class="btn dark" type="button" onclick="goTab(\'checkin\',12)">Go to Check-in</button></div>';
+    return;
+  }
+  var p = res.data;
+  var votes = null, fighterSlug = null;
+  var fr = await supabaseClient.from('fighter_profiles').select('slug,votes_count').eq('user_id', p.id).eq('status', 'live').maybeSingle();
+  if (fr.data) { votes = fr.data.votes_count; fighterSlug = fr.data.slug; }
+  box.innerHTML = cardBoxHtml(p, {qrId: 'cardViewQr', ticketId: 'cardViewTicket', showLink: false, votes: votes}) +
+    (fighterSlug ? '<div class="card" style="text-align:center"><a class="btn" href="#/fighter/' + escapeHtml(fighterSlug) + '">View fighter page</a></div>' : '') +
+    exchangeFormHtml(p);
+  renderCardQr('cardViewQr', p.card_token, p.card_code);
+  if (!(currentUser && currentUser.id === p.id)) {
+    try { supabaseClient.rpc('bump_card_view', {p_token: p.card_token}); } catch (e) {}
+  }
+  if (myIsStaff) loadTicketIntoBox('cardViewTicket', {token: p.card_token});
+  if (box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
+}
+function closeCard(){
+  var box = document.getElementById('cardDetail'); if (box) box.innerHTML = '';
+  if (window.location.hash && window.location.hash.indexOf('#/card/') === 0) history.replaceState(null, '', '#feed');
+}
+/* ---- Door check-in page #/check-in ----
+   Login-gated AND staff-gated. Non-staff logins see a plain
+   "not authorized" message and no ticket data; the scanner and the
+   manual lookup never render for them. */
+var checkinScanner = null;
+var checkinScannerOn = false;
+function renderCheckinPage(){
+  var body = document.getElementById('checkinBody');
+  if (!body) return;
+  if (!supabaseClient) {
+    body.innerHTML = '<div class="card"><p>Check-in is not connected yet.</p></div>';
+    return;
+  }
+  if (!currentUser) {
+    body.innerHTML = '<div class="card"><h3>Staff login required</h3><p>Door check-in is for DAOS staff only. Log in with your staff account to continue.</p><button class="btn" type="button" onclick="openAuthModal()">Log in</button></div>';
+    return;
+  }
+  if (!myIsStaff) {
+    body.innerHTML = '<div class="card"><h3>Not authorized</h3><p>Door check-in is for DAOS staff only. This account is not marked as staff — ask Jake to add it in the DAOS dashboard.</p></div>';
+    return;
+  }
+  body.innerHTML = '<div class="card"><h3>Scan a DAOS card</h3>' +
+    '<p>Point the camera at the member\'s QR code, or type their short code (XXXX-XXXX) below.</p>' +
+    '<div id="checkinReader"></div>' +
+    '<p id="scannerMsg" class="meta"></p>' +
+    '<button class="btn dark" type="button" onclick="startCheckinScanner()">Start camera scanner</button> ' +
+    '<button class="btn dark" type="button" onclick="stopCheckinScanner()">Stop scanner</button></div>' +
+    '<div class="card"><h3>Or type the code</h3>' +
+    '<input id="checkinCode" class="finput" type="text" placeholder="Short code, e.g. A1B2-C3D4 — or paste a card link" maxlength="100" autocomplete="off">' +
+    '<button class="btn" type="button" onclick="lookupCheckinCode()">Look up</button>' +
+    '<p id="checkinCodeMsg" class="meta"></p></div>' +
+    '<div class="checkin-result" id="checkinResult"></div>';
+  // Auto-start the scanner only when the camera library is already
+  // loaded (returning visits); first visit waits for the tap above so
+  // the browser camera prompt is expected, not a surprise.
+  if (typeof Html5QrcodeScanner !== 'undefined') startCheckinScanner();
+}
+async function startCheckinScanner(){
+  var msg = document.getElementById('scannerMsg');
+  if (!supabaseClient || !currentUser || !myIsStaff) return;
+  if (checkinScannerOn) return;
+  var ok = false;
+  try {
+    if (typeof Html5QrcodeScanner === 'undefined') ok = await loadScriptOnce(SCANNER_LIB_URL);
+    else ok = true;
+    if (!ok || typeof Html5QrcodeScanner === 'undefined') throw new Error('scanner library failed to load');
+    var reader = document.getElementById('checkinReader');
+    if (!reader) return;
+    reader.innerHTML = '';
+    checkinScanner = new Html5QrcodeScanner('checkinReader', {fps: 10, qrbox: 250}, false);
+    checkinScannerOn = true;
+    if (msg) msg.textContent = '';
+    checkinScanner.render(
+      function(decodedText){
+        stopCheckinScanner();
+        var key = parseCardScan(decodedText);
+        if (!key) {
+          var m2 = document.getElementById('checkinCodeMsg');
+          if (m2) m2.textContent = 'That QR code is not a DAOS card — try the short code below.';
+          return;
+        }
+        lookupCardForCheckin(key);
+      },
+      function(_err){ /* scan errors are routine (no QR in frame) — ignore */ }
+    );
+  } catch (e) {
+    checkinScannerOn = false;
+    if (msg) msg.textContent = 'Camera scanner could not load — use the short code below. (' + (e && e.message ? e.message : 'scanner unavailable') + ')';
+  }
+}
+async function stopCheckinScanner(){
+  if (checkinScanner) {
+    try { await checkinScanner.clear(); } catch (e) {}
+    checkinScanner = null;
+  }
+  checkinScannerOn = false;
+  var reader = document.getElementById('checkinReader');
+  if (reader) reader.innerHTML = '';
+}
+async function lookupCheckinCode(){
+  var input = document.getElementById('checkinCode');
+  var msg = document.getElementById('checkinCodeMsg');
+  var raw = input ? input.value.trim() : '';
+  var key = parseCardScan(raw);
+  if (!key) { if (msg) msg.textContent = 'Enter a short code like A1B2-C3D4, or paste a card link.'; return; }
+  if (msg) msg.textContent = '';
+  lookupCardForCheckin(key);
+}
+async function lookupCardForCheckin(key){
+  var result = document.getElementById('checkinResult');
+  if (!result) return;
+  result.innerHTML = '<div class="card"><p class="meta">Looking up card…</p></div>';
+  var data = await staffTicketLookup(key);
+  if (!data) {
+    result.innerHTML = '<div class="card"><p>Ticket lookup is not available — are you still logged in as staff?</p></div>';
+    return;
+  }
+  if (data.error) {
+    result.innerHTML = '<div class="card"><p>Could not look up this card: ' + escapeHtml(data.error) + '</p></div>';
+    return;
+  }
+  var p = data.profile;
+  if (!p) {
+    result.innerHTML = '<div class="card"><h3>Card not found</h3><p>No member matches this code. Check the code and try again.</p></div>';
+    return;
+  }
+  // Resolve the card token for the check-in button (the function only
+  // returns public profile fields, so fetch the token by profile id).
+  var token = key.token || '';
+  if (!token) {
+    var pr = await supabaseClient.from('profiles').select('card_token').eq('id', p.id).maybeSingle();
+    token = pr.data ? pr.data.card_token : '';
+  }
+  result.dataset.token = token;
+  var votes = p.fighter ? p.fighter.votes_count : null;
+  result.innerHTML = '<div class="dcard">' +
+    '<div style="text-align:center">' + postAvatarHtml(p, 96) + '</div>' +
+    '<h3>' + escapeHtml(p.display_name) + '</h3>' +
+    (p.bio ? '<p>' + escapeHtml(p.bio) + '</p>' : '') +
+    (votes != null ? '<p><span class="fighter-votes">' + votes + ' vote' + (votes === 1 ? '' : 's') + '</span></p>' : '') +
+    '<div class="ticketbox" style="display:block">' + ticketHtml(data, token) + '</div>' +
+    '<p style="margin-top:12px"><button class="btn dark" type="button" onclick="clearCheckinResult()">Next person</button></p>' +
+    '</div>';
+  if (result.scrollIntoView) result.scrollIntoView({behavior: 'smooth'});
+}
+function clearCheckinResult(){
+  var result = document.getElementById('checkinResult');
+  if (result) { result.innerHTML = ''; result.dataset.token = ''; }
+  var input = document.getElementById('checkinCode');
+  if (input) { input.value = ''; input.focus(); }
 }
 
 /* ---- Paid submissions: $5 event / seminar / tournament listings
@@ -1156,13 +2295,25 @@ function goEventPayStep(){
   var pay = document.getElementById('evPayStep');
   if (pay) { pay.style.display = 'block'; if (pay.scrollIntoView) pay.scrollIntoView({behavior: 'smooth'}); }
 }
+/* In the native app, open payment pages in the phone's system browser
+   (Safari) so Apple Pay / Google Pay work. On the website this falls
+   back to a normal new tab. */
+function openExternal(url){
+  try{
+    if(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser && window.Capacitor.Plugins.Browser.open){
+      window.Capacitor.Plugins.Browser.open({url:url});
+      return;
+    }
+  }catch(e){}
+  window.open(url,'_blank');
+}
 function openEventPayLink(){
   var msg = document.getElementById('evMsg');
   if (!STRIPE_EVENT_PAYMENT_LINK) {
     if (msg) msg.textContent = 'Payments open soon — DAOS is still setting up the $5 payment link. Check back soon.';
     return;
   }
-  window.open(STRIPE_EVENT_PAYMENT_LINK, '_blank');
+  openExternal(STRIPE_EVENT_PAYMENT_LINK);
 }
 async function submitEvent(){
   var msg = document.getElementById('evMsg');
@@ -1261,7 +2412,7 @@ function openSongPayLink(){
     if (msg) msg.textContent = 'Payments open soon — DAOS is still setting up the $5 payment link. Check back soon.';
     return;
   }
-  window.open(STRIPE_SONG_PAYMENT_LINK, '_blank');
+  openExternal(STRIPE_SONG_PAYMENT_LINK);
 }
 async function submitSong(){
   var msg = document.getElementById('sgMsg');
@@ -1298,11 +2449,11 @@ async function loadSelectedSongs(){
   if (!box) return;
   if (!supabaseClient) { box.innerHTML = '<p class="meta">Songs picked by DAOS show up here.</p>'; return; }
   var res = await supabaseClient.from('song_submissions').select('id,song_title,artist_name,stream_url').eq('status', 'selected').order('created_at', {ascending: false}).limit(20);
-  if (res.error || !res.data) { box.innerHTML = '<p class="meta">Could not load selected songs.</p>'; return; }
+  if (res.error || !res.data) { box.innerHTML = '<p class="meta">No songs picked yet. Submit yours &mdash; $5, clean versions only. The best songs may get placed on DAOS Radio WPAT 930 AM.</p><button class="btn" type="button" onclick="openSongForm()">Add your song &mdash; $5</button>'; return; }
   var songs = res.data || [];
   box.innerHTML = songs.length ? songs.map(function(s){
     return '<div style="padding:10px 0;border-top:1px solid var(--border)"><strong>' + escapeHtml(s.song_title) + '</strong> &mdash; ' + escapeHtml(s.artist_name) + '<br><a class="btn" href="' + escapeHtml(s.stream_url) + '" target="_blank" rel="noopener">Listen</a></div>';
-  }).join('') : '<p class="meta">No songs picked yet — submit yours above.</p>';
+  }).join('') : '<p class="meta">No songs picked yet — submit yours.</p><button class="btn" type="button" onclick="openSongForm()">Add your song &mdash; $5</button>';
 }
 
 loadFighters();
@@ -1325,13 +2476,55 @@ function downloadPartyICS(){
   var ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DAOS//DAOS Party//EN','BEGIN:VEVENT','UID:daos-party-2026@daosmedia.com','DTSTAMP:20261104T000000Z','DTSTART:20261205T220000Z','DTEND:20261206T030000Z','SUMMARY:DAOS Party','LOCATION:Row House\\, 2128 Frederick Douglass Blvd\\, Harlem\\, NYC','DESCRIPTION:The official pre-party to DAOS CON. Tickets: https://deadlyartofsurvival.com/products/daos-party','END:VEVENT','END:VCALENDAR'].join('\r\n');
   var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); a.download='daos-party-dec-5-2026.ics'; a.click();
 }
-function submitRSVP(e){
+var RSVP_PARTY_SLUG='daos-party-2026-12-05';
+var RSVP_TICKET_URL='https://deadlyartofsurvival.com/products/daos-party';
+async function submitRSVP(e, eventSlug){
   e.preventDefault();
-  var n=document.getElementById('rsvpName').value, em=document.getElementById('rsvpEmail').value, s=document.getElementById('rsvpSize').value;
-  window.location.href='mailto:daosmediagrp@gmail.com?subject='+encodeURIComponent('DAOS Party RSVP — '+n)+'&body='+encodeURIComponent('Name: '+n+'\nEmail: '+em+'\nParty size: '+s+'\nEvent: DAOS Party, Dec 5, 2026, Row House, Harlem');
-  document.getElementById('rsvpDone').style.display='block';
+  var slug=eventSlug||RSVP_PARTY_SLUG;
+  var nEl=document.getElementById('rsvpName'), emEl=document.getElementById('rsvpEmail'), phEl=document.getElementById('rsvpPhone'), sEl=document.getElementById('rsvpSize');
+  var done=document.getElementById('rsvpDone'), err=document.getElementById('rsvpError');
+  var n=nEl?nEl.value.trim():'', em=emEl?emEl.value.trim():'', ph=phEl?phEl.value:'', s=sEl?(parseInt(sEl.value,10)||1):1;
+  if (err) { err.style.display='none'; err.textContent=''; }
+  if (!n) { if (err) { err.textContent='Enter your name to RSVP.'; err.style.display='block'; } return false; }
+  if (!em || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { if (err) { err.textContent='Enter a valid email to RSVP.'; err.style.display='block'; } return false; }
+  if (!supabaseClient) { if (err) { err.textContent='RSVP is not connected yet — try again in a moment.'; err.style.display='block'; } return false; }
+  var btn=e.target?e.target.querySelector('button[type=submit]'):null;
+  if (btn) btn.disabled=true;
+  var res;
+  try {
+    res=await supabaseClient.rpc('submit_rsvp', {p_event_slug: slug, p_name: n, p_email: em, p_phone: ph, p_party_size: s});
+  } catch (ex) {
+    if (err) { err.textContent='Could not save your RSVP — check your connection and try again.'; err.style.display='block'; }
+    if (btn) btn.disabled=false;
+    return false;
+  }
+  if (btn) btn.disabled=false;
+  if (res.error) {
+    if (err) { err.textContent=res.error.message||'Could not save your RSVP — try again.'; err.style.display='block'; }
+    return false;
+  }
+  var count=res.data&&typeof res.data.count==='number'?res.data.count:null;
+  var already=res.data&&res.data.status==='already';
+  var label=slug===RSVP_PARTY_SLUG?'Dec 5 in Harlem':'the event';
+  var head=already?'You\u2019re already on the list.':'You\u2019re on the list — see you '+label+'.';
+  var countTxt=count===null?'':(count===1?' · 1 person is coming.':' · '+count+' people are coming.');
+  var ticketLine=slug===RSVP_PARTY_SLUG?'<br><a href="'+RSVP_TICKET_URL+'">Get your ticket</a> — tickets are still required for guaranteed entry.':'';
+  if (done) { done.innerHTML=head+countTxt+ticketLine; done.style.display='block'; }
+  if (nEl) nEl.value=''; if (emEl) emEl.value=''; if (phEl) phEl.value='';
+  loadRsvpCount(slug);
   return false;
 }
+async function loadRsvpCount(eventSlug){
+  var el=document.getElementById('rsvpCount'); if (!el) return;
+  var slug=eventSlug||RSVP_PARTY_SLUG;
+  if (!supabaseClient) return;
+  try {
+    var res=await supabaseClient.rpc('get_rsvp_count', {p_event_slug: slug});
+    if (res.error||typeof res.data!=='number') return;
+    el.textContent=res.data===0?'Be the first to RSVP.':(res.data===1?'1 person is coming.':res.data+' people are coming.');
+  } catch (ex) { /* count is a nice-to-have; stay silent until the migration runs */ }
+}
+loadRsvpCount();
 function showMembersBubble(){document.getElementById('membersBubble').classList.add('open')}
 function hideMembersBubble(){document.getElementById('membersBubble').classList.remove('open')}
 function toggleTheme(){
@@ -1350,6 +2543,8 @@ function toggleTheme(){
 function showTab(id,btn){
   document.querySelectorAll('.tabpane').forEach(function(s){s.classList.toggle('active',s.id===id)});
   document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b===btn)});
+  if (id === 'checkin' && typeof renderCheckinPage === 'function') renderCheckinPage();
+  if (id !== 'checkin' && typeof stopCheckinScanner === 'function') stopCheckinScanner();
   window.scrollTo(0,0);
 }
 function openDrawer(){
@@ -1408,10 +2603,26 @@ function openDeepLink(){
   if(h==='#fighters'){showTab('fighters',document.querySelectorAll('#tabs button')[9]);loadFighters();return;}
   if(h==='#network'){showTab('network',document.querySelectorAll('#tabs button')[10]);return;}
   if(h==='#rankings'){showTab('rankings',document.querySelectorAll('#tabs button')[11]);loadRankings();return;}
+  var rk=h.match(/^#\/rankings\/([a-z]+)$/);
+  if(rk){
+    showTab('rankings',document.querySelectorAll('#tabs button')[11]);
+    setRankingCategory(rk[1]);
+    loadRankings();
+    return;
+  }
   var fm=h.match(/^#\/fighter\/([A-Za-z0-9\-_]+)$/);
   if(fm){
     showTab('fighters',document.querySelectorAll('#tabs button')[9]);
     setTimeout(function(){openFighter(fm[1]);},50);
+    return;
+  }
+  var cm=h.match(/^#\/card\/([0-9a-fA-F-]{36})$/);
+  if(cm){
+    setTimeout(function(){openCard(cm[1].toLowerCase());},50);
+    return;
+  }
+  if(h==='#/check-in'||h==='#checkin'){
+    showTab('checkin',document.querySelectorAll('#tabs button')[12]);
     return;
   }
   var mm=h.match(/^#\/member\/([A-Za-z0-9\-]+)$/);
