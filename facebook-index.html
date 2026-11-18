@@ -627,9 +627,10 @@ async function refreshAuth(){
     applyGate();
     if (typeof openDeepLink === 'function') openDeepLink();
   } else {
-    /* Members-only gate (Jake, Nov 15, 2026): logged-out visitors get
-       the gate — log in or create an account first. */
+    /* App: logged-out users get the gate (Nov 15). Web: public-first —
+       no gate, and the feed loads for visitors (Nov 18). */
     applyGate();
+    if (!isNativeApp()) { loadMemberPosts(); loadSuggestions(); }
     btn.textContent = 'Log in';
     btn.onclick = openAuthModal;
     document.getElementById('composerForm').style.display = 'none';
@@ -665,7 +666,14 @@ async function gateAuth(mode){
 /* Gate state (Nov 15, 2026): no session -> step 1 (log in / sign up);
    session but no profile -> step 2 (create profile — forced, the app
    stays closed until it exists); session + profile -> gate lifts. */
+function isNativeApp(){
+  try { return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()); }
+  catch(e){ return false; }
+}
 function applyGate(){
+  /* Forced log in is APP-ONLY (Jake, Nov 18, 2026): on the website the
+     gate never engages — visitors browse publicly, login is optional. */
+  if (!isNativeApp()) { document.body.classList.remove('gated'); return; }
   var stepLogin = document.getElementById('gateLoginStep');
   var stepProfile = document.getElementById('gateProfileStep');
   if (currentUser && myProfile) {
