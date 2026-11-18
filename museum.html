@@ -12,7 +12,9 @@
 <style>
 html,body{touch-action:manipulation}
 input,textarea,select{font-size:16px}
-.backapp{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));left:auto;z-index:999;background:#E10600;color:#fff;font-family:Barlow,system-ui,sans-serif;font-weight:700;font-size:15px;text-decoration:none;padding:10px 16px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.45);letter-spacing:.02em}
+.backapp{display:inline-block;background:#E10600;color:#fff;font-family:Barlow,system-ui,sans-serif;font-weight:700;font-size:15px;text-decoration:none;padding:10px 16px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.45);letter-spacing:.02em}
+.backrow{text-align:right;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 2px}
+.backrow-bottom{text-align:center;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
 .backapp:active{transform:scale(.97)}
 :root{
   --bg:#f4f1ec; --bg2:#ece8e0; --panel:#ffffff; --panel2:#faf8f4;
@@ -261,7 +263,7 @@ footer.site li{margin:5px 0}
 </style>
 </head>
 <body>
-<a class="backapp" href="https://daosmedia.com/">&larr; Back to the DAOS App</a>
+<div class="backrow"><a class="backapp" href="https://daosmedia.com/">&larr; Back to the DAOS App</a></div>
 
 <header class="hero">
   <div class="hero-inner">
@@ -1633,5 +1635,6 @@ footer.site li{margin:5px 0}
   onScroll();
 })();
 </script>
+<div class="backrow backrow-bottom"><a class="backapp" href="https://daosmedia.com/">&larr; Back to the DAOS App</a></div>
 </body>
 </html>

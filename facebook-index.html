@@ -216,8 +216,8 @@ select.finput{appearance:auto}
 .cardactions{margin-top:12px}
 .cardactions .btn{margin:3px 4px}
 .ticket-yes{color:#2ecc71}.ticket-no{color:#E10600}
-#checkinReader video{width:100% !important;border-radius:10px}
-#checkinReader{max-width:480px;margin:0 auto}
+#checkinReader video,#scanReader video{width:100% !important;border-radius:10px}
+#checkinReader,#scanReader{max-width:480px;margin:0 auto}
 .checkin-result{margin-top:12px}
 /* ---- Rankings slice 1: categories, filters, share ---- */
 .catpills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
@@ -289,9 +289,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button onclick="showTab('music',this)">Music</button>
   <button onclick="showTab('profile',this)">Profile</button>
   <button onclick="showTab('fighters',this)">Martial Artists</button>
-  <button onclick="showTab('network',this)">My Profile</button>
+  <button onclick="showTab('network',this)">DAOS Card</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
-  <button onclick="showTab('checkin',this)">Check-in</button>
   <button onclick="location.href='museum.html'">Museum</button>
 </nav>
 <div class="layout">
@@ -521,9 +520,17 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Top Artists</h3><div id="rankArtists"><p class="meta">Loading&hellip;</p></div></div>
   <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
 </section>
-<section id="checkin" class="tabpane">
-  <div class="card"><h3>Door Check-in — DAOS Party</h3><p>Dec 5, 2026 &middot; 5–10 PM &middot; Row House, Harlem. Staff only: scan a member's DAOS card QR code, or type their short code.</p></div>
-  <div id="checkinBody"><div class="card"><p class="meta">Loading…</p></div></div>
+<section id="scan" class="tabpane">
+  <div class="card"><h3>Scan a DAOS Card</h3><p>Point the camera at a member's DAOS card QR code to open their card.</p>
+  <div id="scanReader"></div>
+  <p id="scanMsg" class="meta"></p>
+  <button class="btn dark" type="button" onclick="startScanCamera()">Start camera scanner</button>
+  <button class="btn dark" type="button" onclick="stopScanCamera()">Stop scanner</button>
+  <button class="btn dark" type="button" onclick="toggleScanTorch()">Flashlight</button></div>
+  <div class="card"><h3>Or type the code</h3>
+  <input id="scanCode" class="finput" type="text" placeholder="Short code, e.g. A1B2-C3D4 — or paste a card link" maxlength="100" autocomplete="off">
+  <button class="btn" type="button" onclick="lookupScanCode()">Open card</button>
+  <p id="scanCodeMsg" class="meta"></p></div>
 </section>
 <section id="cardview" class="tabpane">
   <div id="cardDetail"><div class="card"><p class="meta">Loading card…</p></div></div>
@@ -555,9 +562,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic">&#128214;</span>Magazine</button>
   <button class="drawer-row" onclick="goTab('music',7)"><span class="ic">&#127925;</span>Music</button>
   <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Martial Artists</button>
-  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>My Profile</button>
+  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>DAOS Card</button>
   <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
-  <button class="drawer-row" onclick="goTab('checkin',12)"><span class="ic">&#127915;</span>Door Check-in</button>
   <div id="drawerMore" style="display:none">
     <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic">&#128444;</span>Photos</button>
     <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic">&#128240;</span>Blog</button>
@@ -584,7 +590,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 <nav class="bottomnav">
   <button class="active" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])">&#8962;</button>
   <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])">&#127915;</button>
-  <button onclick="showTab('community',document.querySelectorAll('#tabs button')[3])">+</button>
+  <button aria-label="Create a post" onclick="goTab('feed',0);openComposer()">+</button>
+  <button aria-label="Scan QR code" onclick="showTab('scan',null)">&#9635;</button>
   <button aria-label="Notifications" onclick="toggleNotifPanel(event)">&#128276;</button>
   <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
@@ -2267,7 +2274,7 @@ async function openCard(token){
   if (!supabaseClient) { box.innerHTML = '<div class="card"><p>This card is not available yet.</p></div>'; return; }
   var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,card_token,card_code,instagram,website').eq('card_token', token).maybeSingle();
   if (res.error || !res.data) {
-    box.innerHTML = '<div class="card"><h3>Card not found</h3><p>This DAOS card link does not match a member. Check the QR code or type the short code on the Check-in page.</p><button class="btn dark" type="button" onclick="goTab(\'checkin\',12)">Go to Check-in</button></div>';
+    box.innerHTML = '<div class="card"><h3>Card not found</h3><p>This DAOS card link does not match a member. Check the QR code, or scan it from the Scan tab.</p><button class="btn dark" type="button" onclick="showTab(\'scan\',null)">Go to Scan</button></div>';
     return;
   }
   var p = res.data;
@@ -2294,6 +2301,92 @@ function closeCard(){
    Login-gated AND staff-gated. Non-staff logins see a plain
    "not authorized" message and no ticket data; the scanner and the
    manual lookup never render for them. */
+/* ---- Scan tab (bottom nav): scan a DAOS card QR, open the card.
+   Scan only — no check-in, no ticket lookup (Jake, Nov 18, 2026:
+   the Check-in tab was removed; this scanner replaces it). */
+var scanScanner = null;
+var scanScannerOn = false;
+var scanTorchOn = false;
+function renderScanPage(){
+  // Auto-start only when the camera library is already loaded
+  // (returning visits); first visit waits for the Start tap so the
+  // browser camera prompt is expected, not a surprise.
+  if (typeof Html5QrcodeScanner !== 'undefined') startScanCamera();
+}
+async function startScanCamera(){
+  var msg = document.getElementById('scanMsg');
+  if (scanScannerOn) return;
+  if (!supabaseClient) { if (msg) msg.textContent = 'Scanner is not connected yet.'; return; }
+  var ok = false;
+  try {
+    if (typeof Html5QrcodeScanner === 'undefined') ok = await loadScriptOnce(SCANNER_LIB_URL);
+    else ok = true;
+    if (!ok || typeof Html5QrcodeScanner === 'undefined') throw new Error('scanner library failed to load');
+    var reader = document.getElementById('scanReader');
+    if (!reader) return;
+    reader.innerHTML = '';
+    scanScanner = new Html5QrcodeScanner('scanReader', {fps: 10, qrbox: 250}, false);
+    scanScannerOn = true;
+    if (msg) msg.textContent = '';
+    scanScanner.render(
+      function(decodedText){
+        stopScanCamera();
+        var key = parseCardScan(decodedText);
+        if (!key) {
+          var m2 = document.getElementById('scanCodeMsg');
+          if (m2) m2.textContent = 'That QR code is not a DAOS card.';
+          return;
+        }
+        openScannedCard(key);
+      },
+      function(_err){ /* no QR in frame — routine, ignore */ }
+    );
+  } catch (e) {
+    scanScannerOn = false;
+    if (msg) msg.textContent = 'Camera scanner could not load — type the short code instead. (' + (e && e.message ? e.message : 'scanner unavailable') + ')';
+  }
+}
+async function stopScanCamera(){
+  if (scanScanner) {
+    try { await scanScanner.clear(); } catch (e) {}
+    scanScanner = null;
+  }
+  scanScannerOn = false;
+  scanTorchOn = false;
+  var reader = document.getElementById('scanReader');
+  if (reader) reader.innerHTML = '';
+}
+function toggleScanTorch(){
+  var msg = document.getElementById('scanMsg');
+  var video = document.querySelector('#scanReader video');
+  if (!video || !video.srcObject || !video.srcObject.getVideoTracks) {
+    if (msg) msg.textContent = 'Start the scanner first, then tap Flashlight.';
+    return;
+  }
+  var tracks = video.srcObject.getVideoTracks();
+  if (!tracks.length) return;
+  scanTorchOn = !scanTorchOn;
+  tracks[0].applyConstraints({advanced: [{torch: scanTorchOn}]}).catch(function(){
+    scanTorchOn = false;
+    if (msg) msg.textContent = 'Flashlight is not available on this camera.';
+  });
+}
+async function openScannedCard(key){
+  if (key.token) { openCard(key.token); return; }
+  if (!supabaseClient) return;
+  var res = await supabaseClient.from('profiles').select('card_token').eq('card_code', key.code).maybeSingle();
+  if (res.data && res.data.card_token) { openCard(res.data.card_token); return; }
+  var msg = document.getElementById('scanCodeMsg');
+  if (msg) msg.textContent = 'No member matches that code — check it and try again.';
+}
+function lookupScanCode(){
+  var input = document.getElementById('scanCode');
+  var msg = document.getElementById('scanCodeMsg');
+  var key = parseCardScan(input ? input.value : '');
+  if (!key) { if (msg) msg.textContent = 'Enter a short code like A1B2-C3D4, or paste a card link.'; return; }
+  if (msg) msg.textContent = '';
+  openScannedCard(key);
+}
 var checkinScanner = null;
 var checkinScannerOn = false;
 function renderCheckinPage(){
@@ -2724,7 +2817,8 @@ function toggleTheme(){
 function showTab(id,btn){
   document.querySelectorAll('.tabpane').forEach(function(s){s.classList.toggle('active',s.id===id)});
   document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b===btn)});
-  if (id === 'checkin' && typeof renderCheckinPage === 'function') renderCheckinPage();
+  if (id === 'scan' && typeof renderScanPage === 'function') renderScanPage();
+  if (id !== 'scan' && typeof stopScanCamera === 'function') stopScanCamera();
   if (id !== 'checkin' && typeof stopCheckinScanner === 'function') stopCheckinScanner();
   window.scrollTo(0,0);
 }
@@ -2802,8 +2896,8 @@ function openDeepLink(){
     setTimeout(function(){openCard(cm[1].toLowerCase());},50);
     return;
   }
-  if(h==='#/check-in'||h==='#checkin'){
-    showTab('checkin',document.querySelectorAll('#tabs button')[12]);
+  if(h==='#/check-in'||h==='#checkin'||h==='#/scan'){
+    showTab('scan',null);
     return;
   }
   var mm=h.match(/^#\/member\/([A-Za-z0-9\-]+)$/);
