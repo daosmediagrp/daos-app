@@ -2039,16 +2039,20 @@ function renderMyCardBox(){
   box.innerHTML = '<h3 style="margin-top:16px">My DAOS Card</h3>' +
     '<p class="meta">Show this at the door on Dec 5 — it is your ticket check-in card.</p>' +
     cardBoxHtml(myProfile, {qrId: 'myCardQr', ticketId: 'myCardTicket', showLink: true}) +
-    '<p class="meta">' + (myProfile.card_views || 0) + ' card view' + ((myProfile.card_views || 0) === 1 ? '' : 's') + '</p>';
+    '<p class="meta">' + (myProfile.card_views || 0) + ' card view' + ((myProfile.card_views || 0) === 1 ? '' : 's') + '</p>' +
+    '<div class="card" style="text-align:left"><h3>Your DAOS Party ticket</h3>' +
+    '<p class="meta">Bought a ticket on deadlyartofsurvival.com with this account\'s email? Your PAID status shows on the card above automatically. Bought with a different email? Claim it with your order number:</p>' +
+    '<p><input id="claimOrder" type="text" inputmode="numeric" placeholder="Order number (e.g. 2807)" style="max-width:230px"> <button class="btn" type="button" onclick="claimTicket(this)">Claim ticket</button></p>' +
+    '<p id="claimMsg" class="meta"></p></div>';
   renderCardQr('myCardQr', myProfile.card_token, myProfile.card_code);
   loadMyCardContacts();
-  if (myIsStaff) loadTicketIntoBox('myCardTicket', {token: myProfile.card_token});
+  loadTicketIntoBox('myCardTicket', {token: myProfile.card_token});
 }
 /* Staff-only ticket lookup. Called ONLY when myIsStaff is true — the
    function itself re-checks staff server-side, so a non-staff caller
    never gets ticket data even if this is called by mistake. */
 async function staffTicketLookup(key){
-  if (!supabaseClient || !currentUser || !myIsStaff) return null;
+  if (!supabaseClient || !currentUser) return null;
   var sess = await supabaseClient.auth.getSession();
   var jwt = sess.data && sess.data.session && sess.data.session.access_token;
   if (!jwt) return null;
@@ -2060,19 +2064,22 @@ async function staffTicketLookup(key){
   if (res.data && res.data.error) return {error: res.data.error};
   return res.data || null;
 }
-function ticketHtml(data, token){
+function ticketHtml(data, token, ownerView){
   if (!data || !data.ticket) return '';
   var t = data.ticket;
   var html = '';
   if (t.has_ticket) {
-    html += '<p class="big ticket-yes">&#10003; Has a ticket' + (t.ticket_type ? ' — ' + escapeHtml(t.ticket_type) : '') + '</p>';
+    html += '<p class="big ticket-yes">&#10003; ' + (ownerView ? 'Your ticket is PAID' : 'Has a ticket') + (t.ticket_type ? ' — ' + escapeHtml(t.ticket_type) : '') + '</p>';
     if (t.order_name) html += '<p class="meta">Order ' + escapeHtml(t.order_name) + (t.order_date ? ' &middot; ' + new Date(t.order_date).toLocaleDateString() : '') + '</p>';
+    if (t.cached) html += '<p class="meta">Showing the backup record — staff will re-verify at the door.</p>';
+  } else if (ownerView) {
+    html += '<p class="meta">No ticket on this account yet. If you bought one with a different email, claim it below with your order number.</p>';
   } else {
     html += '<p class="big ticket-no">No ticket — sell at door</p>';
   }
   if (t.already_checked_in) {
     html += '<p><strong>Already checked in' + (t.checked_in_at ? ' at ' + new Date(t.checked_in_at).toLocaleTimeString() : '') + '.</strong></p>';
-  } else if (t.has_ticket) {
+  } else if (t.has_ticket && myIsStaff) {
     html += '<button class="btn" type="button" onclick="doCheckIn(\'' + escapeHtml(token) + '\',this)">Check in</button>';
   }
   html += '<p id="checkinMsg-' + escapeHtml(token) + '" class="meta"></p>';
@@ -2095,8 +2102,10 @@ async function loadTicketIntoBox(boxId, key){
     var pr = await supabaseClient.from('profiles').select('card_token').eq('card_code', key.code).maybeSingle();
     token = pr.data ? pr.data.card_token : '';
   }
+  var html = ticketHtml(data, token, boxId === 'myCardTicket');
+  if (!html) { box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'block';
-  box.innerHTML = ticketHtml(data, token);
+  box.innerHTML = html;
 }
 async function doCheckIn(token, btn){
   if (!supabaseClient || !currentUser || !myIsStaff) {
@@ -2140,6 +2149,41 @@ async function doCheckIn(token, btn){
   await Promise.all(refreshes);
   var freshMsg = document.getElementById('checkinMsg-' + token);
   if (freshMsg && outcome) freshMsg.textContent = outcome;
+}
+/* ---- Claim a ticket by order number (spec Nov 18, 2026). The
+   check-ticket function verifies the order LIVE in Shopify before
+   attaching it to this member's card. Fail-soft: until the v2
+   function deploys, the call errors and we say claiming opens soon. */
+async function claimTicket(btn){
+  var input = document.getElementById('claimOrder');
+  var msg = document.getElementById('claimMsg');
+  var num = input ? input.value.replace(/[^0-9]/g, '') : '';
+  if (!num) { if (msg) msg.textContent = 'Enter the order number from your Shopify receipt.'; return; }
+  if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first, then claim your ticket.'; return; }
+  if (msg) msg.textContent = 'Checking order #' + num + ' with the store…';
+  if (btn) btn.disabled = true;
+  var sess = await supabaseClient.auth.getSession();
+  var jwt = sess.data && sess.data.session && sess.data.session.access_token;
+  if (!jwt) { if (msg) msg.textContent = 'Your session expired — log in again and retry.'; if (btn) btn.disabled = false; return; }
+  var res = await supabaseClient.functions.invoke('check-ticket', {
+    headers: { Authorization: 'Bearer ' + jwt },
+    body: {action: 'claim', order_number: num}
+  });
+  if (btn) btn.disabled = false;
+  var d = res.data || {};
+  if (d.claimed) {
+    if (msg) msg.textContent = 'Claimed ✓ — order ' + (d.order_name || ('#' + num)) + ' is on your card.';
+    loadTicketIntoBox('myCardTicket', {token: myProfile.card_token});
+    return;
+  }
+  var errText = (d && d.error) || (res.error && res.error.message) || '';
+  if (/card token|non-2xx/i.test(errText)) {
+    if (msg) msg.textContent = 'Claiming opens as soon as the door-system update lands — your ticket is safe. At the door, staff can also find it by your checkout email.';
+  } else if (errText) {
+    if (msg) msg.textContent = errText;
+  } else {
+    if (msg) msg.textContent = 'Could not claim that order — try again in a moment.';
+  }
 }
 /* ---- Card exchange (HiHello-style): a visitor who opens a card can
    share their own info back. The row lands in card_contacts, owned by
