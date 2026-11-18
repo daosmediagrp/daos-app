@@ -20,6 +20,13 @@ header .logos img{height:38px;width:auto;display:block}
 header .logos img.script{height:24px}
 .iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;position:relative;flex:none}
 .badge{position:absolute;top:-2px;right:-2px;background:#E10600;color:#fff;font-size:11px;font-weight:bold;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+#notifPanel{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));right:10px;width:min(92vw,370px);max-height:72vh;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:14px;z-index:60;padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.45)}
+.notif-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.notif-row{display:flex;gap:10px;padding:9px 2px;border-bottom:1px solid var(--border)}
+.notif-row:last-child{border-bottom:0}
+.notif-ic{font-size:17px;flex:none;width:24px;text-align:center}
+.notif-tx{font-size:14px;line-height:1.45;color:var(--text)}
+.notif-when{display:block;color:var(--muted2);font-size:12px;margin-top:2px}
 nav.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--border);padding:6px 8px;position:sticky;top:calc(58px + env(safe-area-inset-top,0px));z-index:19;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{background:none;border:0;color:var(--muted);font-weight:bold;font-size:14px;padding:8px 12px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
@@ -250,11 +257,15 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="iconbtn" onclick="openDrawer()" aria-label="Menu">&#9776;</button>
   <div class="logos"><img class="script" src="__SCRIPT__" alt="daos"></div>
   <button class="iconbtn" aria-label="Search">&#128269;</button>
-  <button class="iconbtn" aria-label="Notifications">&#128276;<span class="badge">3</span></button>
+  <button class="iconbtn" id="notifBtn" aria-label="Notifications" onclick="toggleNotifPanel(event)">&#128276;<span class="badge" id="notifBadge" style="display:none"></span></button>
   <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">&#9790;</button>
   <button class="btn" id="authBtn" type="button" onclick="openAuthModal()" style="margin:0;padding:9px 14px">Log in</button>
   <div class="avatar" style="width:38px;height:38px;font-size:18px"><img src="__CIRCLED__" alt="DAOS"></div>
 </header>
+<div id="notifPanel" style="display:none">
+  <div class="notif-head"><strong>Notifications</strong><button class="iconbtn" style="width:30px;height:30px;font-size:14px" onclick="toggleNotifPanel(event)" aria-label="Close notifications">&#10005;</button></div>
+  <div id="notifList"><p class="meta">Loading&hellip;</p></div>
+</div>
 <nav class="tabs" id="tabs">
   <button class="active" onclick="showTab('feed',this)">Feed</button>
   <button onclick="showTab('events',this)">Events</button>
@@ -624,6 +635,7 @@ async function refreshAuth(){
     loadSuggestions();
     loadRankings();
     loadMyProfile();
+    loadNotifications(false);
     applyGate();
     if (typeof openDeepLink === 'function') openDeepLink();
   } else {
@@ -2065,6 +2077,87 @@ async function submitExchange(token, btn){
   var form = btn ? btn.closest('.card') : null;
   if (form) form.innerHTML = '<h3>You\'re connected ✓</h3><p class="meta">Your info was sent. They\'ll see it in their DAOS contacts.</p>';
 }
+function relTime(iso){
+  var s = Math.max(1, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+  if (s < 60) return 'just now';
+  var m = Math.floor(s / 60); if (m < 60) return m + 'm ago';
+  var h = Math.floor(m / 60); if (h < 24) return h + 'h ago';
+  var d = Math.floor(h / 24); if (d < 7) return d + 'd ago';
+  return new Date(iso).toLocaleDateString();
+}
+async function loadNotifications(render){
+  var badge = document.getElementById('notifBadge');
+  var list = document.getElementById('notifList');
+  if (!supabaseClient || !currentUser) {
+    if (badge) badge.style.display = 'none';
+    if (render && list) list.innerHTML = '<p class="meta" style="padding:6px 2px">Log in to see your notifications.</p><button class="btn" type="button" onclick="openAuthModal()">Log in</button>';
+    return;
+  }
+  var items = [];
+  try {
+    var f = await supabaseClient.from('follows').select('follower_id,created_at').eq('following_id', currentUser.id).order('created_at', {ascending: false}).limit(15);
+    var mp = await supabaseClient.from('posts').select('id').eq('user_id', currentUser.id).order('created_at', {ascending: false}).limit(60);
+    var myPostIds = (mp.data || []).map(function(r){ return r.id; });
+    var cm = {data: []}, lk = {data: []};
+    if (myPostIds.length) {
+      cm = await supabaseClient.from('post_comments').select('user_id,body,created_at').in('post_id', myPostIds).neq('user_id', currentUser.id).order('created_at', {ascending: false}).limit(15);
+      lk = await supabaseClient.from('post_likes').select('user_id,created_at').in('post_id', myPostIds).neq('user_id', currentUser.id).order('created_at', {ascending: false}).limit(15);
+    }
+    var cc = await supabaseClient.from('card_contacts').select('name,created_at').order('created_at', {ascending: false}).limit(15);
+    var ids = {};
+    (f.data || []).forEach(function(r){ ids[r.follower_id] = 1; });
+    (cm.data || []).forEach(function(r){ ids[r.user_id] = 1; });
+    (lk.data || []).forEach(function(r){ ids[r.user_id] = 1; });
+    var names = {};
+    var idList = Object.keys(ids);
+    if (idList.length) {
+      var pr = await supabaseClient.from('profiles').select('id,display_name').in('id', idList);
+      (pr.data || []).forEach(function(pr2){ names[pr2.id] = pr2.display_name; });
+    }
+    function nm(id){ return names[id] || 'Someone'; }
+    (f.data || []).forEach(function(r){ items.push({t: r.created_at, icon: '&#128100;', text: '<b>' + escapeHtml(nm(r.follower_id)) + '</b> started following you'}); });
+    (cm.data || []).forEach(function(r){ items.push({t: r.created_at, icon: '&#128172;', text: '<b>' + escapeHtml(nm(r.user_id)) + '</b> commented: &ldquo;' + escapeHtml((r.body || '').slice(0, 80)) + '&rdquo;'}); });
+    (lk.data || []).forEach(function(r){ items.push({t: r.created_at, icon: '&#10084;&#65038;', text: '<b>' + escapeHtml(nm(r.user_id)) + '</b> liked your post'}); });
+    (cc.data || []).forEach(function(r){ items.push({t: r.created_at, icon: '&#128257;', text: '<b>' + escapeHtml(r.name) + '</b> exchanged contacts via your DAOS Card'}); });
+  } catch(e) { /* partial items still render */ }
+  items.sort(function(a, b){ return new Date(b.t) - new Date(a.t); });
+  items = items.slice(0, 20);
+  var seen = 0;
+  try { seen = parseInt(localStorage.getItem('daos-notif-seen') || '0', 10) || 0; } catch(e) {}
+  var unseen = items.filter(function(it){ return new Date(it.t).getTime() > seen; }).length;
+  if (badge) {
+    if (unseen > 0) { badge.style.display = 'flex'; badge.textContent = unseen > 9 ? '9+' : String(unseen); }
+    else badge.style.display = 'none';
+  }
+  if (render && list) {
+    var html = '';
+    if (!items.length) html = '<p class="meta" style="padding:6px 2px">Nothing yet — new followers, likes, comments, and card exchanges will show up here.</p>';
+    items.forEach(function(it){
+      html += '<div class="notif-row"><span class="notif-ic">' + it.icon + '</span><div class="notif-tx">' + it.text + '<span class="notif-when">' + relTime(it.t) + '</span></div></div>';
+    });
+    var views = myProfile && myProfile.card_views ? myProfile.card_views : 0;
+    if (views > 0) html += '<div class="notif-row"><span class="notif-ic">&#128064;</span><div class="notif-tx">Your DAOS Card has been viewed <b>' + views + '</b> time' + (views === 1 ? '' : 's') + '.</div></div>';
+    list.innerHTML = html;
+  }
+}
+function toggleNotifPanel(ev){
+  if (ev) ev.stopPropagation();
+  var panel = document.getElementById('notifPanel');
+  if (!panel) return;
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  var list = document.getElementById('notifList');
+  if (list) list.innerHTML = '<p class="meta">Loading&hellip;</p>';
+  loadNotifications(true).then(function(){
+    try { localStorage.setItem('daos-notif-seen', String(Date.now())); } catch(e) {}
+    var badge = document.getElementById('notifBadge');
+    if (badge) badge.style.display = 'none';
+  });
+}
+document.addEventListener('click', function(e){
+  var panel = document.getElementById('notifPanel');
+  if (panel && panel.style.display !== 'none' && !panel.contains(e.target)) panel.style.display = 'none';
+});
 async function loadMyCardContacts(){
   var box = document.getElementById('myCardContacts');
   if (!box || !supabaseClient || !currentUser) return;
