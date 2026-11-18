@@ -192,8 +192,18 @@ select.finput{appearance:auto}
 /* ---- DAOS digital card + door check-in (Dec 5 Party) ---- */
 .dcard{background:var(--card);border:2px solid #E10600;border-radius:12px;padding:16px;margin:12px 0;text-align:center}
 .dcard h3{margin-bottom:2px}
-.qrbox{background:#fff;border-radius:10px;padding:12px;display:inline-block;margin:12px auto 8px;min-width:224px;min-height:224px}
+.qrbox{background:#fff;border:4px solid #E10600;border-radius:22px;padding:16px;display:inline-block;margin:12px auto 8px;min-width:224px;min-height:224px;position:relative;box-shadow:0 0 0 4px rgba(225,6,0,.22),0 10px 30px rgba(225,6,0,.25)}
 .qrbox{text-align:center}.qrbox img,.qrbox canvas,.qrbox table{display:block;margin:0 auto}
+.qrlogo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;background:#fff;border-radius:13px;padding:4px;box-shadow:0 0 0 2px #fff;pointer-events:none}
+.qrlogo img{width:100%;height:100%;display:block;border-radius:9px;margin:0}
+.cardrows{margin:12px 0 4px;text-align:left}
+.cardrow{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none;font-size:16px}
+.cardrow:last-child{border-bottom:0}
+.cardrow .cic{width:42px;height:42px;border-radius:50%;background:#E10600;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.sharerow{display:flex;justify-content:center;gap:16px;margin:12px 0 2px}
+.sharerow .sbtn{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:0;color:var(--text);cursor:pointer;font-size:12px;text-decoration:none;font-family:inherit}
+.sharerow .sic{width:50px;height:50px;border-radius:50%;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text)}
+.sharerow .sic.red{background:#E10600;color:#fff;border-color:#E10600}
 .cardcode{font-family:monospace,monospace;font-size:22px;font-weight:bold;letter-spacing:3px;margin:8px 0 2px}
 .ticketbox{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;text-align:left}
 .ticketbox .big{font-size:18px;font-weight:bold}
@@ -245,6 +255,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <textarea id="gateBio" class="ginput" placeholder="Short bio — who you are, what you do, where you train" maxlength="2000"></textarea>
     <input id="gateIg" class="ginput" type="text" placeholder="Instagram handle (optional)" maxlength="60">
     <input id="gateWeb" class="ginput" type="text" placeholder="Website (optional)" maxlength="300">
+    <input id="gateEmail" class="ginput" type="email" placeholder="Email for your DAOS Card (optional — shown on your card)" maxlength="200">
+    <input id="gatePhone" class="ginput" type="tel" placeholder="Phone for your DAOS Card (optional — shown on your card)" maxlength="40">
     <label class="meta" for="gateAvatar" style="display:block;text-align:left;margin:4px 0">Photo or logo (optional, jpg or png)</label>
     <input id="gateAvatar" class="ginput" type="file" accept="image/*">
     <button class="btn" type="button" onclick="gateSaveProfile()" style="width:100%">Create my profile</button>
@@ -277,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button onclick="showTab('music',this)">Music</button>
   <button onclick="showTab('profile',this)">Profile</button>
   <button onclick="showTab('fighters',this)">Martial Artists</button>
-  <button onclick="showTab('network',this)">Network</button>
+  <button onclick="showTab('network',this)">My Profile</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
   <button onclick="showTab('checkin',this)">Check-in</button>
   <button onclick="location.href='museum.html'">Museum</button>
@@ -454,6 +466,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   </div>
 </section>
 <section id="network" class="tabpane">
+  <div id="myCardBox"></div>
+  <div id="myCardContacts"></div>
   <div class="card"><h3>Network</h3><p>Connect with the DAOS community &mdash; follow members, find people to connect with, and build your network.</p></div>
   <div id="memberDetail" style="display:none"></div>
   <div class="card" id="myMemberCard">
@@ -464,12 +478,12 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <label class="meta" for="mpAvatar">Photo or logo (jpg or png)</label>
     <input id="mpInstagram" class="finput" type="text" placeholder="Instagram handle (optional) — e.g. @deadlyartofsurvival" maxlength="60">
     <input id="mpWebsite" class="finput" type="text" placeholder="Website (optional) — e.g. deadlyartofsurvival.com" maxlength="300">
+    <input id="mpEmail" class="finput" type="email" placeholder="Email for your DAOS Card (optional — shown on your card)" maxlength="200">
+    <input id="mpPhone" class="finput" type="tel" placeholder="Phone for your DAOS Card (optional — shown on your card)" maxlength="40">
     <input id="mpAvatar" class="finput" type="file" accept="image/*">
     <p id="mpAvatarNote" class="meta"></p>
     <button class="btn" type="button" onclick="saveMemberProfile()">Save my profile</button>
     <p id="mpMsg" class="meta"></p>
-    <div id="myCardBox"></div>
-    <div id="myCardContacts"></div>
     <div class="danger-zone" id="deleteAccountBox" style="display:none">
       <h3>Delete account</h3>
       <p class="meta">Permanently delete your DAOS account and everything tied to it.</p>
@@ -537,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic">&#128214;</span>Magazine</button>
   <button class="drawer-row" onclick="goTab('music',7)"><span class="ic">&#127925;</span>Music</button>
   <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Martial Artists</button>
-  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>Network</button>
+  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>My Profile</button>
   <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
   <button class="drawer-row" onclick="goTab('checkin',12)"><span class="ic">&#127915;</span>Door Check-in</button>
   <div id="drawerMore" style="display:none">
@@ -640,7 +654,7 @@ async function refreshAuth(){
     /* App: logged-out users get the gate (Nov 15). Web: public-first —
        no gate, and the feed loads for visitors (Nov 18). */
     applyGate();
-    if (!isNativeApp()) { loadMemberPosts(); loadSuggestions(); }
+    if (!isNativeApp()) { loadMemberPosts(); loadSuggestions(); renderMyCardBox(); }
     btn.textContent = 'Log in';
     btn.onclick = openAuthModal;
     document.getElementById('composerForm').style.display = 'none';
@@ -706,6 +720,10 @@ async function gateSaveProfile(){
   var webEl = document.getElementById('gateWeb');
   var instagram = igEl ? igEl.value.trim().replace(/^@+/, '').replace(/\s+/g, '') : '';
   var website = webEl ? webEl.value.trim() : '';
+  var emEl = document.getElementById('gateEmail');
+  var phEl = document.getElementById('gatePhone');
+  var cEmail = emEl ? emEl.value.trim() : '';
+  var cPhone = phEl ? phEl.value.trim() : '';
   if (!name) { if (msg) msg.textContent = 'Add your name — that is how the community knows you.'; return; }
   if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first.'; return; }
   if (msg) msg.textContent = 'Creating your profile…';
@@ -721,8 +739,9 @@ async function gateSaveProfile(){
     var pub = supabaseClient.storage.from('avatars').getPublicUrl(path);
     avatarUrl = pub.data && pub.data.publicUrl;
   }
-  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl, instagram: instagram || null, website: website || null};
+  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl, instagram: instagram || null, website: website || null, contact_email: cEmail || null, contact_phone: cPhone || null};
   var res = await supabaseClient.from('profiles').upsert(row);
+  if (res.error && (cEmail || cPhone)) { delete row.contact_email; delete row.contact_phone; res = await supabaseClient.from('profiles').upsert(row); }
   if (res.error) { if (msg) msg.textContent = res.error.message; return; }
   refreshAuth();
 }
@@ -1124,10 +1143,16 @@ async function loadMyMemberProfile(){
   myProfile = res.data || null;
   myIsStaff = !!(myProfile && myProfile.is_staff);
   if (myProfile) {
+    var cxr = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', currentUser.id).maybeSingle();
+    if (!cxr.error && cxr.data) { myProfile.contact_email = cxr.data.contact_email; myProfile.contact_phone = cxr.data.contact_phone; }
+  }
+  if (myProfile) {
     document.getElementById('mpName').value = myProfile.display_name || '';
     document.getElementById('mpBio').value = myProfile.bio || '';
     var igEl = document.getElementById('mpInstagram'); if (igEl) igEl.value = myProfile.instagram || '';
     var webEl = document.getElementById('mpWebsite'); if (webEl) webEl.value = myProfile.website || '';
+    var emEl2 = document.getElementById('mpEmail'); if (emEl2) emEl2.value = myProfile.contact_email || '';
+    var phEl2 = document.getElementById('mpPhone'); if (phEl2) phEl2.value = myProfile.contact_phone || '';
     var note = document.getElementById('mpAvatarNote');
     if (note) note.textContent = myProfile.avatar_url ? 'Current photo/logo is set — choose a new file to replace it.' : 'No photo or logo yet — add one so people recognize you.';
     if (statusEl) statusEl.textContent = myProfile.followers_count + ' followers · ' + myProfile.following_count + ' following · ' + myProfile.likes_received + ' likes received';
@@ -1137,8 +1162,7 @@ async function loadMyMemberProfile(){
     myIsStaff = false;
     if (statusEl) statusEl.textContent = 'No profile yet — create one so people can find and follow you.';
     if (setupCard) setupCard.style.display = 'block';
-    var myCard = document.getElementById('myCardBox');
-    if (myCard) myCard.innerHTML = '';
+    renderMyCardBox();
   }
 }
 async function saveMemberProfile(){
@@ -1149,6 +1173,10 @@ async function saveMemberProfile(){
   var webInput = document.getElementById('mpWebsite');
   var instagram = igInput ? igInput.value.trim().replace(/^@+/, '').replace(/\s+/g, '') : '';
   var website = webInput ? webInput.value.trim() : '';
+  var emInput = document.getElementById('mpEmail');
+  var phInput = document.getElementById('mpPhone');
+  var cEmail = emInput ? emInput.value.trim() : '';
+  var cPhone = phInput ? phInput.value.trim() : '';
   if (!name) { if (msg) msg.textContent = 'Add your display name first.'; return; }
   if (!supabaseClient || !currentUser) { if (msg) msg.textContent = 'Log in first.'; return; }
   if (msg) msg.textContent = 'Saving…';
@@ -1164,10 +1192,14 @@ async function saveMemberProfile(){
     var pub = supabaseClient.storage.from('avatars').getPublicUrl(path);
     avatarUrl = pub.data && pub.data.publicUrl;
   }
-  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl, instagram: instagram || null, website: website || null};
-  var res = myProfile
-    ? await supabaseClient.from('profiles').update(row).eq('id', currentUser.id)
-    : await supabaseClient.from('profiles').insert(row);
+  var row = {id: currentUser.id, display_name: name, bio: bio, avatar_url: avatarUrl, instagram: instagram || null, website: website || null, contact_email: cEmail || null, contact_phone: cPhone || null};
+  async function tryProfileSave(r){
+    return myProfile
+      ? await supabaseClient.from('profiles').update(r).eq('id', currentUser.id)
+      : await supabaseClient.from('profiles').insert(r);
+  }
+  var res = await tryProfileSave(row);
+  if (res.error && (cEmail || cPhone)) { delete row.contact_email; delete row.contact_phone; res = await tryProfileSave(row); }
   if (res.error) { if (msg) msg.textContent = res.error.message; return; }
   if (msg) msg.textContent = 'Profile saved.';
   if (fileInput) fileInput.value = '';
@@ -1478,6 +1510,8 @@ async function openMember(userId){
   var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,followers_count,following_count,likes_received,created_at,card_token,card_code,instagram,website').eq('id', userId).maybeSingle();
   if (res.error || !res.data) { box.innerHTML = '<div class="card"><p>This member profile does not exist yet.</p><button class="btn dark" type="button" onclick="closeMember()">Back</button></div>'; return; }
   var p = res.data;
+  var cxm = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', p.id).maybeSingle();
+  if (!cxm.error && cxm.data) { p.contact_email = cxm.data.contact_email; p.contact_phone = cxm.data.contact_phone; }
   var pres = await supabaseClient.from('posts').select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of').eq('user_id', userId).order('created_at', {ascending: false}).limit(10);
   var posts = pres.data || [];
   var pmap = {}; pmap[userId] = p;
@@ -1844,7 +1878,11 @@ async function renderCardQr(boxId, token, code){
     if (typeof QRCode === 'undefined') ok = await loadScriptOnce(QR_LIB_URL);
     else ok = true;
     if (ok && typeof QRCode !== 'undefined') {
-      new QRCode(box, {text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M});
+      new QRCode(box, {text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.H});
+      var lg = document.createElement('span');
+      lg.className = 'qrlogo';
+      lg.innerHTML = '<img src="__CIRCLED__" alt="DAOS">';
+      box.appendChild(lg);
       ok = true;
     } else ok = false;
   } catch (e) { ok = false; }
@@ -1856,8 +1894,12 @@ async function renderCardQr(boxId, token, code){
    digital business card — photo, name, bio, the member's own public
    links (Instagram / website, both optional and set by the member),
    Save Contact (vCard) and Share buttons — on top of the same QR +
-   short code door check-in. The QR still encodes ONLY the card URL;
-   no email or phone is ever shown or encoded. */
+   short code door check-in. The QR still encodes ONLY the card URL.
+   Nov 18, 2026 (Jake, from his HiHello card): framed QR with the DAOS
+   logo centered on the code, contact rows with red circle icons, a big
+   Save Contact button, and a Share / Copy Link / Text / Email row.
+   Email + phone rows appear only when the member chose to publish
+   them (profiles.contact_email / contact_phone, both optional). */
 var DAOS_CARD_PROFILES = {};
 function cardIgHandle(p){
   return ((p && p.instagram) || '').replace(/^@+/, '').replace(/[^A-Za-z0-9._]/g, '');
@@ -1874,6 +1916,8 @@ function saveCardContact(token, btn){
   var p = DAOS_CARD_PROFILES[token];
   if (!p) return;
   var lines = ['BEGIN:VCARD', 'VERSION:3.0', 'FN:' + p.name, 'ORG:DAOS — The Deadly Art of Survival', 'URL:' + p.url];
+  if (p.email) lines.push('EMAIL:' + p.email);
+  if (p.phone) lines.push('TEL:' + p.phone);
   if (p.ig) lines.push('URL;type=Instagram:https://instagram.com/' + p.ig);
   if (p.web) lines.push('URL;type=Website:' + p.web);
   lines.push('NOTE:DAOS Digital Card — door code ' + p.code);
@@ -1898,32 +1942,52 @@ async function shareCardLink(token, btn){
     if (btn) { var t = btn.textContent; btn.textContent = 'Link copied ✓'; setTimeout(function(){ btn.textContent = t; }, 1600); }
   } catch (e) { window.prompt('Copy this card link:', p.url); }
 }
+async function copyCardLink(token, btn){
+  var p = DAOS_CARD_PROFILES[token];
+  if (!p) return;
+  var sic = btn ? btn.querySelector('.sic') : null;
+  try {
+    await navigator.clipboard.writeText(p.url);
+    if (sic) { var t = sic.innerHTML; sic.innerHTML = '&#10003;'; setTimeout(function(){ sic.innerHTML = t; }, 1600); }
+  } catch (e) { window.prompt('Copy this card link:', p.url); }
+}
 function cardBoxHtml(p, opts){
   opts = opts || {};
   var code = p.card_code || shortCodeFromToken(p.card_token);
   var ig = cardIgHandle(p);
   var webHref = cardWebsiteHref(p);
+  var cEmail = ((p && p.contact_email) || '').trim();
+  var cPhone = ((p && p.contact_phone) || '').trim();
   if (p.card_token) {
     DAOS_CARD_PROFILES[p.card_token] = {
       name: p.display_name || 'DAOS member', ig: ig,
-      web: webHref, code: code, url: cardUrl(p.card_token)
+      web: webHref, code: code, url: cardUrl(p.card_token),
+      email: cEmail, phone: cPhone
     };
   }
-  var chips = '';
-  if (ig) chips += '<a class="cardchip" href="https://instagram.com/' + escapeHtml(ig) + '" target="_blank" rel="noopener">Instagram @' + escapeHtml(ig) + '</a>';
-  if (webHref) chips += '<a class="cardchip" href="' + escapeHtml(webHref) + '" target="_blank" rel="noopener">' + escapeHtml(cardWebsiteLabel(p)) + '</a>';
+  var rows = '';
+  if (ig) rows += '<a class="cardrow" href="https://instagram.com/' + escapeHtml(ig) + '" target="_blank" rel="noopener"><span class="cic">&#128247;</span>@' + escapeHtml(ig) + '</a>';
+  if (cEmail) rows += '<a class="cardrow" href="mailto:' + escapeHtml(cEmail) + '"><span class="cic">&#9993;</span>' + escapeHtml(cEmail) + '</a>';
+  if (cPhone) rows += '<a class="cardrow" href="tel:' + escapeHtml(cPhone.replace(/[^0-9+]/g, '')) + '"><span class="cic">&#128222;</span>' + escapeHtml(cPhone) + '</a>';
+  if (webHref) rows += '<a class="cardrow" href="' + escapeHtml(webHref) + '" target="_blank" rel="noopener"><span class="cic">&#128279;</span>' + escapeHtml(cardWebsiteLabel(p)) + '</a>';
   var html = '<div class="dcard">' +
     '<div class="dcard-band">DAOS</div>' +
     '<div style="text-align:center"><span class="avatar-ring">' + postAvatarHtml(p, 96) + '</span></div>' +
     '<h3>' + escapeHtml(p.display_name) + '</h3>' +
     (p.bio ? '<p>' + escapeHtml(p.bio) + '</p>' : '') +
     (opts.votes != null ? '<p><span class="fighter-votes">' + opts.votes + ' vote' + (opts.votes === 1 ? '' : 's') + '</span></p>' : '') +
-    (chips ? '<div class="cardchips">' + chips + '</div>' : '') +
+    (rows ? '<div class="cardrows">' + rows + '</div>' : '') +
     '<p class="meta">DAOS Digital Card &middot; Dec 5 Party, Row House, Harlem</p>' +
     '<div class="qrbox" id="' + opts.qrId + '"></div>' +
     '<p class="cardcode">' + escapeHtml(code) + '</p>' +
     '<p class="meta">Show this code at the door if the QR will not scan.</p>' +
-    (p.card_token ? '<div class="cardactions"><button class="btn" type="button" onclick="saveCardContact(\'' + escapeHtml(p.card_token) + '\', this)">Save Contact</button> <button class="btn dark" type="button" onclick="shareCardLink(\'' + escapeHtml(p.card_token) + '\', this)">Share Card</button></div>' : '') +
+    (p.card_token ? '<div class="cardactions"><button class="btn" type="button" style="width:100%;padding:14px;font-size:17px" onclick="saveCardContact(\'' + escapeHtml(p.card_token) + '\', this)">&#8681; Save Contact</button></div>' +
+    '<div class="sharerow">' +
+    '<button class="sbtn" type="button" onclick="shareCardLink(\'' + escapeHtml(p.card_token) + '\', this)"><span class="sic red">&#128228;</span>Share</button>' +
+    '<button class="sbtn" type="button" onclick="copyCardLink(\'' + escapeHtml(p.card_token) + '\', this)"><span class="sic">&#128279;</span>Copy Link</button>' +
+    '<a class="sbtn" href="sms:?&body=' + encodeURIComponent(cardUrl(p.card_token)) + '"><span class="sic">&#128172;</span>Text</a>' +
+    '<a class="sbtn" href="mailto:?subject=' + encodeURIComponent('DAOS Card') + '&body=' + encodeURIComponent(cardUrl(p.card_token)) + '"><span class="sic">&#9993;</span>Email</a>' +
+    '</div>' : '') +
     (opts.showLink ? '<p><a href="' + escapeHtml(cardUrl(p.card_token)) + '">Open this card</a></p>' : '') +
     '<div class="ticketbox" id="' + opts.ticketId + '" style="display:none"></div>' +
     '</div>';
@@ -1932,7 +1996,16 @@ function cardBoxHtml(p, opts){
 function renderMyCardBox(){
   var box = document.getElementById('myCardBox');
   if (!box) return;
-  if (!myProfile || !myProfile.card_token) { box.innerHTML = ''; return; }
+  if (!myProfile || !myProfile.card_token) {
+    /* Card slot shows FIRST in My Profile — without a card it is the
+       sign-up hook (Jake, Nov 18, 2026). */
+    if (currentUser) {
+      box.innerHTML = '<div class="card" style="text-align:center"><h3>My DAOS Card</h3><p>Your digital DAOS card with QR code — your ticket and check-in for DAOS events, starting with the Dec 5 Party.</p><p class="meta">Create your profile below and your card is issued automatically.</p></div>';
+    } else {
+      box.innerHTML = '<div class="card" style="text-align:center"><h3>My DAOS Card</h3><p>Your digital DAOS card with QR code — your ticket and check-in for DAOS events, starting with the Dec 5 Party. Sign up to get yours.</p><button class="btn" type="button" onclick="openAuthModal()">Sign up / Log in</button></div>';
+    }
+    return;
+  }
   box.innerHTML = '<h3 style="margin-top:16px">My DAOS Card</h3>' +
     '<p class="meta">Show this at the door on Dec 5 — it is your ticket check-in card.</p>' +
     cardBoxHtml(myProfile, {qrId: 'myCardQr', ticketId: 'myCardTicket', showLink: true}) +
@@ -2189,6 +2262,8 @@ async function openCard(token){
     return;
   }
   var p = res.data;
+  var cxp = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', p.id).maybeSingle();
+  if (!cxp.error && cxp.data) { p.contact_email = cxp.data.contact_email; p.contact_phone = cxp.data.contact_phone; }
   var votes = null, fighterSlug = null;
   var fr = await supabaseClient.from('fighter_profiles').select('slug,votes_count').eq('user_id', p.id).eq('status', 'live').maybeSingle();
   if (fr.data) { votes = fr.data.votes_count; fighterSlug = fr.data.slug; }
