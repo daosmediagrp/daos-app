@@ -447,6 +447,10 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
         <option value="bjj">Brazilian Jiu-Jitsu (BJJ)</option>
         <option value="striker">Striker</option>
         <option value="youth">Youth (under 18)</option>
+        <option value="boxer">Boxer</option>
+        <option value="mma">MMA</option>
+        <option value="wrestler">Wrestler</option>
+        <option value="athlete">Athlete (all sports)</option>
       </select>
       <input id="fpStyleName" class="finput" type="text" placeholder="Style, e.g. Karate" list="styleList" maxlength="100">
       <input id="fpSchool" class="finput" type="text" placeholder="School / gym, e.g. Global Champs Karate" maxlength="200">
@@ -1236,7 +1240,8 @@ async function loadSuggestions(){
 }
 /* ---- Rankings slice 1: categories + filters + share ----
    Categories: Top Martial Artists (all live fighters, by votes) plus
-   Top MMA Fighters, Top BJJ, Top Strikers, Top Youth — each ranked by
+   Top BJJ, Top Strikers, Top Youth, Top Boxers, Top MMA, Top
+   Wrestlers, Top Athletes (last four added Nov 18, 2026) — each ranked by
    votes within its category. A fighter appears in a category ONLY when
    its category field is set to that category; uncategorized fighters
    show in Top Martial Artists only. Top Youth additionally requires
@@ -1253,9 +1258,13 @@ var RANKING_CATEGORIES = [
   {key: 'all', label: 'Top Martial Artists'},
   {key: 'bjj', label: 'Top BJJ'},
   {key: 'striker', label: 'Top Strikers'},
-  {key: 'youth', label: 'Top Youth'}
+  {key: 'youth', label: 'Top Youth'},
+  {key: 'boxer', label: 'Top Boxers'},
+  {key: 'mma', label: 'Top MMA'},
+  {key: 'wrestler', label: 'Top Wrestlers'},
+  {key: 'athlete', label: 'Top Athletes'}
 ];
-var RANKING_CATEGORY_LABELS = {bjj: 'BJJ', striker: 'Striker', youth: 'Youth'};
+var RANKING_CATEGORY_LABELS = {bjj: 'BJJ', striker: 'Striker', youth: 'Youth', boxer: 'Boxer', mma: 'MMA', wrestler: 'Wrestler', athlete: 'Athlete'};
 var FIGHTER_RANKING_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count,category,style,record,school,weight_class,region,age';
 var FIGHTER_BASE_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count';
 var rankingCategory = 'all';
