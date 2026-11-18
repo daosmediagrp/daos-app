@@ -38,6 +38,13 @@ main{max-width:680px;margin:0 auto;padding:12px}
 .adboard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .adboard-head h3{margin:0;color:#E10600}
 .adboard-tag{background:#E10600;color:#fff;font-size:11px;font-weight:bold;padding:4px 9px;border-radius:10px;letter-spacing:1px}
+.shopitem{display:flex;gap:14px;align-items:center}
+.shopitem .shopic{flex:none;width:54px;height:54px;border-radius:12px;background:#111;color:#E10600;display:flex;align-items:center;justify-content:center;font-size:28px}
+.shopitem .shopbody{flex:1;min-width:0}
+.shopitem .shopbody h3{margin:0 0 4px}
+.shopitem .shopbody p{margin:0}
+.shopprice{flex:none;background:#E10600;color:#fff;border:0;font-weight:800;font-size:17px;padding:12px 18px;border-radius:12px;cursor:pointer}
+.shopprice:active{transform:scale(.97)}
 .composer{display:flex;gap:10px;align-items:center}
 .avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex:none;border:2px solid #fff}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -321,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card adboard">
     <div class="adboard-head"><h3>Ad Board</h3><span class="adboard-tag">SPONSORED</span></div>
     <p><strong>Your brand here.</strong> Put your business in front of the DAOS community &mdash; 139K Instagram followers, a 14K-member private community, and roughly 30M views a month across platforms, plus DAOS Magazine, the site, and the Dec 5 Party in Harlem.</p>
-    <a class="btn" href="https://deadlyartofsurvival.com">Advertise with DAOS</a>
+    <a class="btn" href="#" onclick="showTab('advertise',null);return false">Advertise with DAOS</a>
     <p class="meta">Ad space on the DAOS feed &middot; Contact daosmediagrp@gmail.com</p>
   </div>
   <div class="card">
@@ -531,6 +538,13 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <input id="scanCode" class="finput" type="text" placeholder="Short code, e.g. A1B2-C3D4 — or paste a card link" maxlength="100" autocomplete="off">
   <button class="btn" type="button" onclick="lookupScanCode()">Open card</button>
   <p id="scanCodeMsg" class="meta"></p></div>
+</section>
+<section id="advertise" class="tabpane">
+  <div class="card"><h3>Advertise with DAOS</h3><p>Put your business in front of the DAOS community &mdash; 139K Instagram followers, a 14K-member private community, and roughly 30M views a month across platforms, plus DAOS Magazine and the Dec 5 Party in Harlem.</p></div>
+  <div class="card shopitem"><div class="shopic">&#128226;</div><div class="shopbody"><h3>Ad Board</h3><p>Your ad on the DAOS Ad Board &mdash; shown on the app feed, in front of the whole community.</p></div><button class="shopprice" type="button" onclick="buyAdBoard()">$5</button></div>
+  <p id="adMsg" class="meta" style="text-align:center"></p>
+  <div class="card shopitem"><div class="shopic">&#128214;</div><div class="shopbody"><h3>Print Magazine Ads</h3><p>Full-page, half-page, and back-cover ads in DAOS Magazine print editions.</p></div><button class="btn dark" type="button" onclick="openExternal('https://deadlyartofsurvival.com/pages/advertise')">See options</button></div>
+  <div class="card"><p class="meta">Every ad is reviewed by DAOS before it runs. After you pay, email your ad &mdash; image, text, and link &mdash; to daos@deadlyartofsurvival.com with your order number or receipt.</p></div>
 </section>
 <section id="cardview" class="tabpane">
   <div id="cardDetail"><div class="card"><p class="meta">Loading card…</p></div></div>
@@ -2530,6 +2544,8 @@ function clearCheckinResult(){
    verified — the site cannot check it. */
 var STRIPE_EVENT_PAYMENT_LINK = 'https://deadlyartofsurvival.com/cart/50873011306658:1'; /* $5 event listing — Shopify checkout permalink. Jake matches the payer email against the Shopify order when approving. */
 var STRIPE_SONG_PAYMENT_LINK = 'https://deadlyartofsurvival.com/cart/50873011732642:1';  /* $5 song submission — Shopify checkout permalink. Jake matches the payer email against the Shopify order when approving. */
+var AD_SHOPIFY_PAYMENT_LINK = 'https://deadlyartofsurvival.com/cart/50911689965730:1';  /* $5 Ad Board — Shopify checkout permalink, used on the WEB only. Inside the app the Ad Board is a native Apple In-App Purchase (Jake, Nov 18, 2026). */
+var AD_IAP_PRODUCT_ID = 'com.daosmedia.app.adboard';  /* App Store Connect IAP (consumable, $4.99 tier) — must exist in App Store Connect before in-app buys work. */
 var EVENT_TYPE_LABELS = {event: 'Event', seminar: 'Seminar', tournament: 'Tournament'};
 function paidGuard(){
   if (!supabaseClient) { openAuthModal(); return false; }
@@ -2580,6 +2596,52 @@ function openExternal(url){
     }
   }catch(e){}
   window.open(url,'_blank');
+}
+function buyAdBoard(){
+  var msg = document.getElementById('adMsg');
+  if (isNativeApp()) {
+    buyAdBoardIAP(msg);
+    return;
+  }
+  if (msg) msg.textContent = 'Opening checkout — pay with Apple Pay or card.';
+  openExternal(AD_SHOPIFY_PAYMENT_LINK);
+}
+function buyAdBoardIAP(msg){
+  try {
+    if (!window.CdvPurchase || !window.CdvPurchase.store) throw new Error('iap unavailable');
+    var store = window.CdvPurchase.store;
+    var product = store.get(AD_IAP_PRODUCT_ID);
+    if (!product || !product.getOffer()) {
+      if (msg) msg.textContent = 'In-app purchase is not available yet — try again soon, or email daos@deadlyartofsurvival.com to book your ad.';
+      return;
+    }
+    if (msg) msg.textContent = 'Opening Apple checkout…';
+    product.getOffer().order();
+  } catch (e) {
+    if (msg) msg.textContent = 'In-app purchase is not available yet — email daos@deadlyartofsurvival.com to book your ad.';
+  }
+}
+var adIapInitialized = false;
+function initAdIAP(){
+  if (adIapInitialized) return;
+  if (!isNativeApp()) return;
+  if (!window.CdvPurchase || !window.CdvPurchase.store) return;
+  adIapInitialized = true;
+  try {
+    var store = window.CdvPurchase.store;
+    store.register([{type: window.CdvPurchase.ProductType.CONSUMABLE, id: AD_IAP_PRODUCT_ID, platform: window.CdvPurchase.Platform.APPLE_APPSTORE}]);
+    store.when().approved(function(t){
+      t.verify();
+    }).verified(function(r){
+      r.finish();
+      var msg = document.getElementById('adMsg');
+      if (msg) msg.textContent = 'Payment confirmed — email your ad (image, text, and link) to daos@deadlyartofsurvival.com and DAOS will review it before it runs.';
+    }).finished(function(t){
+      var msg = document.getElementById('adMsg');
+      if (msg && !msg.textContent) msg.textContent = 'Done — check your email for the Apple receipt.';
+    });
+    store.initialize([window.CdvPurchase.Platform.APPLE_APPSTORE]);
+  } catch (e) { /* IAP stays dormant until the plugin + product are live */ }
 }
 function openEventPayLink(){
   var msg = document.getElementById('evMsg');
@@ -2814,6 +2876,7 @@ function toggleTheme(){
     }
   }catch(e){}
 })();
+document.addEventListener('deviceready', function(){ try { initAdIAP(); } catch (e) {} }, false);
 function showTab(id,btn){
   document.querySelectorAll('.tabpane').forEach(function(s){s.classList.toggle('active',s.id===id)});
   document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b===btn)});
