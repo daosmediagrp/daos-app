@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button onclick="showTab('blog',this)">Blog</button>
   <button onclick="showTab('music',this)">Music</button>
   <button onclick="showTab('profile',this)">Profile</button>
-  <button onclick="showTab('fighters',this)">Fighters</button>
+  <button onclick="showTab('fighters',this)">Martial Artists</button>
   <button onclick="showTab('network',this)">Network</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
   <button onclick="showTab('checkin',this)">Check-in</button>
@@ -295,8 +295,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 <main>
 <section id="feed" class="tabpane active">
   <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">What's on your mind?</button></div>
-  <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your fighter, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',9)">Vote for a fighter</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
-  <div class="card" id="rankHero"><h3>&#129351; Top fighters this week</h3><div id="rankHeroBody"><p class="meta">Loading rankings&hellip;</p></div></div>
+  <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your martial artist, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',9)">Vote for a martial artist</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
+  <div class="card" id="rankHero"><h3>&#129351; Top martial artists this week</h3><div id="rankHeroBody"><p class="meta">Loading rankings&hellip;</p></div></div>
   <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',10)">Create my profile</button></div>
   <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Members only — log in to continue.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
   <div class="card" id="composerForm" style="display:none"><h3>New post</h3><textarea id="postText" rows="3" placeholder="What's on your mind?" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Post</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival Magazine &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
   <div class="card"><h3>28th Edition &mdash; Complete <span class="ed-pill">Published</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; every cover is now published.</p><div class="ed-progress" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: complete, all covers published"><div class="ed-track"><div class="ed-fill" style="width:100%"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="done">&#10003; Processing</span><span class="done">&#10003; Published</span></div></div><p class="ed-note">All covers published. &middot; Updated Nov 18, 2026.</p><a class="btn" href="museum.html#magazine">See the Edition Wall</a></div>
   <div class="card"><h3>Apply to be featured — application</h3><p>The application lives on the DAOS site — tap below and it opens the correct application page. Your profile becomes your feature application.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application</a></div>
-  <div class="card"><h3>Martial Artist Vote</h3><p>See the fighters, vote for your favorite, or create your own fighter profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Fighters</button></div>
+  <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Martial Artists</button></div>
 </section>
 <section id="photos" class="tabpane">
   <div class="card"><h3>Photos</h3><p>Party Vault photos and DAOS galleries live here.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
@@ -418,12 +418,12 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Selected songs</h3><div id="selectedSongs"><p class="meta">Songs picked by DAOS show up here.</p></div></div>
 </section>
 <section id="fighters" class="tabpane">
-  <div class="card"><h3>Martial Artist Vote</h3><p>Vote for the martial artists of DAOS Magazine. One vote per email, per fighter. Tap a fighter to open their page, vote, and share it.</p><p class="meta">New here? Log in below to create your own profile — it goes live after DAOS review. Nothing publishes automatically.</p></div>
+  <div class="card"><h3>Martial Artist Vote</h3><p>Vote for the martial artists of DAOS Magazine. One vote per email, per martial artist. Tap a martial artist to open their page, vote, and share it.</p><p class="meta">New here? Log in below to create your own profile — it goes live after DAOS review. Nothing publishes automatically.</p></div>
   <div id="fighterDetail" style="display:none"></div>
-  <div id="fighterList" class="fighter-grid"><p class="meta">Loading fighters&hellip;</p></div>
+  <div id="fighterList" class="fighter-grid"><p class="meta">Loading martial artists&hellip;</p></div>
   <div class="card" id="myProfileCard">
     <h3>My Profile</h3>
-    <div id="myProfileLogin"><p>Log in to create your own fighter profile, upload your photo, and share your page to gather votes.</p><button class="btn" type="button" onclick="openAuthModal()">Log in / Sign up</button></div>
+    <div id="myProfileLogin"><p>Log in to create your own martial artist profile, upload your photo, and share your page to gather votes.</p><button class="btn" type="button" onclick="openAuthModal()">Log in / Sign up</button></div>
     <div id="myProfileForm" style="display:none">
       <p id="myProfileStatus" class="meta"></p>
       <input id="fpName" class="finput" type="text" placeholder="Your name (as it appears on your page)" maxlength="100">
@@ -432,18 +432,16 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
       <textarea id="fpBio" class="finput" placeholder="Short bio — who you are, what you teach, where you are based" maxlength="2000"></textarea>
       <select id="fpCategory" class="finput" aria-label="Ranking category">
         <option value="">Ranking category — none yet</option>
-        <option value="mma">MMA</option>
         <option value="bjj">Brazilian Jiu-Jitsu (BJJ)</option>
         <option value="striker">Striker</option>
         <option value="youth">Youth (under 18)</option>
       </select>
       <input id="fpStyleName" class="finput" type="text" placeholder="Style, e.g. Karate" list="styleList" maxlength="100">
-      <input id="fpRecord" class="finput" type="text" placeholder="Record, e.g. 12-2-0 (wins-losses-draws)" maxlength="50">
       <input id="fpSchool" class="finput" type="text" placeholder="School / gym, e.g. Global Champs Karate" maxlength="200">
       <input id="fpWeight" class="finput" type="text" placeholder="Weight class, e.g. Lightweight" list="weightList" maxlength="100">
       <input id="fpRegion" class="finput" type="text" placeholder="Region, e.g. New York, NY" list="regionList" maxlength="200">
       <input id="fpAge" class="finput" type="number" min="5" max="120" step="1" placeholder="Age (numbers only)">
-      <p class="meta">Ranking fields are optional. Leave the category blank to appear only in Top Martial Artists. Top Youth lists fighters in the Youth category who are under 18 — set your age to appear there. Changes to a live profile stay live and are flagged for DAOS review.</p>
+      <p class="meta">Ranking fields are optional. Leave the category blank to appear only in Top Martial Artists. Top Youth lists martial artists in the Youth category who are under 18 — set your age to appear there. Changes to a live profile stay live and are flagged for DAOS review.</p>
       <datalist id="styleList"><option value="Karate"></option><option value="Taekwondo"></option><option value="Brazilian Jiu-Jitsu"></option><option value="Judo"></option><option value="Kung Fu"></option><option value="MMA"></option><option value="Kickboxing"></option><option value="Muay Thai"></option><option value="Boxing"></option><option value="Hapkido"></option><option value="Aikido"></option></datalist>
       <datalist id="weightList"><option value="Flyweight"></option><option value="Bantamweight"></option><option value="Featherweight"></option><option value="Lightweight"></option><option value="Welterweight"></option><option value="Middleweight"></option><option value="Light Heavyweight"></option><option value="Heavyweight"></option><option value="Open Weight"></option></datalist>
       <datalist id="regionList"><option value="New York, NY"></option><option value="New Jersey"></option><option value="Connecticut"></option><option value="Florida"></option><option value="California"></option><option value="Texas"></option><option value="Illinois"></option><option value="Pennsylvania"></option></datalist>
@@ -477,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
       <p class="meta">Permanently delete your DAOS account and everything tied to it.</p>
       <button class="btn dark" id="deleteAccountBtn" type="button" onclick="showDeleteAccountConfirm()">Delete account</button>
       <div id="deleteAccountConfirm" style="display:none;margin-top:10px">
-        <p><strong>This permanently deletes your profile, posts, likes, comments, follows and fighter profile. This cannot be undone.</strong></p>
+        <p><strong>This permanently deletes your profile, posts, likes, comments, follows and martial artist profile. This cannot be undone.</strong></p>
         <button class="btn" type="button" onclick="deleteMyAccount()">Yes, delete my account</button>
         <button class="btn dark" type="button" onclick="hideDeleteAccountConfirm()">Cancel</button>
       </div>
@@ -538,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="drawer-row" onclick="goTab('community',3)"><span class="ic">&#128101;</span>Community</button>
   <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic">&#128214;</span>Magazine</button>
   <button class="drawer-row" onclick="goTab('music',7)"><span class="ic">&#127925;</span>Music</button>
-  <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Fighters</button>
+  <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Martial Artists</button>
   <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>Network</button>
   <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
   <button class="drawer-row" onclick="goTab('checkin',12)"><span class="ic">&#127915;</span>Door Check-in</button>
@@ -572,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button>&#128276;<span class="badge">1</span></button>
   <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
-<div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or fighter page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
+<div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or martial artist page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* Supabase config — filled in once Jake's project exists. Until then the
@@ -1108,7 +1106,7 @@ async function deleteMyAccount(){
   var box = document.getElementById('deleteAccountBox');
   if (box) {
     var done = document.createElement('p');
-    done.innerHTML = '<strong>Your account has been deleted.</strong> Your profile, posts, likes, comments, follows and fighter profile are gone.';
+    done.innerHTML = '<strong>Your account has been deleted.</strong> Your profile, posts, likes, comments, follows and martial artist profile are gone.';
     box.appendChild(done);
   }
   await supabaseClient.auth.signOut();
@@ -1221,12 +1219,11 @@ async function loadSuggestions(){
    weight / region / age until then). */
 var RANKING_CATEGORIES = [
   {key: 'all', label: 'Top Martial Artists'},
-  {key: 'mma', label: 'Top MMA Fighters'},
   {key: 'bjj', label: 'Top BJJ'},
   {key: 'striker', label: 'Top Strikers'},
   {key: 'youth', label: 'Top Youth'}
 ];
-var RANKING_CATEGORY_LABELS = {mma: 'MMA', bjj: 'BJJ', striker: 'Striker', youth: 'Youth'};
+var RANKING_CATEGORY_LABELS = {bjj: 'BJJ', striker: 'Striker', youth: 'Youth'};
 var FIGHTER_RANKING_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count,category,style,record,school,weight_class,region,age';
 var FIGHTER_BASE_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count';
 var rankingCategory = 'all';
@@ -1240,7 +1237,6 @@ function fighterCategoryLabel(f){ return RANKING_CATEGORY_LABELS[f.category] || 
 function fighterDetailLine(f){
   var parts = [];
   if (f.style) parts.push(f.style);
-  if (f.record) parts.push('Record ' + f.record);
   if (f.school) parts.push(f.school);
   if (f.weight_class) parts.push(f.weight_class);
   if (f.region) parts.push(f.region);
@@ -1346,19 +1342,19 @@ function renderRankings(){
   var list = rankingVisibleFighters();
   if (note) {
     if (!list.length && allRankedFighters.length) {
-      note.textContent = 'No fighters match this category and these filters yet — try clearing a filter.';
+      note.textContent = 'No martial artists match this category and these filters yet — try clearing a filter.';
     } else if (rankingCategory === 'youth') {
-      note.textContent = 'Top Youth lists fighters in the Youth category who are under 18.';
+      note.textContent = 'Top Youth lists martial artists in the Youth category who are under 18.';
     } else if (rankingCategory !== 'all') {
-      note.textContent = 'Only fighters who set this category appear here — uncategorized fighters show in Top Martial Artists.';
+      note.textContent = 'Only martial artists who set this category appear here — uncategorized martial artists show in Top Martial Artists.';
     } else {
       note.textContent = '';
     }
   }
   if (!list.length) {
     rf.innerHTML = allRankedFighters.length
-      ? '<p class="meta">No fighters in this ranking yet.</p>'
-      : '<p class="meta">No live fighter profiles yet.</p>';
+      ? '<p class="meta">No martial artists in this ranking yet.</p>'
+      : '<p class="meta">No live martial artist profiles yet.</p>';
     return;
   }
   rf.innerHTML = list.map(function(p, i){
@@ -1554,7 +1550,7 @@ function fighterPhotoHtml(p, big){
 }
 function renderRankHero(fighters){
   var hero = document.getElementById('rankHeroBody'); if (!hero) return;
-  if (!fighters || !fighters.length) { hero.innerHTML = '<p class="meta">Rankings open soon — be the first to create a fighter profile.</p><button class="btn" type="button" onclick="goTab(\'fighters\',9)">Fighters</button>'; return; }
+  if (!fighters || !fighters.length) { hero.innerHTML = '<p class="meta">Rankings open soon — be the first to create a martial artist profile.</p><button class="btn" type="button" onclick="goTab(\'fighters\',9)">Martial Artists</button>'; return; }
   var top = fighters.slice(0, 3);
   hero.innerHTML = top.map(function(p, i){
     return '<div style="padding:8px 0;border-top:1px solid var(--border)"><strong>' + (i + 1) + '. ' + escapeHtml(p.display_name) + '</strong> &mdash; ' + (p.votes_count || 0) + ' vote' + ((p.votes_count || 0) === 1 ? '' : 's') + ' <button class="btn" type="button" onclick="openFighter(\'' + escapeHtml(p.slug) + '\')">Vote</button></div>';
@@ -1562,10 +1558,10 @@ function renderRankHero(fighters){
 }
 async function loadFighters(){
   var box = document.getElementById('fighterList'); if (!box) return;
-  if (!supabaseClient) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; return; }
+  if (!supabaseClient) { box.innerHTML = '<p class="meta">Martial artist profiles open soon — the leaderboard goes live once profiles are set up.</p>'; return; }
   var fighters = await fetchLiveFighters();
-  if (fighters === null) { box.innerHTML = '<p class="meta">Fighter profiles open soon — the leaderboard goes live once profiles are set up.</p>'; renderRankHero(null); return; }
-  if (!fighters.length) { box.innerHTML = '<p class="meta">No live fighter profiles yet — be the first to create one below.</p>'; renderRankHero([]); return; }
+  if (fighters === null) { box.innerHTML = '<p class="meta">Martial artist profiles open soon — the leaderboard goes live once profiles are set up.</p>'; renderRankHero(null); return; }
+  if (!fighters.length) { box.innerHTML = '<p class="meta">No live martial artist profiles yet — be the first to create one below.</p>'; renderRankHero([]); return; }
   fighters.sort(function(a, b){ return (b.votes_count || 0) - (a.votes_count || 0) || ((a.display_name || '') < (b.display_name || '') ? -1 : 1); });
   renderRankHero(fighters);
   box.innerHTML = fighters.map(function(p, i){
@@ -1709,7 +1705,7 @@ async function saveMyProfile(){
   // 5–120 when given; Youth rankings need age < 18.
   var category = document.getElementById('fpCategory').value || '';
   var styleName = document.getElementById('fpStyleName').value.trim();
-  var recordVal = document.getElementById('fpRecord').value.trim();
+  var recordVal = ''; /* No fight records — rankings are for martial artists (Jake, Nov 18, 2026). */
   var school = document.getElementById('fpSchool').value.trim();
   var weight = document.getElementById('fpWeight').value.trim();
   var region = document.getElementById('fpRegion').value.trim();
