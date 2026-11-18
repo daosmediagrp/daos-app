@@ -579,9 +579,9 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </aside>
 <nav class="bottomnav">
   <button class="active" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])">&#8962;</button>
-  <button onclick="showTab('events',document.querySelectorAll('#tabs button')[1])">&#127915;</button>
+  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])">&#127915;</button>
   <button onclick="showTab('community',document.querySelectorAll('#tabs button')[3])">+</button>
-  <button>&#128276;<span class="badge">1</span></button>
+  <button aria-label="Notifications" onclick="toggleNotifPanel(event)">&#128276;</button>
   <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
 <div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or martial artist page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
