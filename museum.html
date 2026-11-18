@@ -12,7 +12,7 @@
 <style>
 html,body{touch-action:manipulation}
 input,textarea,select{font-size:16px}
-.backapp{position:fixed;top:12px;left:12px;z-index:999;background:#E10600;color:#fff;font-family:Barlow,system-ui,sans-serif;font-weight:700;font-size:15px;text-decoration:none;padding:10px 16px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.45);letter-spacing:.02em}
+.backapp{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));left:auto;z-index:999;background:#E10600;color:#fff;font-family:Barlow,system-ui,sans-serif;font-weight:700;font-size:15px;text-decoration:none;padding:10px 16px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.45);letter-spacing:.02em}
 .backapp:active{transform:scale(.97)}
 :root{
   --bg:#f4f1ec; --bg2:#ece8e0; --panel:#ffffff; --panel2:#faf8f4;
