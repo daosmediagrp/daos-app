@@ -175,6 +175,13 @@ body.gated #loginGate{display:flex}
 .followbtn.following{background:#E10600;color:#fff}
 .post-highlight{outline:2px solid #E10600}
 .setupcard{border:2px solid #E10600}
+.videowrap{position:relative;padding-top:56.25%;background:#000;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.videowrap iframe,.videowrap video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.statuschip{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
+.statuschip.pending{color:#f5a623;border-color:#f5a623}
+.statuschip.approved{color:#34C759;border-color:#34C759}
+.statuschip.rejected{color:#E10600;border-color:#E10600}
+.statuschip.edits{color:#ff7a1a;border-color:#ff7a1a}
 .memberrow{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--border)}
 .memberrow:first-of-type{border-top:0}
 .memberrow .who{flex:1;min-width:0}
@@ -307,6 +314,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button onclick="showTab('fighters',this)">Martial Artists</button>
   <button onclick="showTab('network',this)">DAOS Card</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
+  <button onclick="showTab('videos',this)">Videos</button>
   <button onclick="openMuseum()">Museum</button>
 </nav>
 <div class="layout">
@@ -536,6 +544,32 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Top Artists</h3><div id="rankArtists"><p class="meta">Loading&hellip;</p></div></div>
   <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
 </section>
+<section id="videos" class="tabpane">
+  <div class="card"><h3>DAOS Videos</h3><p>Member-submitted fight clips, training, events and music videos. Every submission is reviewed by DAOS before anything goes public.</p>
+  <div class="catpills" id="videoCatPills"></div>
+  <div id="videoGrid"><p class="meta">Loading videos&hellip;</p></div></div>
+  <div class="card"><h3>Submit a video</h3>
+  <p class="meta">Drop a YouTube or Vimeo link, or upload a video file. It goes to the DAOS review queue first &mdash; nothing appears publicly until it&rsquo;s approved, and you&rsquo;ll see the status right here.</p>
+  <div id="videoSubmitGate"></div>
+  <div id="videoForm" style="display:none">
+  <input id="vTitle" class="finput" type="text" maxlength="120" placeholder="Video title">
+  <select id="vCategory" class="finput"></select>
+  <textarea id="vDesc" class="finput" maxlength="1000" placeholder="Description &mdash; what is it, who&rsquo;s in it, where was it shot?"></textarea>
+  <div style="display:flex;gap:8px;margin-bottom:8px">
+    <button class="btn" id="vSrcLinkBtn" type="button" style="margin:0" onclick="setVideoSource('link')">Video link</button>
+    <button class="btn dark" id="vSrcUploadBtn" type="button" style="margin:0" onclick="setVideoSource('upload')">Upload file</button>
+  </div>
+  <input id="vUrl" class="finput" type="url" placeholder="YouTube or Vimeo link (https://&hellip;)">
+  <input id="vFile" class="finput" type="file" accept="video/*" style="display:none">
+  <input id="vWebsite" class="finput" type="url" maxlength="300" placeholder="Your website (optional &mdash; shown with your credit)">
+  <input id="vSocial" class="finput" type="text" maxlength="120" placeholder="Your social link or @handle (optional)">
+  <label style="display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:14px;line-height:1.45;color:var(--muted)"><input id="vRights" type="checkbox" style="width:20px;height:20px;flex:none;margin-top:1px"><span>I confirm I own this video or have permission to submit it, and I grant DAOS the right to publish it in the DAOS app and on DAOS platforms and to promote it on DAOS social channels, with credit to me.</span></label>
+  <button class="btn" type="button" onclick="submitVideo()">Submit for review</button>
+  <p id="vMsg" class="meta"></p>
+  </div></div>
+  <div class="card" id="myVideosCard" style="display:none"><h3>My submissions</h3><div id="myVideos"></div></div>
+  <div class="card" id="videoQueueCard" style="display:none"><h3>Review queue &mdash; DAOS staff</h3><div id="videoQueue"></div></div>
+</section>
 <section id="search" class="tabpane">
   <div class="card"><h3>Find members</h3>
   <input id="memberSearchInput" class="finput" type="text" placeholder="Search members by name" oninput="searchMembers()">
@@ -592,6 +626,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Martial Artists</button>
   <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>DAOS Card</button>
   <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
+  <button class="drawer-row" onclick="goTab('videos',12)"><span class="ic">&#127916;</span>Videos</button>
   <div id="drawerMore" style="display:none">
     <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic">&#128444;</span>Photos</button>
     <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic">&#128240;</span>Blog</button>
@@ -2672,7 +2707,241 @@ function openExternal(url){
   }catch(e){}
   window.open(url,'_blank');
 }
+var VIDEO_CATEGORIES = ['Fight Clips','Training & Technique','Events','Music Videos','Interviews','Documentary','Highlights','Other'];
+var videoCategory = 'All';
+var videoTableMissing = false;
+var videoSource = 'link';
+function videoStatusLabel(s){
+  return {pending: 'In review', approved: 'Published', rejected: 'Not approved', edits: 'Edits requested'}[s] || s;
+}
+function parseVideoEmbed(url){
+  var u = String(url || '');
+  var m = u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  if (m) return {type: 'iframe', src: 'https://www.youtube-nocookie.com/embed/' + m[1]};
+  m = u.match(/vimeo\.com\/(\d+)/);
+  if (m) return {type: 'iframe', src: 'https://player.vimeo.com/video/' + m[1]};
+  return null;
+}
+function isVideoLinkHost(url){
+  try {
+    var h = new URL(String(url)).hostname.replace(/^www\./, '');
+    return h === 'youtube.com' || h === 'youtu.be' || h === 'vimeo.com' || h === 'm.youtube.com';
+  } catch(e) { return false; }
+}
+function videoEmbedHtml(v, small){
+  var e = parseVideoEmbed(v.video_url);
+  var inner;
+  if (e) inner = '<iframe src="' + e.src + '" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen title="' + escapeHtml(v.title || 'DAOS video') + '"></iframe>';
+  else inner = '<video controls preload="metadata" src="' + escapeHtml(v.video_url || '') + '"></video>';
+  return '<div class="videowrap"' + (small ? ' style="max-width:340px"' : '') + '>' + inner + '</div>';
+}
+function videoCardHtml(v, pmap){
+  var credit = escapeHtml(v.creator_name || 'DAOS member');
+  var prof = pmap && pmap[v.user_id];
+  var links = '';
+  if (prof && prof.card_token) links += ' <a href="#" onclick="openCard(\'' + escapeHtml(prof.card_token) + '\');return false;">DAOS Card</a>';
+  if (v.website) links += ' &middot; <a href="' + escapeHtml(v.website) + '" target="_blank" rel="noopener">Website</a>';
+  if (v.social) {
+    var s = String(v.social);
+    if (/^https?:\/\//.test(s)) links += ' &middot; <a href="' + escapeHtml(s) + '" target="_blank" rel="noopener">Social</a>';
+    else links += ' &middot; ' + escapeHtml(s);
+  }
+  return '<div style="padding:14px 0;border-top:1px solid var(--border)">' + videoEmbedHtml(v) +
+    '<b>' + escapeHtml(v.title || '') + '</b> <span class="catbadge">' + escapeHtml(v.category || 'Other') + '</span>' +
+    (v.description ? '<p style="margin-top:6px">' + escapeHtml(v.description) + '</p>' : '') +
+    '<p class="meta">By ' + credit + (links ? ' &middot;' + links : '') + '</p></div>';
+}
+function renderVideoPills(){
+  var box = document.getElementById('videoCatPills');
+  if (!box) return;
+  var cats = ['All'].concat(VIDEO_CATEGORIES);
+  box.innerHTML = cats.map(function(c){
+    return '<button class="catpill' + (videoCategory === c ? ' active' : '') + '" type="button" onclick="setVideoCategory(\'' + c.replace(/'/g, "\\'") + '\')">' + escapeHtml(c) + '</button>';
+  }).join('');
+}
+function setVideoCategory(c){ videoCategory = c; renderVideoPills(); loadVideoGrid(); }
+function setVideoSource(s){
+  videoSource = s;
+  var lb = document.getElementById('vSrcLinkBtn'), ub = document.getElementById('vSrcUploadBtn');
+  if (lb) lb.className = s === 'link' ? 'btn' : 'btn dark';
+  if (ub) ub.className = s === 'upload' ? 'btn' : 'btn dark';
+  var url = document.getElementById('vUrl'), f = document.getElementById('vFile');
+  if (url) url.style.display = s === 'link' ? '' : 'none';
+  if (f) f.style.display = s === 'upload' ? '' : 'none';
+}
+async function loadVideosTab(){
+  renderVideoPills();
+  var cat = document.getElementById('vCategory');
+  if (cat && !cat.options.length) {
+    cat.innerHTML = VIDEO_CATEGORIES.map(function(c){ return '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>'; }).join('');
+  }
+  renderVideoSubmitGate();
+  loadVideoGrid();
+  loadMyVideos();
+  loadVideoQueue();
+}
+function renderVideoSubmitGate(){
+  var gate = document.getElementById('videoSubmitGate');
+  var form = document.getElementById('videoForm');
+  if (!gate || !form) return;
+  if (videoTableMissing) {
+    gate.innerHTML = '<p class="meta">Video submissions open shortly — the review system is being switched on.</p>';
+    form.style.display = 'none';
+    return;
+  }
+  if (!currentUser) {
+    gate.innerHTML = '<button class="btn" type="button" onclick="openAuthModal()">Log in to submit a video</button>';
+    form.style.display = 'none';
+    return;
+  }
+  if (!myProfile) {
+    gate.innerHTML = '<p class="meta">Create your DAOS profile first — your card is your creator credit.</p><button class="btn" type="button" onclick="goTab(\'network\',10)">Create my profile</button>';
+    form.style.display = 'none';
+    return;
+  }
+  gate.innerHTML = '';
+  form.style.display = '';
+}
+function markVideoTableMissing(){
+  videoTableMissing = true;
+  var grid = document.getElementById('videoGrid');
+  if (grid) grid.innerHTML = '<p class="meta">Videos open shortly — the review system is being switched on.</p>';
+  renderVideoSubmitGate();
+}
+async function loadVideoGrid(){
+  var grid = document.getElementById('videoGrid');
+  if (!grid || !supabaseClient) return;
+  var q = supabaseClient.from('video_submissions')
+    .select('id,user_id,creator_name,title,category,description,video_url,website,social,status,published_at,created_at')
+    .eq('status', 'approved').order('published_at', {ascending: false, nullsFirst: false}).limit(60);
+  if (videoCategory !== 'All') q = q.eq('category', videoCategory);
+  var res = await q;
+  if (res.error) {
+    if (String(res.error.message || '').indexOf('video_submissions') !== -1 || res.error.code === 'PGRST205') { markVideoTableMissing(); return; }
+    grid.innerHTML = '<p class="meta">Could not load videos: ' + escapeHtml(res.error.message) + '</p>';
+    return;
+  }
+  var rows = res.data || [];
+  if (!rows.length) { grid.innerHTML = '<p class="meta">No published videos yet in this category — be the first to submit one below.</p>'; return; }
+  var ids = [];
+  rows.forEach(function(v){ if (ids.indexOf(v.user_id) === -1) ids.push(v.user_id); });
+  var pmap = {};
+  if (ids.length) {
+    var pr = await supabaseClient.from('profiles').select('id,display_name,card_token').in('id', ids);
+    (pr.data || []).forEach(function(p){ pmap[p.id] = p; });
+  }
+  grid.innerHTML = rows.map(function(v){ return videoCardHtml(v, pmap); }).join('');
+}
+async function submitVideo(){
+  var msg = document.getElementById('vMsg');
+  function say(t){ if (msg) msg.textContent = t; }
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  if (!myProfile) { say('Create your profile first.'); return; }
+  var title = document.getElementById('vTitle').value.trim();
+  var category = document.getElementById('vCategory').value;
+  var desc = document.getElementById('vDesc').value.trim();
+  var website = document.getElementById('vWebsite').value.trim();
+  var social = document.getElementById('vSocial').value.trim();
+  var rights = document.getElementById('vRights').checked;
+  if (!title) { say('Give the video a title.'); return; }
+  if (!rights) { say('Confirm the rights checkbox — DAOS can only review videos you own or have permission to submit.'); return; }
+  var videoUrl = '', storagePath = null;
+  if (videoSource === 'link') {
+    videoUrl = document.getElementById('vUrl').value.trim();
+    if (!isVideoLinkHost(videoUrl)) { say('Paste a YouTube or Vimeo link.'); return; }
+  } else {
+    var f = document.getElementById('vFile').files && document.getElementById('vFile').files[0];
+    if (!f) { say('Choose a video file to upload.'); return; }
+    if (f.size > 200 * 1024 * 1024) { say('That file is over 200 MB — upload a smaller cut or use a YouTube/Vimeo link.'); return; }
+    say('Uploading your video…');
+    var clean = f.name.replace(/[^A-Za-z0-9._-]+/g, '_');
+    storagePath = currentUser.id + '/' + Date.now() + '-' + clean;
+    var up = await supabaseClient.storage.from('videos').upload(storagePath, f, {upsert: false});
+    if (up.error) { say('Upload failed: ' + up.error.message); return; }
+    var pub = supabaseClient.storage.from('videos').getPublicUrl(storagePath);
+    videoUrl = pub.data && pub.data.publicUrl;
+    if (!videoUrl) { say('Upload failed — no public link came back.'); return; }
+  }
+  say('Sending to the DAOS review queue…');
+  var res = await supabaseClient.from('video_submissions').insert({
+    user_id: currentUser.id,
+    creator_name: myProfile.display_name || '',
+    title: title, category: category, description: desc,
+    source_type: videoSource, video_url: videoUrl, storage_path: storagePath,
+    website: website || null, social: social || null,
+    rights_confirmed: true, rights_agreed_at: new Date().toISOString(),
+    status: 'pending'
+  });
+  if (res.error) {
+    if (String(res.error.message || '').indexOf('video_submissions') !== -1 || res.error.code === 'PGRST205') { markVideoTableMissing(); say('Submissions open shortly — the review system is being switched on.'); return; }
+    say(res.error.message);
+    return;
+  }
+  document.getElementById('vTitle').value = '';
+  document.getElementById('vDesc').value = '';
+  document.getElementById('vUrl').value = '';
+  document.getElementById('vRights').checked = false;
+  say('Submitted — it’s in the DAOS review queue. Watch the status under “My submissions”.');
+  loadMyVideos();
+  loadVideoQueue();
+}
+async function loadMyVideos(){
+  var card = document.getElementById('myVideosCard');
+  var box = document.getElementById('myVideos');
+  if (!card || !box) return;
+  if (!supabaseClient || !currentUser || videoTableMissing) { card.style.display = 'none'; return; }
+  var res = await supabaseClient.from('video_submissions')
+    .select('id,title,category,status,review_note,created_at')
+    .eq('user_id', currentUser.id).order('created_at', {ascending: false}).limit(30);
+  if (res.error) {
+    if (String(res.error.message || '').indexOf('video_submissions') !== -1 || res.error.code === 'PGRST205') { markVideoTableMissing(); return; }
+    card.style.display = 'none';
+    return;
+  }
+  var rows = res.data || [];
+  if (!rows.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+  box.innerHTML = rows.map(function(v){
+    return '<div style="padding:10px 0;border-top:1px solid var(--border)"><b>' + escapeHtml(v.title) + '</b> <span class="catbadge">' + escapeHtml(v.category) + '</span> <span class="statuschip ' + escapeHtml(v.status) + '">' + escapeHtml(videoStatusLabel(v.status)) + '</span>' +
+      (v.review_note ? '<p class="meta" style="margin-top:6px">DAOS note: ' + escapeHtml(v.review_note) + '</p>' : '') + '</div>';
+  }).join('');
+}
+async function loadVideoQueue(){
+  var card = document.getElementById('videoQueueCard');
+  var box = document.getElementById('videoQueue');
+  if (!card || !box) return;
+  if (!supabaseClient || !currentUser || !myIsStaff || videoTableMissing) { card.style.display = 'none'; return; }
+  var res = await supabaseClient.from('video_submissions')
+    .select('id,user_id,creator_name,title,category,description,video_url,website,social,rights_confirmed,created_at')
+    .eq('status', 'pending').order('created_at', {ascending: true}).limit(30);
+  if (res.error) { card.style.display = 'none'; return; }
+  var rows = res.data || [];
+  card.style.display = '';
+  if (!rows.length) { box.innerHTML = '<p class="meta">Queue is clear — no videos waiting on review.</p>'; return; }
+  box.innerHTML = rows.map(function(v){
+    return '<div style="padding:12px 0;border-top:1px solid var(--border)">' + videoEmbedHtml(v, true) +
+      '<b>' + escapeHtml(v.title) + '</b> <span class="catbadge">' + escapeHtml(v.category) + '</span>' +
+      '<p class="meta">By ' + escapeHtml(v.creator_name || 'DAOS member') + (v.rights_confirmed ? ' &middot; rights confirmed ✓' : '') + '</p>' +
+      (v.description ? '<p>' + escapeHtml(v.description) + '</p>' : '') +
+      '<input id="vq-note-' + v.id + '" class="finput" type="text" maxlength="500" placeholder="Note to creator (optional — required for edits/reject context)">' +
+      '<button class="btn" type="button" style="margin:0 6px 0 0" onclick="reviewVideo(\'' + v.id + '\',\'approved\')">Approve</button>' +
+      '<button class="btn dark" type="button" style="margin:0 6px 0 0" onclick="reviewVideo(\'' + v.id + '\',\'edits\')">Request edits</button>' +
+      '<button class="btn dark" type="button" style="margin:0" onclick="reviewVideo(\'' + v.id + '\',\'rejected\')">Reject</button></div>';
+  }).join('');
+}
+async function reviewVideo(id, status){
+  if (!supabaseClient || !myIsStaff) return;
+  var noteEl = document.getElementById('vq-note-' + id);
+  var note = noteEl ? noteEl.value.trim() : '';
+  var patch = {status: status, review_note: note || null};
+  if (status === 'approved') patch.published_at = new Date().toISOString();
+  var res = await supabaseClient.from('video_submissions').update(patch).eq('id', id);
+  if (res.error) { alert('Could not update: ' + res.error.message); return; }
+  loadVideoQueue();
+  loadVideoGrid();
+}
 function openMuseum(anchor){
+
   var suffix = anchor ? '#' + anchor : '';
   if (isNativeApp()) { openExternal('https://daosmedia.com/museum.html' + suffix); return; }
   location.href = 'museum.html' + suffix;
@@ -2990,6 +3259,7 @@ function showTab(id,btn){
   document.querySelectorAll('.tabpane').forEach(function(s){s.classList.toggle('active',s.id===id)});
   document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b===btn)});
   if (id === 'scan' && typeof renderScanPage === 'function') renderScanPage();
+  if (id === 'videos' && typeof loadVideosTab === 'function') loadVideosTab();
   if (id !== 'scan' && typeof stopScanCamera === 'function') stopScanCamera();
   if (id !== 'checkin' && typeof stopCheckinScanner === 'function') stopCheckinScanner();
   window.scrollTo(0,0);
