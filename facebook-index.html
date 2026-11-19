@@ -233,6 +233,9 @@ select.finput{appearance:auto}
 .sharerow .sic{width:50px;height:50px;border-radius:50%;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text)}
 .sharerow .sic.red{background:#E10600;color:#fff;border-color:#E10600}
 .cardcode{font-family:monospace,monospace;font-size:22px;font-weight:bold;letter-spacing:3px;margin:8px 0 2px}
+.mtitle{text-align:center;margin:2px 0 14px;font-size:13px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)}
+.mtitle.partner{color:#F5B301}
+.mtitle svg{vertical-align:-2px;margin-right:6px}
 .ticketbox{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;text-align:left}
 .ticketbox .big{font-size:18px;font-weight:bold}
 .dcard{padding:0 16px 16px;overflow:hidden}
@@ -1266,6 +1269,8 @@ async function loadMyMemberProfile(){
   if (myProfile) {
     var cxr = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', currentUser.id).maybeSingle();
     if (!cxr.error && cxr.data) { myProfile.contact_email = cxr.data.contact_email; myProfile.contact_phone = cxr.data.contact_phone; }
+    var myTitle = await fetchMemberTitle(currentUser.id);
+    if (myTitle) myProfile.member_title = myTitle;
   }
   if (myProfile) {
     document.getElementById('mpName').value = myProfile.display_name || '';
@@ -1639,6 +1644,8 @@ async function openMember(userId){
   var p = res.data;
   var cxm = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', p.id).maybeSingle();
   if (!cxm.error && cxm.data) { p.contact_email = cxm.data.contact_email; p.contact_phone = cxm.data.contact_phone; }
+  var mTitle = await fetchMemberTitle(p.id);
+  if (mTitle) p.member_title = mTitle;
   var pres = await supabaseClient.from('posts').select('id,user_id,content,created_at,like_count,comment_count,repost_count,repost_of').eq('user_id', userId).order('created_at', {ascending: false}).limit(10);
   var posts = pres.data || [];
   var pmap = {}; pmap[userId] = p;
@@ -1676,6 +1683,8 @@ async function openMember(userId){
     box.appendChild(cardWrap);
     renderCardQr('memberCardQr', p.card_token, p.card_code);
     if (myIsStaff) loadTicketIntoBox('memberCardTicket', {token: p.card_token});
+    var setterHtml = staffTitleSetterHtml(p);
+    if (setterHtml) { var sw = document.createElement('div'); sw.innerHTML = setterHtml; box.appendChild(sw); }
   }
   if (posts.length) {
     var list = document.createElement('div');
@@ -2078,6 +2087,61 @@ async function copyCardLink(token, btn){
     if (sic) { var t = sic.innerHTML; sic.innerHTML = '&#10003;'; setTimeout(function(){ sic.innerHTML = t; }, 1600); }
   } catch (e) { window.prompt('Copy this card link:', p.url); }
 }
+var MEMBER_TITLES = ['Partner','V.I.P','Representative First Class','Representative','Supporter','Vendor','Member'];
+function memberTitleOf(p){
+  var t = (p && p.member_title) || 'Member';
+  return MEMBER_TITLES.indexOf(t) !== -1 ? t : 'Member';
+}
+function memberTitleHtml(p){
+  var t = memberTitleOf(p);
+  var star = t === 'Partner'
+    ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="#F5B301" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
+    : '';
+  return '<div class="mtitle' + (t === 'Partner' ? ' partner' : '') + '">' + star + escapeHtml(t) + '</div>';
+}
+async function fetchMemberTitle(id){
+  if (!supabaseClient || !id) return;
+  try {
+    var r = await supabaseClient.from('profiles').select('member_title').eq('id', id).maybeSingle();
+    return (!r.error && r.data) ? r.data.member_title : null;
+  } catch (e) { return null; }
+}
+function staffTitleSetterHtml(p){
+  if (!myIsStaff || !p || !p.id) return '';
+  var cur = memberTitleOf(p);
+  var opts = MEMBER_TITLES.map(function(t){
+    return '<option value="' + escapeHtml(t) + '"' + (t === cur ? ' selected' : '') + '>' + escapeHtml(t) + '</option>';
+  }).join('');
+  return '<div class="card" style="text-align:left"><h3>Member title — DAOS staff</h3>' +
+    '<p class="meta">Titles are verified by DAOS. Partner carries the verified star.</p>' +
+    '<p><select id="titleSel-' + p.id + '" class="finput" style="max-width:280px;display:inline-block">' + opts + '</select> ' +
+    '<button class="btn" type="button" onclick="setMemberTitle(\'' + p.id + '\', this)">Set title</button></p>' +
+    '<p id="titleMsg-' + p.id + '" class="meta"></p></div>';
+}
+async function setMemberTitle(userId, btn){
+  var sel = document.getElementById('titleSel-' + userId);
+  var msg = document.getElementById('titleMsg-' + userId);
+  function say(t){ if (msg) msg.textContent = t; }
+  if (!sel || !supabaseClient) { say('Not available yet.'); return; }
+  var val = sel.value;
+  if (btn) btn.disabled = true;
+  say('Saving…');
+  var res = await supabaseClient.from('profiles').update({member_title: val}).eq('id', userId).select('id,member_title');
+  if (btn) btn.disabled = false;
+  if (res.error) {
+    if (String(res.error.message || '').indexOf('member_title') !== -1 || res.error.code === 'PGRST204' || res.error.code === '42703') {
+      say('Titles switch on with the next database update — member-titles.sql is on the Supabase checklist.');
+      return;
+    }
+    say('Could not save: ' + res.error.message);
+    return;
+  }
+  if (!res.data || !res.data.length) { say('That change was blocked — titles can also be set in the Supabase dashboard.'); return; }
+  say('Title set to ' + val + '.');
+  var inCardView = document.getElementById('cardDetail') && document.getElementById('cardDetail').contains(btn);
+  if (inCardView && window.__lastCardToken) openCard(window.__lastCardToken);
+  else if (typeof openMember === 'function') openMember(userId);
+}
 function cardBoxHtml(p, opts){
   opts = opts || {};
   var code = p.card_code || shortCodeFromToken(p.card_token);
@@ -2118,7 +2182,7 @@ function cardBoxHtml(p, opts){
     '</div>' : '') +
     (opts.showLink ? '<p><a href="' + escapeHtml(cardUrl(p.card_token)) + '">Open this card</a></p>' : '') +
     '<div class="ticketbox" id="' + opts.ticketId + '" style="display:none"></div>' +
-    '</div>';
+    '</div>' + memberTitleHtml(p);
   return html;
 }
 function renderMyCardBox(){
@@ -2423,6 +2487,7 @@ async function loadMyCardContacts(){
    Anyone can open it; it shows name / photo / bio / votes only. A
    logged-in staff viewer additionally sees ticket status + check-in. */
 async function openCard(token){
+  window.__lastCardToken = token;
   showTab('cardview', null);
   var box = document.getElementById('cardDetail');
   if (!box) return;
@@ -2436,11 +2501,14 @@ async function openCard(token){
   var p = res.data;
   var cxp = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', p.id).maybeSingle();
   if (!cxp.error && cxp.data) { p.contact_email = cxp.data.contact_email; p.contact_phone = cxp.data.contact_phone; }
+  var cTitle = await fetchMemberTitle(p.id);
+  if (cTitle) p.member_title = cTitle;
   var votes = null, fighterSlug = null;
   var fr = await supabaseClient.from('fighter_profiles').select('slug,votes_count').eq('user_id', p.id).eq('status', 'live').maybeSingle();
   if (fr.data) { votes = fr.data.votes_count; fighterSlug = fr.data.slug; }
   box.innerHTML = cardBoxHtml(p, {qrId: 'cardViewQr', ticketId: 'cardViewTicket', showLink: false, votes: votes}) +
     (fighterSlug ? '<div class="card" style="text-align:center"><a class="btn" href="#/fighter/' + escapeHtml(fighterSlug) + '">View fighter page</a></div>' : '') +
+    staffTitleSetterHtml(p) +
     exchangeFormHtml(p);
   renderCardQr('cardViewQr', p.card_token, p.card_code);
   if (!(currentUser && currentUser.id === p.id)) {
