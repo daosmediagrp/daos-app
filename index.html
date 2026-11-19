@@ -582,12 +582,15 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Submit a video</h3>
   <p class="meta">Submit a YouTube or Vimeo link below. All submissions enter the DAOS review queue &mdash; nothing is published until it has been reviewed and approved. Approved videos are published with full creator credit, and selected submissions may also be featured in DAOS reaction content and other DAOS programming. You can track your submission status here at any time.</p>
   <div id="videoSubmitGate"></div>
-  <div id="videoForm" style="display:none">
+  <div id="vDrop" ondragover="event.preventDefault()" ondrop="dropVideoLink(event)" style="border:2px dashed var(--border);border-radius:14px;padding:14px;background:var(--card2);margin-bottom:12px">
+    <label for="vUrl" style="display:block;margin-bottom:6px;font-weight:800">Drop your video link here</label>
+    <input id="vUrl" class="finput" type="url" placeholder="Paste a YouTube or Vimeo link (https://&hellip;)" style="margin:0">
+    <button class="btn dark" type="button" style="margin-top:10px" onclick="pasteVideoLink()">Paste from clipboard</button>
+  </div>
+  <div id="videoForm">
   <input id="vTitle" class="finput" type="text" maxlength="120" placeholder="Video title">
   <select id="vCategory" class="finput"></select>
   <textarea id="vDesc" class="finput" maxlength="1000" placeholder="Description &mdash; what is it, who&rsquo;s in it, where was it shot?"></textarea>
-  <label class="meta" for="vUrl" style="display:block;margin-bottom:4px">Video link (YouTube or Vimeo)</label>
-  <input id="vUrl" class="finput" type="url" placeholder="https://&hellip;">
   <input id="vWebsite" class="finput" type="url" maxlength="300" placeholder="Your website (optional &mdash; shown with your credit)">
   <input id="vSocial" class="finput" type="text" maxlength="120" placeholder="Your social link or @handle (optional)">
   <label style="display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:14px;line-height:1.45;color:var(--muted)"><input id="vRights" type="checkbox" style="width:20px;height:20px;flex:none;margin-top:1px"><span><b>Rights &amp; permissions.</b> I certify that I own this video, or hold all rights and permissions necessary to submit it. By submitting, I grant The DAOS Foundation a non-exclusive, royalty-free license to publish, distribute, promote, and otherwise use the video across DAOS platforms and channels &mdash; including publishing it in this app, featuring it in DAOS reaction content, compilations, and other DAOS programming &mdash; with credit to me as the creator.</span></label>
@@ -2804,23 +2807,25 @@ function renderVideoSubmitGate(){
   var gate = document.getElementById('videoSubmitGate');
   var form = document.getElementById('videoForm');
   if (!gate || !form) return;
+  /* The link drop area and the form stay visible at all times
+     (Jake, Nov 19, 2026) — this line only carries the note that
+     applies: submissions switching on, log-in hint, or the
+     create-profile step. Submitting itself still enforces
+     log-in + profile + rights in submitVideo(). */
+  form.style.display = '';
   if (videoTableMissing) {
     gate.innerHTML = '<p class="meta">Video submissions open shortly — the review system is being switched on.</p>';
-    form.style.display = 'none';
     return;
   }
   if (!currentUser) {
-    gate.innerHTML = '<button class="btn" type="button" onclick="openAuthModal()">Log in to submit a video</button>';
-    form.style.display = 'none';
+    gate.innerHTML = '<p class="meta">You will be asked to log in when you submit.</p>';
     return;
   }
   if (!myProfile) {
     gate.innerHTML = '<p class="meta">Create your DAOS profile first — your card is your creator credit.</p><button class="btn" type="button" onclick="goTab(\'network\',10)">Create my profile</button>';
-    form.style.display = 'none';
     return;
   }
   gate.innerHTML = '';
-  form.style.display = '';
 }
 function markVideoTableMissing(){
   videoTableMissing = true;
@@ -2851,6 +2856,20 @@ async function loadVideoGrid(){
     (pr.data || []).forEach(function(p){ pmap[p.id] = p; });
   }
   grid.innerHTML = rows.map(function(v){ return videoCardHtml(v, pmap); }).join('');
+}
+function dropVideoLink(e){
+  e.preventDefault();
+  var t = (e.dataTransfer && (e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain'))) || '';
+  t = (t.split(/\s+/)[0] || '').trim();
+  if (t) { var i = document.getElementById('vUrl'); if (i) { i.value = t; i.focus(); } }
+}
+async function pasteVideoLink(){
+  var i = document.getElementById('vUrl');
+  try {
+    var t = await navigator.clipboard.readText();
+    if (t && i) { i.value = t.trim(); i.focus(); return; }
+  } catch (e) {}
+  if (i) i.focus();
 }
 async function submitVideo(){
   var msg = document.getElementById('vMsg');
