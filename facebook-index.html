@@ -8,7 +8,7 @@
 <style>
 *{box-sizing:border-box}:root{--bg:#000;--text:#fff;--card:#111;--card2:#1c1c1c;--border:#222;--muted:#bbb;--muted2:#999}
 body.light{--bg:#fff;--text:#000;--card:#fff;--card2:#f0f0f0;--border:#ddd;--muted:#555;--muted2:#777}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 /* App screen-fit: never let the page grow wider than the phone screen.
    overflow-x:clip keeps sticky headers/tabs working (hidden would break them). */
 html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
@@ -18,7 +18,7 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px s
 header .logos{display:flex;align-items:center;gap:2px;flex:1;min-width:0}
 header .logos img{height:38px;width:auto;display:block}
 header .logos img.script{height:24px}
-.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;position:relative;flex:none}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:18px;cursor:pointer;position:relative;flex:none}
 .badge{position:absolute;top:-2px;right:-2px;background:#E10600;color:#fff;font-size:11px;font-weight:bold;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
 #notifPanel{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));right:10px;width:min(92vw,370px);max-height:72vh;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:14px;z-index:60;padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.45)}
 .notif-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -29,7 +29,7 @@ header .logos img.script{height:24px}
 .notif-when{display:block;color:var(--muted2);font-size:12px;margin-top:2px}
 nav.tabs{display:flex;gap:4px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--border);padding:6px 8px;position:sticky;top:calc(58px + env(safe-area-inset-top,0px));z-index:19;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
 nav.tabs::-webkit-scrollbar{display:none}
-nav.tabs button{background:none;border:0;color:var(--muted);font-weight:bold;font-size:14px;padding:8px 12px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs button{background:none;border:0;color:var(--muted);font-weight:600;font-size:14px;letter-spacing:.01em;padding:10px 12px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent}
 nav.tabs button.active{color:var(--text);border-bottom-color:#E10600}
 main{max-width:680px;margin:0 auto;padding:12px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
@@ -48,11 +48,11 @@ main{max-width:680px;margin:0 auto;padding:12px}
 .composer{display:flex;gap:10px;align-items:center}
 .avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex:none;border:2px solid #fff}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.pill{flex:1;background:var(--card2);border-radius:20px;padding:11px 14px;color:var(--muted);cursor:pointer;text-align:left;border:0;font-size:16px}
+.pill{flex:1;background:var(--card2);border-radius:12px;padding:12px 14px;color:var(--muted);cursor:pointer;text-align:left;border:1px solid var(--border);font-size:16px}
 .members-bubble-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:none;align-items:center;justify-content:center;padding:24px}
 .members-bubble-overlay.open{display:flex}
 .members-bubble{background:#fff;color:#000;border-radius:20px;padding:22px 24px;text-align:center;max-width:320px;box-shadow:0 12px 32px rgba(0,0,0,.45);font-weight:bold;font-size:17px;line-height:1.4}
-.members-bubble button{margin-top:14px;background:#000;color:#fff;border:0;border-radius:20px;padding:10px 22px;font-weight:bold;cursor:pointer}
+.members-bubble button{margin-top:14px;background:#000;color:#fff;border:0;border-radius:12px;padding:11px 22px;font-weight:700;cursor:pointer}
 .stories{display:flex;gap:10px;overflow-x:auto}
 .story{flex:0 0 110px;height:170px;border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;font-weight:bold;font-size:13px}
 .story.create{background:#E10600}.story.your{background:var(--card2)}.story.party{background:var(--card2)}
@@ -64,8 +64,11 @@ h1{font-size:28px}h2{font-size:20px}h3{font-size:16px}
 p{line-height:1.55;color:var(--muted);margin:0 0 10px}
 .hero{background:#E10600;border-radius:12px;padding:18px;margin-bottom:12px}
 .hero h1{font-size:38px;line-height:1}
-.btn{display:inline-block;background:#E10600;color:#fff;font-weight:bold;text-decoration:none;padding:11px 18px;border-radius:20px;margin:4px 6px 4px 0}
-.btn.white{background:#fff;color:#000}.btn.dark{background:var(--card2);color:var(--text)}
+.btn{display:inline-block;background:#E10600;color:#fff;font-weight:700;font-size:15px;letter-spacing:.01em;text-decoration:none;padding:12px 20px;border:1px solid #E10600;border-radius:12px;margin:4px 6px 4px 0;cursor:pointer;box-shadow:0 2px 10px rgba(225,6,0,.25);transition:transform .08s ease}
+.btn:active{transform:scale(.98)}
+.btn.white{background:#fff;color:#000;border-color:#fff;box-shadow:none}
+.btn.dark{background:transparent;color:var(--text);border-color:var(--border);box-shadow:none}
+.btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--muted2);box-shadow:none}
 .ed-pill{display:inline-block;background:#E10600;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 9px;vertical-align:middle;margin-left:6px}
 .ed-progress{margin:12px 0 4px}
 .ed-track{height:12px;background:var(--border);border-radius:999px;overflow:hidden}
@@ -88,7 +91,7 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .detail{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border);color:var(--muted)}
 .sidebar{display:none}
 .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px calc(4px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(4px + env(safe-area-inset-left,0px))}
-.bottomnav button{background:none;border:0;color:var(--text);font-size:22px;cursor:pointer;position:relative}
+.bottomnav button{background:none;border:0;color:var(--text);font-size:20px;cursor:pointer;position:relative;padding:4px 10px}
 .bottomnav button.active{color:#E10600}
 @media(min-width:900px){
   .layout{max-width:1100px;margin:0 auto;display:flex;gap:16px;align-items:flex-start}
@@ -97,12 +100,9 @@ section.tabpane{display:none}section.tabpane.active{display:block}
   .sidebar a:hover{background:var(--card)}
   main{flex:1;max-width:680px}
 }
-/* Narrow phones (the app): slim the header so every button fits on screen.
-   The Search button has no action, so it hides here; theme toggle also
-   lives in the drawer. */
+/* Narrow phones (the app): slim the header so every button fits on screen. */
 @media(max-width:560px){
   header{gap:6px;padding-left:calc(8px + env(safe-area-inset-left,0px));padding-right:calc(8px + env(safe-area-inset-right,0px))}
-  header button[aria-label="Search"]{display:none}
   header .logos img.script{height:20px}
   #authBtn{padding:8px 10px !important}
   nav.tabs button{padding:8px 10px;font-size:13px}
@@ -149,11 +149,14 @@ textarea.finput{resize:vertical;min-height:90px}
 .fstatus{font-weight:bold;color:#E10600}
 /* ---- Social layer: login gate, posts, network, rankings ---- */
 body.gated header,body.gated nav.tabs,body.gated .layout,body.gated .bottomnav,body.gated #drawer,body.gated .drawer-overlay{display:none}
-#loginGate{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:flex-start;justify-content:center;padding:48px 24px;overflow-y:auto}
+#loginGate{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:center;justify-content:center;padding:28px 18px;overflow-y:auto}
 body.gated #loginGate{display:flex}
-.logingate-inner{max-width:360px;width:100%;text-align:center}
-.logingate-inner img{height:150px;width:auto;display:block;margin:0 auto 16px}
-.logingate-inner .ginput{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:8px;font-size:16px}
+.logingate-inner{max-width:380px;width:100%;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:34px 28px 26px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.logingate-inner img{height:128px;width:auto;display:block;margin:0 auto 4px}
+.gateword{font-size:21px;font-weight:800;letter-spacing:4px;margin-top:12px;color:var(--text)}
+.gaterule{width:44px;height:3px;background:#E10600;border-radius:2px;margin:12px auto 14px}
+.logingate-inner .ginput{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--text);margin-bottom:10px;font-size:16px}
+.logingate-inner .ginput:focus,.finput:focus{outline:none;border-color:#E10600;box-shadow:0 0 0 3px rgba(225,6,0,.22)}
 .postactions{display:flex;gap:4px;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
 .pact{flex:1;background:none;border:0;color:var(--muted);font-size:14px;font-weight:bold;cursor:pointer;padding:6px 2px;border-radius:8px}
 .pact:hover{background:var(--card2)}
@@ -172,6 +175,11 @@ body.gated #loginGate{display:flex}
 .followbtn.following{background:#E10600;color:#fff}
 .post-highlight{outline:2px solid #E10600}
 .setupcard{border:2px solid #E10600}
+.memberrow{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--border)}
+.memberrow:first-of-type{border-top:0}
+.memberrow .who{flex:1;min-width:0}
+.memberrow .who b{display:block}
+.memberrow .who span{color:var(--muted2);font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .suggest-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--border)}
 .suggest-row:first-of-type{border-top:0}
 .suggest-row .who{flex:1;min-width:0}
@@ -228,7 +236,7 @@ select.finput{appearance:auto}
 .checkin-result{margin-top:12px}
 /* ---- Rankings slice 1: categories, filters, share ---- */
 .catpills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.catpill{background:var(--card2);border:1px solid var(--border);color:var(--text);font-weight:bold;font-size:13px;padding:7px 12px;border-radius:16px;cursor:pointer}
+.catpill{background:var(--card2);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:13px;padding:8px 14px;border-radius:999px;cursor:pointer}
 .catpill.active{background:#E10600;border-color:#E10600;color:#fff}
 .rankfilters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .rankfilters select{flex:1 1 120px;min-width:0;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:14px}
@@ -247,12 +255,13 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 <div id="loginGate">
   <div class="logingate-inner">
     <img src="__CIRCLED__" alt="DAOS">
+    <div class="gateword">THE DAOS APP</div><div class="gaterule"></div>
     <div id="gateLoginStep">
     <p>Martial arts, music &amp; culture &mdash; members only. Log in or create your free account to join the community.</p>
     <input id="gateEmail" class="ginput" type="email" placeholder="Email" autocomplete="email">
     <input id="gatePass" class="ginput" type="password" placeholder="Password" autocomplete="current-password">
     <button class="btn" type="button" onclick="gateAuth('signin')" style="width:100%">Log in</button>
-    <button class="btn dark" type="button" onclick="gateAuth('signup')" style="width:100%">Create account</button>
+    <button class="btn ghost" type="button" onclick="gateAuth('signup')" style="width:100%">Create account</button>
     <p id="gateMsg" class="meta"></p>
     <p class="meta">Free to join. No paywall. Oss.</p>
     </div>
@@ -262,8 +271,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <textarea id="gateBio" class="ginput" placeholder="Short bio — who you are, what you do, where you train" maxlength="2000"></textarea>
     <input id="gateIg" class="ginput" type="text" placeholder="Instagram handle (optional)" maxlength="60">
     <input id="gateWeb" class="ginput" type="text" placeholder="Website (optional)" maxlength="300">
-    <input id="gateEmail" class="ginput" type="email" placeholder="Email for your DAOS Card (optional — shown on your card)" maxlength="200">
-    <input id="gatePhone" class="ginput" type="tel" placeholder="Phone for your DAOS Card (optional — shown on your card)" maxlength="40">
+    <input id="gateContactEmail" class="ginput" type="email" placeholder="Email for your DAOS Card (optional — shown on your card)" maxlength="200">
+    <input id="gateContactPhone" class="ginput" type="tel" placeholder="Phone for your DAOS Card (optional — shown on your card)" maxlength="40">
     <label class="meta" for="gateAvatar" style="display:block;text-align:left;margin:4px 0">Photo or logo (optional, jpg or png)</label>
     <input id="gateAvatar" class="ginput" type="file" accept="image/*">
     <button class="btn" type="button" onclick="gateSaveProfile()" style="width:100%">Create my profile</button>
@@ -275,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 <header>
   <button class="iconbtn" onclick="openDrawer()" aria-label="Menu">&#9776;</button>
   <div class="logos"><img class="script" src="__SCRIPT__" alt="daos"></div>
-  <button class="iconbtn" aria-label="Search">&#128269;</button>
+  <button class="iconbtn" aria-label="Search" onclick="showTab('search',null)">&#128269;</button>
   <button class="iconbtn" id="notifBtn" aria-label="Notifications" onclick="toggleNotifPanel(event)">&#128276;<span class="badge" id="notifBadge" style="display:none"></span></button>
   <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">&#9790;</button>
   <button class="btn" id="authBtn" type="button" onclick="openAuthModal()" style="margin:0;padding:9px 14px">Log in</button>
@@ -298,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button onclick="showTab('fighters',this)">Martial Artists</button>
   <button onclick="showTab('network',this)">DAOS Card</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
-  <button onclick="location.href='museum.html'">Museum</button>
+  <button onclick="openMuseum()">Museum</button>
 </nav>
 <div class="layout">
 <aside class="sidebar">
@@ -312,12 +321,12 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </aside>
 <main>
 <section id="feed" class="tabpane active">
-  <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">What's on your mind?</button></div>
+  <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">Any suggestions for us?</button></div>
   <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your martial artist, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',9)">Vote for a martial artist</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
   <div class="card" id="rankHero"><h3>&#129351; Top martial artists this week</h3><div id="rankHeroBody"><p class="meta">Loading rankings&hellip;</p></div></div>
   <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',10)">Create my profile</button></div>
   <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Members only — log in to continue.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
-  <div class="card" id="composerForm" style="display:none"><h3>New post</h3><textarea id="postText" rows="3" placeholder="What's on your mind?" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Post</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
+  <div class="card" id="composerForm" style="display:none"><h3>Suggestion for DAOS</h3><textarea id="postText" rows="3" placeholder="Suggest something for DAOS — an event idea, someone to feature, a collab, a class…" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Send suggestion</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
   <div id="memberFeed"></div>
   <div class="members-bubble-overlay" id="membersBubble" onclick="hideMembersBubble()"><div class="members-bubble" onclick="event.stopPropagation()">This section is only for DAOS members.<br><button type="button" onclick="hideMembersBubble()">OK</button></div></div>
   <div class="card">
@@ -393,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </section>
 <section id="magazine" class="tabpane">
   <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival Magazine &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
-  <div class="card"><h3>28th Edition &mdash; Complete <span class="ed-pill">Published</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; every cover is now published.</p><div class="ed-progress" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: complete, all covers published"><div class="ed-track"><div class="ed-fill" style="width:100%"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="done">&#10003; Processing</span><span class="done">&#10003; Published</span></div></div><p class="ed-note">All covers published. &middot; Updated Nov 18, 2026.</p><a class="btn" href="museum.html#magazine">See the Edition Wall</a></div>
+  <div class="card"><h3>28th Edition &mdash; Complete <span class="ed-pill">Published</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; every cover is now published.</p><div class="ed-progress" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: complete, all covers published"><div class="ed-track"><div class="ed-fill" style="width:100%"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="done">&#10003; Processing</span><span class="done">&#10003; Published</span></div></div><p class="ed-note">All covers published. &middot; Updated Nov 18, 2026.</p><a class="btn" href="museum.html#magazine" onclick="openMuseum('magazine');return false;">See the Edition Wall</a></div>
   <div class="card"><h3>Apply to be featured — application</h3><p>The application lives on the DAOS site — tap below and it opens the correct application page. Your profile becomes your feature application.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application</a></div>
   <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Martial Artists</button></div>
 </section>
@@ -526,6 +535,11 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   </div>
   <div class="card"><h3>Top Artists</h3><div id="rankArtists"><p class="meta">Loading&hellip;</p></div></div>
   <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
+</section>
+<section id="search" class="tabpane">
+  <div class="card"><h3>Find members</h3>
+  <input id="memberSearchInput" class="finput" type="text" placeholder="Search members by name" oninput="searchMembers()">
+  <div id="memberSearchResults"><p class="meta">Type a name to find DAOS members and view their cards.</p></div></div>
 </section>
 <section id="scan" class="tabpane">
   <div class="card"><h3>Scan a DAOS Card</h3><p>Point the camera at a member's DAOS card QR code to open their card.</p>
@@ -745,8 +759,8 @@ async function gateSaveProfile(){
   var webEl = document.getElementById('gateWeb');
   var instagram = igEl ? igEl.value.trim().replace(/^@+/, '').replace(/\s+/g, '') : '';
   var website = webEl ? webEl.value.trim() : '';
-  var emEl = document.getElementById('gateEmail');
-  var phEl = document.getElementById('gatePhone');
+  var emEl = document.getElementById('gateContactEmail') || document.getElementById('gateEmail');
+  var phEl = document.getElementById('gateContactPhone') || document.getElementById('gatePhone');
   var cEmail = emEl ? emEl.value.trim() : '';
   var cPhone = phEl ? phEl.value.trim() : '';
   if (!name) { if (msg) msg.textContent = 'Add your name — that is how the community knows you.'; return; }
@@ -794,6 +808,14 @@ async function openComposer(){
   document.getElementById('composerForm').style.display = 'block';
   document.getElementById('composerForm').scrollIntoView({behavior: 'smooth'});
 }
+var FLAGGED_PREFIX = '[[flagged]] ';
+var DAOS_TOPICS = ['daos','deadly art','martial','karate','bjj','jiu','kung fu','judo','taekwondo','tkd','boxing','boxer','mma','fight','muay','kickbox','dojo','sensei','sifu','shihan','grandmaster','belt','tournament','seminar','workshop','training','gym','magazine','edition','cover','party','event','concert','music','song','album','artist','rapper','hip hop','hip-hop','feature','interview','sponsor','membership','community','harlem','class','school','wrestling','grappling','sparring','kata','coach','instructor','lesson','performance','showcase','battle','cypher','mic','stage','venue','ticket','merch','brand','collab'];
+function isDaosTopic(text){
+  var t = ' ' + String(text || '').toLowerCase() + ' ';
+  for (var i = 0; i < DAOS_TOPICS.length; i++) { if (t.indexOf(DAOS_TOPICS[i]) !== -1) return true; }
+  return false;
+}
+function isFlaggedPost(p){ return !!(p && typeof p.content === 'string' && p.content.indexOf(FLAGGED_PREFIX) === 0); }
 async function submitPost(){
   var text = document.getElementById('postText').value.trim();
   if (!text) return;
@@ -803,9 +825,14 @@ async function submitPost(){
     showProfileSetup();
     return;
   }
-  var res = await supabaseClient.from('posts').insert({user_id: currentUser.id, content: text});
-  document.getElementById('postMsg').textContent = res.error ? res.error.message : 'Posted.';
-  if (!res.error) { document.getElementById('postText').value = ''; loadMemberPosts(); }
+  var onTopic = isDaosTopic(text);
+  var res = await supabaseClient.from('posts').insert({user_id: currentUser.id, content: onTopic ? text : FLAGGED_PREFIX + text});
+  if (res.error) { document.getElementById('postMsg').textContent = res.error.message; return; }
+  document.getElementById('postText').value = '';
+  document.getElementById('postMsg').textContent = onTopic
+    ? 'Suggestion posted — thank you.'
+    : 'Suggestions have to be about DAOS, so that one was flagged for review instead of posted.';
+  if (onTopic) loadMemberPosts();
 }
 function postAvatarHtml(profile, size){
   var style = size ? 'width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size / 2) + 'px' : '';
@@ -828,6 +855,7 @@ function followButtonHtml(userId){
   return '<button class="followbtn' + (following ? ' following' : '') + '" type="button" data-follow-user="' + escapeHtml(userId) + '" onclick="toggleFollow(\'' + escapeHtml(userId) + '\',this)">' + (following ? 'Following' : 'Follow') + '</button>';
 }
 function renderPostCard(p, pmap, origMap, liked, reposted, highlightId){
+  if (isFlaggedPost(p)) return '';
   var author = profileById(pmap, p.user_id);
   var d = document.createElement('div');
   d.className = 'card' + (highlightId && String(p.id) === String(highlightId) ? ' post-highlight' : '');
@@ -877,6 +905,7 @@ async function loadMemberPosts(highlightId){
   // App Store Guideline 1.2). The block list is loaded in refreshAuth
   // before this runs; an empty list filters nothing.
   posts = posts.filter(function(p){ return !myBlockedIds[p.user_id]; });
+  posts = posts.filter(function(p){ return !isFlaggedPost(p); });
   var ids = [];
   posts.forEach(function(p){ if (ids.indexOf(p.user_id) === -1) ids.push(p.user_id); });
   var origIds = [];
@@ -896,7 +925,7 @@ async function loadMemberPosts(highlightId){
     (rr.data || []).forEach(function(r){ reposted[r.post_id] = true; });
   }
   box.innerHTML = posts.map(function(p){ return renderPostCard(p, pmap, origMap, liked, reposted, highlightId); }).join('');
-  if (!posts.length) box.innerHTML = '<div class="card"><p>Nothing posted yet — be the first to post.</p></div>';
+  if (!posts.length) box.innerHTML = '<div class="card"><p>No suggestions yet — be the first to suggest something.</p></div>';
 }
 async function toggleLike(postId, btn){
   if (!supabaseClient || !currentUser) return;
@@ -1283,9 +1312,10 @@ var RANKING_CATEGORIES = [
   {key: 'boxer', label: 'Top Boxers'},
   {key: 'mma', label: 'Top MMA'},
   {key: 'wrestler', label: 'Top Wrestlers'},
-  {key: 'athlete', label: 'Top Athletes'}
+  {key: 'athlete', label: 'Top Athletes'},
+  {key: 'artist', label: 'Top Artists'}
 ];
-var RANKING_CATEGORY_LABELS = {bjj: 'BJJ', striker: 'Striker', youth: 'Youth', boxer: 'Boxer', mma: 'MMA', wrestler: 'Wrestler', athlete: 'Athlete'};
+var RANKING_CATEGORY_LABELS = {bjj: 'BJJ', striker: 'Striker', youth: 'Youth', boxer: 'Boxer', mma: 'MMA', wrestler: 'Wrestler', athlete: 'Athlete', artist: 'Artist'};
 var FIGHTER_RANKING_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count,category,style,record,school,weight_class,region,age';
 var FIGHTER_BASE_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_count';
 var rankingCategory = 'all';
@@ -2012,6 +2042,7 @@ function cardBoxHtml(p, opts){
     '<p class="cardcode">' + escapeHtml(code) + '</p>' +
     '<p class="meta">Show this code at the door if the QR will not scan.</p>' +
     (p.card_token ? '<div class="cardactions"><button class="btn" type="button" style="width:100%;padding:14px;font-size:17px" onclick="saveCardContact(\'' + escapeHtml(p.card_token) + '\', this)">&#8681; Save Contact</button></div>' +
+    (opts.mine && p.card_token ? '<div class="cardactions"><button class="btn dark" type="button" style="width:100%;padding:13px;font-size:16px" onclick="addToWallet()">Add to Apple Wallet</button><p class="meta" id="walletMsg"></p></div>' : '') +
     '<div class="sharerow">' +
     '<button class="sbtn" type="button" onclick="shareCardLink(\'' + escapeHtml(p.card_token) + '\', this)"><span class="sic red">&#128228;</span>Share</button>' +
     '<button class="sbtn" type="button" onclick="copyCardLink(\'' + escapeHtml(p.card_token) + '\', this)"><span class="sic">&#128279;</span>Copy Link</button>' +
@@ -2038,7 +2069,7 @@ function renderMyCardBox(){
   }
   box.innerHTML = '<h3 style="margin-top:16px">My DAOS Card</h3>' +
     '<p class="meta">Show this at the door on Dec 5 — it is your ticket check-in card.</p>' +
-    cardBoxHtml(myProfile, {qrId: 'myCardQr', ticketId: 'myCardTicket', showLink: true}) +
+    cardBoxHtml(myProfile, {qrId: 'myCardQr', ticketId: 'myCardTicket', showLink: true, mine: true}) +
     '<p class="meta">' + (myProfile.card_views || 0) + ' card view' + ((myProfile.card_views || 0) === 1 ? '' : 's') + '</p>' +
     '<div class="card" style="text-align:left"><h3>Your DAOS Party ticket</h3>' +
     '<p class="meta">Bought a ticket on deadlyartofsurvival.com with this account\'s email? Your PAID status shows on the card above automatically. Bought with a different email? Claim it with your order number:</p>' +
@@ -2640,6 +2671,40 @@ function openExternal(url){
     }
   }catch(e){}
   window.open(url,'_blank');
+}
+function openMuseum(anchor){
+  var suffix = anchor ? '#' + anchor : '';
+  if (isNativeApp()) { openExternal('https://daosmedia.com/museum.html' + suffix); return; }
+  location.href = 'museum.html' + suffix;
+}
+var memberSearchTimer = null;
+function searchMembers(){
+  var input = document.getElementById('memberSearchInput');
+  var box = document.getElementById('memberSearchResults');
+  if (!input || !box) return;
+  var q = input.value.trim();
+  if (memberSearchTimer) clearTimeout(memberSearchTimer);
+  if (q.length < 2) { box.innerHTML = '<p class="meta">Type at least 2 letters of a member\'s name.</p>'; return; }
+  memberSearchTimer = setTimeout(async function(){
+    if (!supabaseClient) { box.innerHTML = '<p class="meta">Search is unavailable right now.</p>'; return; }
+    box.innerHTML = '<p class="meta">Searching\u2026</p>';
+    var res = await supabaseClient.from('profiles').select('id,display_name,bio,avatar_url,card_token').ilike('display_name', '%' + q.replace(/[%_]/g, '') + '%').order('display_name').limit(20);
+    if (res.error) { box.innerHTML = '<p class="meta">Could not search: ' + escapeHtml(res.error.message) + '</p>'; return; }
+    var rows = res.data || [];
+    if (!rows.length) { box.innerHTML = '<p class="meta">No members found for \u201c' + escapeHtml(q) + '\u201d.</p>'; return; }
+    box.innerHTML = rows.map(function(p){
+      return '<div class="memberrow">' + postAvatarHtml(p) + '<div class="who"><b>' + escapeHtml(p.display_name || 'DAOS member') + '</b><span>' + escapeHtml(p.bio || '') + '</span></div>' +
+      (p.card_token ? '<button class="btn dark" type="button" style="margin:0;padding:9px 14px" onclick="openCard(\'' + escapeHtml(p.card_token) + '\')">View card</button>' : '') + '</div>';
+    }).join('');
+  }, 250);
+}
+var WALLET_PASS_URL = 'https://hsgbmrtpwnyqkmfnveaz.supabase.co/functions/v1/wallet-pass';
+var WALLET_PASS_LIVE = false;
+function addToWallet(){
+  var msg = document.getElementById('walletMsg');
+  if (!myProfile || !myProfile.card_token) return;
+  if (!WALLET_PASS_LIVE) { if (msg) msg.textContent = 'Apple Wallet passes are being set up — yours will be addable here shortly.'; return; }
+  openExternal(WALLET_PASS_URL + '?token=' + encodeURIComponent(myProfile.card_token));
 }
 function buyAdBoard(){
   var msg = document.getElementById('adMsg');
