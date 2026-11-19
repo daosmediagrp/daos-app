@@ -549,21 +549,17 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="catpills" id="videoCatPills"></div>
   <div id="videoGrid"><p class="meta">Loading videos&hellip;</p></div></div>
   <div class="card"><h3>Submit a video</h3>
-  <p class="meta">Drop a YouTube or Vimeo link, or upload a video file. It goes to the DAOS review queue first &mdash; nothing appears publicly until it&rsquo;s approved, and you&rsquo;ll see the status right here.</p>
+  <p class="meta">Submit a YouTube or Vimeo link below. All submissions enter the DAOS review queue &mdash; nothing is published until it has been reviewed and approved. Approved videos are published with full creator credit, and selected submissions may also be featured in DAOS reaction content and other DAOS programming. You can track your submission status here at any time.</p>
   <div id="videoSubmitGate"></div>
   <div id="videoForm" style="display:none">
   <input id="vTitle" class="finput" type="text" maxlength="120" placeholder="Video title">
   <select id="vCategory" class="finput"></select>
   <textarea id="vDesc" class="finput" maxlength="1000" placeholder="Description &mdash; what is it, who&rsquo;s in it, where was it shot?"></textarea>
-  <div style="display:flex;gap:8px;margin-bottom:8px">
-    <button class="btn" id="vSrcLinkBtn" type="button" style="margin:0" onclick="setVideoSource('link')">Video link</button>
-    <button class="btn dark" id="vSrcUploadBtn" type="button" style="margin:0" onclick="setVideoSource('upload')">Upload file</button>
-  </div>
-  <input id="vUrl" class="finput" type="url" placeholder="YouTube or Vimeo link (https://&hellip;)">
-  <input id="vFile" class="finput" type="file" accept="video/*" style="display:none">
+  <label class="meta" for="vUrl" style="display:block;margin-bottom:4px">Video link (YouTube or Vimeo)</label>
+  <input id="vUrl" class="finput" type="url" placeholder="https://&hellip;">
   <input id="vWebsite" class="finput" type="url" maxlength="300" placeholder="Your website (optional &mdash; shown with your credit)">
   <input id="vSocial" class="finput" type="text" maxlength="120" placeholder="Your social link or @handle (optional)">
-  <label style="display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:14px;line-height:1.45;color:var(--muted)"><input id="vRights" type="checkbox" style="width:20px;height:20px;flex:none;margin-top:1px"><span>I confirm I own this video or have permission to submit it, and I grant DAOS the right to publish it in the DAOS app and on DAOS platforms and to promote it on DAOS social channels, with credit to me.</span></label>
+  <label style="display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:14px;line-height:1.45;color:var(--muted)"><input id="vRights" type="checkbox" style="width:20px;height:20px;flex:none;margin-top:1px"><span><b>Rights &amp; permissions.</b> I certify that I own this video, or hold all rights and permissions necessary to submit it. By submitting, I grant The DAOS Foundation a non-exclusive, royalty-free license to publish, distribute, promote, and otherwise use the video across DAOS platforms and channels &mdash; including publishing it in this app, featuring it in DAOS reaction content, compilations, and other DAOS programming &mdash; with credit to me as the creator.</span></label>
   <button class="btn" type="button" onclick="submitVideo()">Submit for review</button>
   <p id="vMsg" class="meta"></p>
   </div></div>
@@ -2760,15 +2756,6 @@ function renderVideoPills(){
   }).join('');
 }
 function setVideoCategory(c){ videoCategory = c; renderVideoPills(); loadVideoGrid(); }
-function setVideoSource(s){
-  videoSource = s;
-  var lb = document.getElementById('vSrcLinkBtn'), ub = document.getElementById('vSrcUploadBtn');
-  if (lb) lb.className = s === 'link' ? 'btn' : 'btn dark';
-  if (ub) ub.className = s === 'upload' ? 'btn' : 'btn dark';
-  var url = document.getElementById('vUrl'), f = document.getElementById('vFile');
-  if (url) url.style.display = s === 'link' ? '' : 'none';
-  if (f) f.style.display = s === 'upload' ? '' : 'none';
-}
 async function loadVideosTab(){
   renderVideoPills();
   var cat = document.getElementById('vCategory');
@@ -2845,29 +2832,15 @@ async function submitVideo(){
   var rights = document.getElementById('vRights').checked;
   if (!title) { say('Give the video a title.'); return; }
   if (!rights) { say('Confirm the rights checkbox — DAOS can only review videos you own or have permission to submit.'); return; }
-  var videoUrl = '', storagePath = null;
-  if (videoSource === 'link') {
-    videoUrl = document.getElementById('vUrl').value.trim();
-    if (!isVideoLinkHost(videoUrl)) { say('Paste a YouTube or Vimeo link.'); return; }
-  } else {
-    var f = document.getElementById('vFile').files && document.getElementById('vFile').files[0];
-    if (!f) { say('Choose a video file to upload.'); return; }
-    if (f.size > 200 * 1024 * 1024) { say('That file is over 200 MB — upload a smaller cut or use a YouTube/Vimeo link.'); return; }
-    say('Uploading your video…');
-    var clean = f.name.replace(/[^A-Za-z0-9._-]+/g, '_');
-    storagePath = currentUser.id + '/' + Date.now() + '-' + clean;
-    var up = await supabaseClient.storage.from('videos').upload(storagePath, f, {upsert: false});
-    if (up.error) { say('Upload failed: ' + up.error.message); return; }
-    var pub = supabaseClient.storage.from('videos').getPublicUrl(storagePath);
-    videoUrl = pub.data && pub.data.publicUrl;
-    if (!videoUrl) { say('Upload failed — no public link came back.'); return; }
-  }
+  var videoUrl = document.getElementById('vUrl').value.trim();
+  if (!isVideoLinkHost(videoUrl)) { say('Please paste a valid YouTube or Vimeo link.'); return; }
+  var storagePath = null;
   say('Sending to the DAOS review queue…');
   var res = await supabaseClient.from('video_submissions').insert({
     user_id: currentUser.id,
     creator_name: myProfile.display_name || '',
     title: title, category: category, description: desc,
-    source_type: videoSource, video_url: videoUrl, storage_path: storagePath,
+    source_type: 'link', video_url: videoUrl, storage_path: storagePath,
     website: website || null, social: social || null,
     rights_confirmed: true, rights_agreed_at: new Date().toISOString(),
     status: 'pending'
