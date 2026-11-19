@@ -236,6 +236,18 @@ select.finput{appearance:auto}
 .mtitle{text-align:center;margin:2px 0 14px;font-size:13px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)}
 .mtitle.partner{color:#F5B301}
 .mtitle svg{vertical-align:-2px;margin-right:6px}
+.lvlchip{display:inline-block;background:#E10600;color:#fff;font-weight:800;border-radius:99px;padding:5px 14px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase}
+.lvlbar{height:10px;background:var(--card2);border:1px solid var(--border);border-radius:99px;overflow:hidden;margin:10px 0 4px}
+.lvlfill{height:100%;background:#E10600;border-radius:99px}
+.ptsrow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
+.ptsrow:last-child{border-bottom:0}
+.stampgrid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:10px}
+.stamp{width:108px;height:108px;border-radius:50%;border:3px solid #E10600;color:#E10600;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px;transform:rotate(-6deg)}
+.stamp .sname{font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;line-height:1.25}
+.stamp .sdate{font-size:10px;margin-top:4px;font-weight:700}
+.stamp .scheck{font-size:16px;line-height:1}
+.stamp.missed{border-style:dashed;border-color:var(--border);color:var(--muted);transform:none}
+.stamp.soon{border-style:dashed}
 .ticketbox{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;text-align:left}
 .ticketbox .big{font-size:18px;font-weight:bold}
 .dcard{padding:0 16px 16px;overflow:hidden}
@@ -528,6 +540,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </section>
 <section id="network" class="tabpane">
   <div id="myCardBox"></div>
+  <div id="myPointsBox"></div>
+  <div id="myStampsBox"></div>
   <div id="myCardContacts"></div>
   <div class="card"><h3>Network</h3><p>Connect with the DAOS community &mdash; follow members, find people to connect with, and build your network.</p></div>
   <div id="memberDetail" style="display:none"></div>
@@ -1049,6 +1063,7 @@ async function submitComment(postId){
   if (btn) btn.innerHTML = '&#128172; Comment' + (n ? ' (' + n + ')' : '');
 }
 function shareMemberPost(postId, btn){
+  awardPoints('share_post', 'post-' + postId);
   var url = 'https://daosmedia.com/#post/' + postId;
   var done = function(){
     if (!btn) return;
@@ -1540,6 +1555,7 @@ function renderRankings(){
 function rankingShareUrl(){ return 'https://daosmedia.com/#/rankings/' + rankingCategory; }
 function rankingShareTitle(){ return 'DAOS Rankings — ' + rankingCategoryDef(rankingCategory).label; }
 function shareLink(title, text, url, btn){
+  awardPoints('share_page', url);
   var openSheet = function(){ openShareSheet(title, text, url); };
   try {
     if (navigator.share) {
@@ -1779,6 +1795,7 @@ async function openFighter(slug){
     '<button class="btn dark" type="button" onclick="closeFighter()">Back to the leaderboard</button>' +
     '<p id="voteMsg" class="meta"></p>';
   box.innerHTML = ''; box.appendChild(d);
+  applyAppVoteGate(d, p);
   // DAOS digital card for this fighter (their member profile's token).
   // Public QR + short code + votes; ticket status only for staff.
   if (p.user_id) {
@@ -1797,10 +1814,51 @@ function closeFighter(){
   var box = document.getElementById('fighterDetail'); if (box) { box.style.display = 'none'; box.innerHTML = ''; }
   if (window.location.hash && window.location.hash.indexOf('#/fighter/') === 0) history.replaceState(null, '', '#fighters');
 }
+/* ---- App-only: card holders vote (Jake, Nov 19, 2026) ------------
+   In the app, only verified DAOS Card holders vote in the Best of
+   the Best awards / app rankings. The card is the ballot — worth
+   having even if you never attend an event. Website voting stays
+   open (email + phone) and is untouched by everything below. */
+function isVerifiedCardHolder(){
+  return !!(currentUser && myProfile && myProfile.card_token);
+}
+function applyAppVoteGate(d, p){
+  if (!isNativeApp()) return;
+  var em = d.querySelector('#voteEmail');
+  var ph = d.querySelector('#votePhone');
+  if (isVerifiedCardHolder()) {
+    if (em && currentUser.email && !em.value) em.value = currentUser.email;
+    var note = document.createElement('p');
+    note.className = 'meta';
+    note.innerHTML = '&#10003; Voting as a verified DAOS Card holder.';
+    if (em) em.parentNode.insertBefore(note, em);
+    return;
+  }
+  var btns = d.querySelectorAll('button');
+  for (var i = 0; i < btns.length; i++) {
+    if ((btns[i].getAttribute('onclick') || '').indexOf('castVote') === 0) btns[i].style.display = 'none';
+  }
+  if (em) em.style.display = 'none';
+  if (ph) ph.style.display = 'none';
+  var panel = document.createElement('div');
+  panel.className = 'card';
+  panel.style.textAlign = 'center';
+  panel.style.margin = '10px 0';
+  panel.innerHTML = '<h3>Best of the Best — card holders vote</h3>' +
+    '<p>In the app, only verified DAOS Card holders vote in the Best of the Best awards and the app rankings. Your card is your ballot — free to get, and yours even if you never attend an event.</p>' +
+    '<button class="btn" type="button" onclick="openMyProfile()">Get my DAOS Card</button>';
+  var msg = d.querySelector('#voteMsg');
+  if (msg && msg.parentNode) msg.parentNode.insertBefore(panel, msg);
+  else d.appendChild(panel);
+}
 async function castVote(fighterId, slug){
   var em = document.getElementById('voteEmail');
   var ph = document.getElementById('votePhone');
   var msg = document.getElementById('voteMsg');
+  if (isNativeApp() && !isVerifiedCardHolder()) {
+    if (msg) msg.textContent = 'App voting is for verified DAOS Card holders — get your free DAOS Card to vote.';
+    return;
+  }
   var email = em ? em.value.trim() : '';
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter a valid email to vote.'; return; }
   var phone = ph ? ph.value.replace(/\D/g, '') : '';
@@ -2080,6 +2138,7 @@ function saveCardContact(token, btn){
 async function shareCardLink(token, btn){
   var p = DAOS_CARD_PROFILES[token];
   if (!p) return;
+  awardPoints('share_card', token);
   if (navigator.share) {
     try { await navigator.share({title: p.name + ' — DAOS Card', text: p.name + ' on DAOS', url: p.url}); return; } catch (e) { return; }
   }
@@ -2091,11 +2150,214 @@ async function shareCardLink(token, btn){
 async function copyCardLink(token, btn){
   var p = DAOS_CARD_PROFILES[token];
   if (!p) return;
+  awardPoints('share_card', token);
   var sic = btn ? btn.querySelector('.sic') : null;
   try {
     await navigator.clipboard.writeText(p.url);
     if (sic) { var t = sic.innerHTML; sic.innerHTML = '&#10003;'; setTimeout(function(){ sic.innerHTML = t; }, 1600); }
   } catch (e) { window.prompt('Copy this card link:', p.url); }
+}
+/* ---- Proof-of-attendance stamps (Jake, Nov 19, 2026) -------------
+   Every DAOS event you attend adds a stamp to your card. Stamps
+   come from check_ins — door staff check you in at the event, so a
+   stamp is proof you were actually there and can't be self-awarded
+   from the app. The collection is the reason to show up to the
+   next one: collect them all.
+   The catalog below maps the check-in event slugs; any check-in
+   with a slug not listed still renders as its own stamp, so no
+   attendance is ever lost when a new event ships. */
+var DAOS_STAMPS = [
+  {event: 'daos-party-2026-12-05', name: 'DAOS Party', detail: 'Dec 5, 2026 · Row House, Harlem'},
+  {event: 'daos-con-7-2027-03-07', name: 'DAOS CON 7', detail: 'Mar 7, 2027 · New York City'}
+];
+function stampNameFromSlug(slug){
+  return String(slug || 'DAOS Event').replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+}
+async function renderMyStampsBox(){
+  var box = document.getElementById('myStampsBox');
+  if (!box) return;
+  if (!currentUser) {
+    box.innerHTML = '<div class="card" style="text-align:center"><h3>Proof-of-Attendance Stamps</h3>' +
+      '<p>Every DAOS event you attend stamps your card — the DAOS Party, DAOS CON, and more. <b>Collect them all.</b></p>' +
+      '<button class="btn" type="button" onclick="openAuthModal()">Log in to start collecting</button></div>';
+    return;
+  }
+  var mine = {};
+  if (supabaseClient) {
+    try {
+      var r = await supabaseClient.from('check_ins').select('event,checked_in_at').eq('profile_id', currentUser.id).order('checked_in_at', {ascending: true}).limit(100);
+      if (!r.error && r.data) r.data.forEach(function(x){ mine[x.event] = x.checked_in_at; });
+    } catch (e) { /* policy not live yet — collection shows uncollected */ }
+  }
+  var known = {};
+  var tiles = DAOS_STAMPS.map(function(s){
+    known[s.event] = 1;
+    var at = mine[s.event];
+    if (at) {
+      return '<div class="stamp"><span class="scheck">&#10003;</span><span class="sname">' + escapeHtml(s.name) + '</span><span class="sdate">' + new Date(at).toLocaleDateString() + '</span></div>';
+    }
+    return '<div class="stamp missed soon"><span class="sname">' + escapeHtml(s.name) + '</span><span class="sdate">' + escapeHtml(s.detail) + '</span></div>';
+  });
+  Object.keys(mine).forEach(function(ev){
+    if (known[ev]) return;
+    tiles.push('<div class="stamp"><span class="scheck">&#10003;</span><span class="sname">' + escapeHtml(stampNameFromSlug(ev)) + '</span><span class="sdate">' + new Date(mine[ev]).toLocaleDateString() + '</span></div>');
+  });
+  var got = Object.keys(mine).length;
+  var total = Math.max(DAOS_STAMPS.length, got);
+  box.innerHTML = '<div class="card" style="text-align:center"><h3>Proof-of-Attendance Stamps</h3>' +
+    '<p class="meta">' + got + ' of ' + total + ' collected — every event you attend stamps your card. Collect them all.</p>' +
+    '<div class="stampgrid">' + tiles.join('') + '</div>' +
+    '<p class="meta" style="margin-top:10px">Stamps are added at the door when staff check you in — show your DAOS Card QR at each event.</p></div>';
+}
+/* ---- Points + levels (Jake, Nov 19, 2026) -------------------------
+   Members earn points for sharing and for making contacts, and level
+   up as the points grow. At 1,000 points (Level 5, DAOS Legend) they
+   unlock a FREE blog post write-up on DAOS — a Claim button appears
+   in the My Level card; DAOS reviews and writes it, nothing
+   auto-publishes. Jake's numbers (Nov 19, 2026):
+     +5  any share (your card, a post, fighter page, rankings, story)
+     +10 any connect (exchange your info on a member's card, or a
+         contact received on YOUR card, counted from card_contacts)
+   Daily caps so it can't be farmed: only 5 shares and 10 connects
+   a day count, and only one award per item per day. Levels:
+   L1 0 / L2 100 / L3 250 / L4 500 / L5 1,000 (blog post).
+   Points show right away from this
+   device; once supabase/member-points.sql runs, events also land in
+   point_events and the server total takes over. */
+var DAOS_LEVELS = [
+  {name: 'Rookie', at: 0},
+  {name: 'Connector', at: 100},
+  {name: 'Networker', at: 250},
+  {name: 'Ambassador', at: 500},
+  {name: 'DAOS Legend', at: 1000}
+];
+var DAOS_REWARD_POINTS = 1000;
+var POINT_VALUES = {share_card: 5, share_post: 5, share_page: 5, contact_made: 10};
+var CONTACT_RECEIVED_POINTS = 10;
+var DAILY_CAPS = {share: 5, connect: 10};
+function levelForPoints(total){
+  var cur = DAOS_LEVELS[0], next = null;
+  for (var i = 0; i < DAOS_LEVELS.length; i++) {
+    if (total >= DAOS_LEVELS[i].at) cur = DAOS_LEVELS[i];
+    else { next = DAOS_LEVELS[i]; break; }
+  }
+  return {level: cur, next: next, index: DAOS_LEVELS.indexOf(cur)};
+}
+function localPointsLoad(){
+  try { return JSON.parse(localStorage.getItem('daos-points-v1') || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function localPointsSave(d){
+  try { localStorage.setItem('daos-points-v1', JSON.stringify(d)); } catch (e) {}
+}
+async function awardPoints(action, refKey){
+  if (!currentUser || !POINT_VALUES[action]) return;
+  var day = new Date().toISOString().slice(0, 10);
+  var key = action + '|' + (refKey || '') + '|' + day;
+  var d = localPointsLoad();
+  d.events = d.events || {};
+  if (d.events[key]) return;
+  var cat = action === 'contact_made' ? 'connect' : 'share';
+  d.dayCounts = d.dayCounts || {};
+  d.dayCounts[day] = d.dayCounts[day] || {share: 0, connect: 0};
+  if ((d.dayCounts[day][cat] || 0) >= DAILY_CAPS[cat]) return;
+  d.dayCounts[day][cat] = (d.dayCounts[day][cat] || 0) + 1;
+  d.events[key] = 1;
+  d.total = (d.total || 0) + POINT_VALUES[action];
+  localPointsSave(d);
+  if (supabaseClient) {
+    try {
+      await supabaseClient.from('point_events').insert({
+        user_id: currentUser.id, action: action,
+        points: POINT_VALUES[action], ref_key: String(refKey || '').slice(0, 200)
+      });
+    } catch (e) { /* table not live yet — local points still count */ }
+  }
+  renderMyPointsBox();
+}
+async function fetchMyPoints(){
+  var local = localPointsLoad();
+  var earned = null, contacts = 0, contactReceivedPoints = 0, claimed = !!local.claimed;
+  if (supabaseClient && currentUser) {
+    try {
+      var r = await supabaseClient.from('point_events').select('points').eq('user_id', currentUser.id).limit(2000);
+      if (!r.error && r.data) earned = r.data.reduce(function(s, x){ return s + (x.points || 0); }, 0);
+    } catch (e) {}
+    try {
+      var c = await supabaseClient.from('card_contacts').select('created_at').order('created_at', {ascending: false}).limit(1000);
+      if (!c.error && c.data) {
+        contacts = c.data.length;
+        var byDay = {};
+        c.data.forEach(function(r){ var dy = String(r.created_at || '').slice(0, 10); byDay[dy] = (byDay[dy] || 0) + 1; });
+        contactReceivedPoints = Object.keys(byDay).reduce(function(s, dy){
+          return s + Math.min(byDay[dy], DAILY_CAPS.connect) * CONTACT_RECEIVED_POINTS;
+        }, 0);
+      }
+    } catch (e) {}
+    try {
+      var cl = await supabaseClient.from('point_reward_claims').select('id').eq('user_id', currentUser.id).maybeSingle();
+      if (!cl.error && cl.data) claimed = true;
+    } catch (e) {}
+  }
+  if (earned === null) earned = local.total || 0;
+  var contactPoints = contactReceivedPoints;
+  return {earned: earned, contacts: contacts, contactPoints: contactPoints,
+          total: earned + contactPoints, claimed: claimed};
+}
+async function renderMyPointsBox(){
+  var box = document.getElementById('myPointsBox');
+  if (!box) return;
+  if (!currentUser) {
+    box.innerHTML = '<div class="card" style="text-align:center"><h3>Level up with DAOS</h3>' +
+      '<p>Earn points every time you share and every contact you make. Reach <b>1,000 points</b> (Level 5) and you unlock a <b>free blog post write-up</b> on DAOS.</p>' +
+      '<button class="btn" type="button" onclick="openAuthModal()">Log in to start earning</button></div>';
+    return;
+  }
+  var pts = await fetchMyPoints();
+  var lv = levelForPoints(pts.total);
+  var pct = 100, nextLine = 'Top level — you are a DAOS Legend.';
+  if (lv.next) {
+    pct = Math.max(2, Math.min(100, Math.round(100 * (pts.total - lv.level.at) / (lv.next.at - lv.level.at))));
+    nextLine = (lv.next.at - pts.total) + ' points to Level ' + (lv.index + 2) + ' — ' + lv.next.name + '.';
+  }
+  var reward = '';
+  if (pts.total >= DAOS_REWARD_POINTS) {
+    reward = pts.claimed
+      ? '<p class="big" style="color:#2e9e4f">&#10003; Free blog post write-up claimed</p><p class="meta">DAOS has your claim — we will reach out to set up your write-up.</p>'
+      : '<p class="big" style="color:#2e9e4f">&#127942; You unlocked a FREE blog post write-up!</p><p><button class="btn" type="button" onclick="claimBlogReward(this)">Claim my free blog post write-up</button></p><p id="claimRewardMsg" class="meta"></p>';
+  } else {
+    reward = '<p class="meta">' + (DAOS_REWARD_POINTS - pts.total) + ' points to go until your <b>free blog post write-up</b> unlocks at ' + DAOS_REWARD_POINTS + ' points (Level 5 — DAOS Legend).</p>';
+  }
+  box.innerHTML = '<div class="card" style="text-align:left"><h3>My Level &amp; Points</h3>' +
+    '<p style="text-align:center"><span class="lvlchip">Level ' + (lv.index + 1) + ' &middot; ' + escapeHtml(lv.level.name) + '</span></p>' +
+    '<p style="text-align:center" class="big">' + pts.total + ' points</p>' +
+    '<div class="lvlbar"><div class="lvlfill" style="width:' + pct + '%"></div></div>' +
+    '<p class="meta" style="text-align:center">' + nextLine + '</p>' +
+    '<div class="ptsrow"><span>Shares &amp; contacts you made</span><b>' + pts.earned + ' pts</b></div>' +
+    '<div class="ptsrow"><span>Contacts from your card (' + pts.contacts + ' received)</span><b>' + pts.contactPoints + ' pts</b></div>' +
+    '<p class="meta" style="margin-top:10px">How to earn: any share (+5) &middot; any connect (+10) — exchange contacts on a member\'s card, or a contact your card receives. Only 5 shares and 10 connects a day count.</p>' +
+    reward + '</div>';
+}
+async function claimBlogReward(btn){
+  var msg = document.getElementById('claimRewardMsg');
+  function say(t){ if (msg) msg.textContent = t; }
+  if (!supabaseClient || !currentUser) { say('Log in first, then claim.'); return; }
+  if (btn) btn.disabled = true;
+  say('Sending your claim…');
+  var pts = await fetchMyPoints();
+  var done = false;
+  try {
+    var res = await supabaseClient.from('point_reward_claims').insert({
+      user_id: currentUser.id, reward: 'blog_writeup', points_at_claim: pts.total
+    });
+    done = !res.error;
+    if (res.error && /duplicate|unique/i.test(res.error.message || '')) done = true;
+    if (res.error && /point_reward_claims/.test(res.error.message || '')) done = false;
+  } catch (e) {}
+  var d = localPointsLoad(); d.claimed = true; localPointsSave(d);
+  if (btn) btn.disabled = false;
+  if (done) { renderMyPointsBox(); return; }
+  say('Claim noted on this device — claiming fully switches on with the next DAOS database update, and your points are saved either way.');
 }
 var MEMBER_TITLES = ['Partner','V.I.P','Representative First Class','Representative','Supporter','Vendor','Member'];
 function memberTitleOf(p){
@@ -2196,6 +2458,8 @@ function cardBoxHtml(p, opts){
   return html;
 }
 function renderMyCardBox(){
+  renderMyPointsBox();
+  renderMyStampsBox();
   var box = document.getElementById('myCardBox');
   if (!box) return;
   if (!myProfile || !myProfile.card_token) {
@@ -2389,6 +2653,7 @@ async function submitExchange(token, btn){
     if (btn) btn.disabled = false;
     return;
   }
+  awardPoints('contact_made', token);
   var form = btn ? btn.closest('.card') : null;
   if (form) form.innerHTML = '<h3>You\'re connected ✓</h3><p class="meta">Your info was sent. They\'ll see it in their DAOS contacts.</p>';
 }
@@ -3403,6 +3668,7 @@ function fallbackCopy(text){
   }catch(e){}
 }
 function sharePost(slug,btn){
+  awardPoints('share_post','blog-' + slug);
   var url=postUrl(slug);
   var done=function(){
     if(!btn)return;
