@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your martial artist, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',9)">Vote for a martial artist</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
   <div class="card" id="rankHero"><h3>&#129351; Top martial artists this week</h3><div id="rankHeroBody"><p class="meta">Loading rankings&hellip;</p></div></div>
   <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',10)">Create my profile</button></div>
-  <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Members only — log in to continue.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
+  <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Members only — log in to continue.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPhone" type="tel" placeholder="Phone number (required to sign up)" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><label style="display:block;font-weight:normal;font-size:13px;color:#555;margin-bottom:4px;text-align:left"><input type="checkbox" id="authEmailOpt"> Email me DAOS updates, drops, and event news</label><label style="display:block;font-weight:normal;font-size:13px;color:#555;margin-bottom:8px;text-align:left"><input type="checkbox" id="authSmsOpt"> Text me DAOS updates (msg &amp; data rates may apply)</label><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
   <div class="card" id="composerForm" style="display:none"><h3>Suggestion for DAOS</h3><textarea id="postText" rows="3" placeholder="Suggest something for DAOS — an event idea, someone to feature, a collab, a class…" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Send suggestion</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
   <div id="memberFeed"></div>
   <div class="members-bubble-overlay" id="membersBubble" onclick="hideMembersBubble()"><div class="members-bubble" onclick="event.stopPropagation()">This section is only for DAOS members.<br><button type="button" onclick="hideMembersBubble()">OK</button></div></div>
@@ -557,6 +557,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </section>
 <section id="network" class="tabpane">
   <div id="myCardBox"></div>
+  <div id="myPhoneBox"></div>
   <div id="myPointsBox"></div>
   <div id="myStampsBox"></div>
   <div id="myCardContacts"></div>
@@ -893,8 +894,13 @@ async function authSignIn(){
 }
 async function authSignUp(){
   var em = document.getElementById('authEmail').value, pw = document.getElementById('authPass').value;
-  var res = await supabaseClient.auth.signUp({email: em, password: pw});
-  document.getElementById('authMsg').textContent = res.error ? res.error.message : 'Account created — check your email to confirm, then log in.';
+  var msg = document.getElementById('authMsg');
+  var ph = (document.getElementById('authPhone').value || '').trim();
+  if (ph.replace(/\D/g, '').length < 10) { msg.textContent = 'Enter your phone number — a phone number is required to sign up.'; return; }
+  var emailOpt = !!document.getElementById('authEmailOpt').checked;
+  var smsOpt = !!document.getElementById('authSmsOpt').checked;
+  var res = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {phone: ph, email_opt_in: emailOpt, sms_opt_in: smsOpt}}});
+  msg.textContent = res.error ? res.error.message : 'Account created — check your email to confirm, then log in.';
 }
 async function authSignOut(){ if (supabaseClient) await supabaseClient.auth.signOut(); refreshAuth(); }
 function showProfileSetup(){
@@ -1304,6 +1310,21 @@ async function loadMyMemberProfile(){
   if (myProfile) {
     var cxr = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', currentUser.id).maybeSingle();
     if (!cxr.error && cxr.data) { myProfile.contact_email = cxr.data.contact_email; myProfile.contact_phone = cxr.data.contact_phone; }
+    try {
+      var mxr = await supabaseClient.from('profiles').select('phone,email_opt_in,sms_opt_in').eq('id', currentUser.id).maybeSingle();
+      if (!mxr.error && mxr.data) {
+        myProfile.phone = mxr.data.phone; myProfile.email_opt_in = mxr.data.email_opt_in; myProfile.sms_opt_in = mxr.data.sms_opt_in;
+      }
+      var meta = (currentUser.user_metadata || {});
+      if (!myProfile.phone && meta.phone) {
+        var nowIso = new Date().toISOString();
+        var up = {id: currentUser.id, phone: meta.phone, email_opt_in: !!meta.email_opt_in, sms_opt_in: !!meta.sms_opt_in};
+        if (meta.email_opt_in) up.email_opt_in_at = nowIso;
+        if (meta.sms_opt_in) up.sms_opt_in_at = nowIso;
+        var ures = await supabaseClient.from('profiles').upsert(up);
+        if (!ures.error) { myProfile.phone = meta.phone; myProfile.email_opt_in = !!meta.email_opt_in; myProfile.sms_opt_in = !!meta.sms_opt_in; }
+      }
+    } catch (e) { /* marketing columns land with member-marketing.sql */ }
     var myTitle = await fetchMemberTitle(currentUser.id);
     if (myTitle) myProfile.member_title = myTitle;
   }
@@ -2366,6 +2387,30 @@ function creditBoughtPoints(points){
   d.bought = (d.bought || 0) + points;
   localPointsSave(d);
 }
+async function renderMyPhoneBox(){
+  var box = document.getElementById('myPhoneBox');
+  if (!box) return;
+  if (!currentUser || !myProfile || myProfile.phone) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="card" style="text-align:left;border:2px solid #E10600"><h3>Add your phone number</h3>' +
+    '<p>DAOS accounts need a phone number — it is how you get event texts, order updates, and account recovery. Add yours to finish your account.</p>' +
+    '<div class="customrow"><input id="myPhoneInput" type="tel" placeholder="Phone number" autocomplete="tel">' +
+    '<button class="shopprice" type="button" onclick="saveMyPhone()">Save</button></div>' +
+    '<label class="meta" style="display:block;margin-top:6px"><input type="checkbox" id="mySmsOpt"> Text me DAOS updates (msg &amp; data rates may apply)</label>' +
+    '<p id="myPhoneMsg" class="meta"></p></div>';
+}
+async function saveMyPhone(){
+  var msg = document.getElementById('myPhoneMsg');
+  var inp = document.getElementById('myPhoneInput');
+  var ph = ((inp && inp.value) || '').trim();
+  if (ph.replace(/\D/g, '').length < 10) { if (msg) msg.textContent = 'Enter a valid phone number.'; return; }
+  var smsOpt = !!document.getElementById('mySmsOpt').checked;
+  var up = {id: currentUser.id, phone: ph, sms_opt_in: smsOpt};
+  if (smsOpt) up.sms_opt_in_at = new Date().toISOString();
+  var res = await supabaseClient.from('profiles').upsert(up);
+  if (res.error) { if (msg) msg.textContent = 'Could not save yet — phone saving switches on with the next DAOS database update.'; return; }
+  myProfile.phone = ph; myProfile.sms_opt_in = smsOpt;
+  renderMyPhoneBox();
+}
 async function renderMyPointsBox(){
   var box = document.getElementById('myPointsBox');
   if (!box) return;
@@ -2539,6 +2584,7 @@ function cardBoxHtml(p, opts){
   return html;
 }
 function renderMyCardBox(){
+  renderMyPhoneBox();
   renderMyPointsBox();
   renderMyStampsBox();
   var box = document.getElementById('myCardBox');
