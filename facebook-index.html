@@ -46,6 +46,16 @@ main{max-width:680px;margin:0 auto;padding:12px}
 .shopitem .shopbody p{margin:0}
 .shopprice{flex:none;background:#E10600;color:#fff;border:0;font-weight:800;font-size:17px;padding:12px 18px;border-radius:12px;cursor:pointer}
 .shopprice:active{transform:scale(.97)}
+.baltiles{display:flex;gap:12px;margin:12px 0}
+.baltile{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center}
+.baltile .bnum{font-size:28px;font-weight:800;color:#E10600;line-height:1}
+.baltile .blab{font-size:12px;letter-spacing:2px;color:var(--muted);margin-top:6px;text-transform:uppercase}
+.packrow{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.packrow:last-child{border-bottom:0}
+.packrow .shopic{flex:none;width:54px;height:54px;border-radius:12px;background:#111;color:#E10600;display:flex;align-items:center;justify-content:center;font-size:28px}
+.packrow .shopbody{flex:1;min-width:0}
+.packrow .shopbody h3{margin:0 0 4px}
+.packrow .shopbody p{margin:0}
 .composer{display:flex;gap:10px;align-items:center}
 .avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex:none;border:2px solid #fff}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -2289,6 +2299,42 @@ async function fetchMyPoints(){
   if (earned === null) earned = local.total || 0;
   return {earned: earned, bought: local.bought || 0, claims: claims};
 }
+var POINT_PACKS = [
+  {id: 'com.daosmedia.app.points100', points: 100, name: 'Points Pack', desc: '100 DAOS Points — spend them on songs, 10 points a track.', icon: '&#129689;', priceApp: '$9.99', priceWeb: '$10'},
+  {id: 'com.daosmedia.app.points250', points: 250, name: 'Points Stack', desc: '250 DAOS Points — a real stack for songs and early access.', icon: '&#128176;', priceApp: '$24.99', priceWeb: '$25'},
+  {id: 'com.daosmedia.app.points500', points: 500, name: 'Points Vault', desc: '500 DAOS Points — exclusive and unreleased tracks are points-only.', icon: '&#9889;', priceApp: '$49.99', priceWeb: '$50'},
+  {id: 'com.daosmedia.app.points1000', points: 1000, name: 'Points Empire', desc: '1,000 DAOS Points — the full war chest, only at DAOS.', icon: '&#128081;', priceApp: '$99.99', priceWeb: '$100'}
+];
+function buyPoints(idx){
+  var pack = POINT_PACKS[idx];
+  var msg = document.getElementById('pointsBuyMsg');
+  if (!pack) return;
+  if (!isNativeApp()) {
+    if (msg) msg.textContent = 'Opening the DAOS store — pick your pack and check out with the same email as your app account.';
+    openExternal(POINTS_STORE_URL);
+    return;
+  }
+  try {
+    initAdIAP();
+    if (!window.CdvPurchase || !window.CdvPurchase.store) throw new Error('iap unavailable');
+    var store = window.CdvPurchase.store;
+    var product = store.get(pack.id);
+    if (!product || !product.getOffer()) {
+      if (msg) msg.textContent = 'Points packs are being switched on in the App Store — try again soon.';
+      return;
+    }
+    try { localStorage.setItem('daos-points-pending', JSON.stringify({id: pack.id, points: pack.points})); } catch (e) {}
+    if (msg) msg.textContent = 'Opening Apple checkout…';
+    product.getOffer().order();
+  } catch (e) {
+    if (msg) msg.textContent = 'In-app purchase is not available yet — try again soon.';
+  }
+}
+function creditBoughtPoints(points){
+  var d = localPointsLoad();
+  d.bought = (d.bought || 0) + points;
+  localPointsSave(d);
+}
 async function renderMyPointsBox(){
   var box = document.getElementById('myPointsBox');
   if (!box) return;
@@ -2311,15 +2357,23 @@ async function renderMyPointsBox(){
         : '<b>' + (m.at - pts.earned) + ' to go</b>');
     return '<div class="ptsrow"><span><b>' + m.at + ' earned</b> — ' + escapeHtml(m.name) + '<br><span class="meta">' + escapeHtml(m.detail) + '</span></span>' + right + '</div>';
   }).join('');
+  var packs = POINT_PACKS.map(function(pk, i){
+    return '<div class="packrow"><div class="shopic">' + pk.icon + '</div>' +
+      '<div class="shopbody"><h3>' + pk.name + '</h3><p>' + pk.desc + '</p></div>' +
+      '<button class="shopprice" type="button" onclick="buyPoints(' + i + ')">' + (isNativeApp() ? pk.priceApp : pk.priceWeb) + '</button></div>';
+  }).join('');
   box.innerHTML = '<div class="card" style="text-align:left"><h3>DAOS Points</h3>' +
-    '<div class="ptsrow"><span>Earned points</span><b>' + pts.earned + ' pts</b></div>' +
-    '<div class="ptsrow"><span>Bought points</span><b>' + pts.bought + ' pts</b></div>' +
-    '<p class="meta" style="margin-top:10px">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
+    '<div class="baltiles">' +
+    '<div class="baltile"><div class="bnum">' + pts.earned + '</div><div class="blab">Earned</div></div>' +
+    '<div class="baltile"><div class="bnum">' + pts.bought + '</div><div class="blab">Bought</div></div>' +
+    '</div>' +
+    '<p class="meta">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
     '<h3 style="margin-top:14px">The ladder — earned points only</h3>' + rows +
-    '<p id="claimRewardMsg" class="meta"></p>' +
-    '<h3 style="margin-top:14px">Buy points</h3>' +
-    '<p class="meta">$1 = 10 points. Bought points spend on songs only — 10 points per standard track, and exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder. Purchases match your account email and land on this card.</p>' +
-    '<p><button class="btn dark" type="button" onclick="openExternal(\'' + POINTS_STORE_URL + '\')">Buy DAOS Points</button></p>' +
+    '<p id="claimRewardMsg" class="meta"></p></div>' +
+    '<div class="card" style="text-align:left"><h3>Points Shop</h3>' +
+    '<p class="meta">$1 = 10 points. Bought points spend on songs only — 10 points per standard track; exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder.</p>' +
+    packs +
+    '<p id="pointsBuyMsg" class="meta" style="margin-top:10px"></p>' +
     '<p class="meta">Points spend only at DAOS — on blog features, print magazine features, and songs. Never tickets, never merch. No cash-out, no cash value.</p></div>';
 }
 async function claimLadderReward(key, btn){
@@ -3362,11 +3416,28 @@ function initAdIAP(){
   adIapInitialized = true;
   try {
     var store = window.CdvPurchase.store;
-    store.register([{type: window.CdvPurchase.ProductType.CONSUMABLE, id: AD_IAP_PRODUCT_ID, platform: window.CdvPurchase.Platform.APPLE_APPSTORE}]);
+    var regs = [{type: window.CdvPurchase.ProductType.CONSUMABLE, id: AD_IAP_PRODUCT_ID, platform: window.CdvPurchase.Platform.APPLE_APPSTORE}];
+    POINT_PACKS.forEach(function(pk){ regs.push({type: window.CdvPurchase.ProductType.CONSUMABLE, id: pk.id, platform: window.CdvPurchase.Platform.APPLE_APPSTORE}); });
+    store.register(regs);
     store.when().approved(function(t){
+      window.__daosApprovedPid = t.productId || window.__daosApprovedPid;
       t.verify();
     }).verified(function(r){
       r.finish();
+      var pend = null;
+      try { pend = JSON.parse(localStorage.getItem('daos-points-pending') || 'null'); } catch (e) {}
+      var boughtPack = null;
+      POINT_PACKS.forEach(function(pk){
+        if (pk.id === window.__daosApprovedPid || (pend && pk.id === pend.id)) boughtPack = pk;
+      });
+      if (boughtPack) {
+        creditBoughtPoints(boughtPack.points);
+        try { localStorage.removeItem('daos-points-pending'); } catch (e) {}
+        var pm = document.getElementById('pointsBuyMsg');
+        if (pm) pm.textContent = boughtPack.points + ' points added to your DAOS Card.';
+        renderMyPointsBox();
+        return;
+      }
       var msg = document.getElementById('adMsg');
       if (msg) msg.textContent = 'Payment confirmed — email your ad (image, text, and link) to daos@deadlyartofsurvival.com and DAOS will review it before it runs.';
     }).finished(function(t){
