@@ -2328,11 +2328,11 @@ async function fetchMyPoints(){
   return {earned: earned, bought: local.bought || 0, claims: claims};
 }
 var DAOS_LEVELS = [
-  {n: 1, at: 0, name: 'Rookie'},
-  {n: 2, at: 100, name: 'Connector'},
-  {n: 3, at: 250, name: 'Networker'},
-  {n: 4, at: 500, name: 'Ambassador'},
-  {n: 5, at: 1000, name: 'DAOS Legend'}
+  {n: 1, at: 0},
+  {n: 2, at: 100},
+  {n: 3, at: 250},
+  {n: 4, at: 500},
+  {n: 5, at: 1000}
 ];
 function levelForEarned(earned){
   var cur = DAOS_LEVELS[0], next = null;
@@ -2416,7 +2416,7 @@ async function renderMyPointsBox(){
   if (!box) return;
   if (!currentUser) {
     box.innerHTML = '<div class="card" style="text-align:center"><h3>DAOS Points</h3>' +
-      '<p>Earn points by promoting DAOS — post, like, comment, share. Level up from Level 1 to DAOS Legend, and work the ladder: <b>song exposure at 100</b>, a <b>blog feature at 500</b>, a <b>magazine feature shot at 5,000</b>. Or buy points (1 point = $1) and spend them on songs.</p>' +
+      '<p>Earn points by promoting DAOS — post, like, comment, share. Level up as you earn, and work the ladder: <b>song exposure at 100</b>, a <b>blog feature at 500</b>, a <b>magazine feature shot at 5,000</b>. Or buy points (1 point = $1) and spend them on songs.</p>' +
       '<button class="btn" type="button" onclick="openAuthModal()">Log in to start earning</button></div>';
     return;
   }
@@ -2441,11 +2441,10 @@ async function renderMyPointsBox(){
   var lv = levelForEarned(pts.earned);
   var lvlPct = lv.next ? Math.min(100, Math.round(100 * (pts.earned - lv.cur.at) / (lv.next.at - lv.cur.at))) : 100;
   var lvlHtml = '<div class="levelbanner"><span class="lvlbig">LEVEL ' + lv.cur.n + '</span>' +
-    '<span class="lvlname">' + lv.cur.name + '</span>' +
     '<div class="lvlbar"><div class="lvlfill" style="width:' + lvlPct + '%"></div></div>' +
     '<p class="meta" style="margin-top:8px;color:#bbb">' + (lv.next
-      ? (lv.next.at - pts.earned) + ' earned points to Level ' + lv.next.n + ' — ' + lv.next.name
-      : 'Top level — DAOS Legend status') + '</p></div>';
+      ? (lv.next.at - pts.earned) + ' earned points to Level ' + lv.next.n
+      : 'Top level reached') + '</p></div>';
   box.innerHTML = '<div class="card" style="text-align:left"><h3>DAOS Points</h3>' +
     '<div class="baltiles">' +
     '<div class="baltile"><div class="bnum">' + pts.earned + '</div><div class="blab">Earned</div></div>' +
