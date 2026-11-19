@@ -368,7 +368,6 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="active" onclick="showTab('feed',this)">Feed</button>
   <button onclick="showTab('events',this)">Events</button>
   <button onclick="showTab('tournaments',this)">Tournaments</button>
-  <button onclick="showTab('community',this)">Community</button>
   <button onclick="showTab('magazine',this)">Magazine</button>
   <button onclick="showTab('photos',this)">Photos</button>
   <button onclick="showTab('blog',this)">Blog</button>
@@ -378,24 +377,24 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button onclick="showTab('network',this)">DAOS Card</button>
   <button onclick="showTab('rankings',this)">Rankings</button>
   <button onclick="showTab('videos',this)">Videos</button>
+  <button onclick="showTab('shop',this)">Shop</button>
   <button onclick="openMuseum()">Museum</button>
 </nav>
 <div class="layout">
 <aside class="sidebar">
-  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#128202; Business Dashboard</a>
-  <a href="#" onclick="showTab('community',document.querySelectorAll('#tabs button')[3]);return false">&#128101; Groups</a>
+  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[7]);return false">&#128202; Business Dashboard</a>
   <a href="#" onclick="showTab('events',document.querySelectorAll('#tabs button')[1]);return false">&#127915; Events</a>
-  <a href="#" onclick="showTab('photos',document.querySelectorAll('#tabs button')[5]);return false">&#128444; Saved</a>
-  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#10067; Help and support</a>
-  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[8]);return false">&#9881; Settings and privacy</a>
+  <a href="#" onclick="showTab('photos',document.querySelectorAll('#tabs button')[4]);return false">&#128444; Saved</a>
+  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[7]);return false">&#10067; Help and support</a>
+  <a href="#" onclick="showTab('profile',document.querySelectorAll('#tabs button')[7]);return false">&#9881; Settings and privacy</a>
   <div class="card" id="suggestSidebarCard" style="display:none;margin-top:12px"><h3>People to connect with</h3><div id="suggestSidebar"></div></div>
 </aside>
 <main>
 <section id="feed" class="tabpane active">
   <div class="card composer"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><button class="pill" type="button" onclick="openComposer()">Any suggestions for us?</button></div>
-  <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your martial artist, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',9)">Vote for a martial artist</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
+  <div class="card" id="welcomeCard" style="display:none"><h3>Welcome to DAOS</h3><p>Vote for your martial artist, get your DAOS card, and join us Dec 5 in Harlem for the DAOS Party.</p><button class="btn" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('fighters',8)">Vote for a martial artist</button> <button class="btn dark" type="button" onclick="try{localStorage.setItem('daos-welcome-seen','1')}catch(e){};goTab('events',1)">Dec 5 Party</button> <button class="btn dark" type="button" onclick="this.parentElement.style.display='none';try{localStorage.setItem('daos-welcome-seen','1')}catch(e){}">Got it</button></div>
   <div class="card" id="rankHero"><h3>&#129351; Top martial artists this week</h3><div id="rankHeroBody"><p class="meta">Loading rankings&hellip;</p></div></div>
-  <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',10)">Create my profile</button></div>
+  <div class="card setupcard" id="profileSetupCard" style="display:none"><h3>Welcome &mdash; set up your profile</h3><p>Create your profile so people can find you, follow you, and see your posts. Add your name, a short bio, and a photo or logo.</p><button class="btn" type="button" onclick="goTab('network',9)">Create my profile</button></div>
   <div class="members-bubble-overlay" id="authModal" onclick="closeAuthModal()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="authTitle">DAOS members log in</div><p id="authNote" style="font-weight:normal;font-size:14px;color:#555">Members only — log in to continue.</p><input id="authEmail" type="email" placeholder="Email" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPass" type="password" placeholder="Password" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><input id="authPhone" type="tel" placeholder="Phone number (required to sign up)" style="width:100%;padding:11px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"><label style="display:block;font-weight:normal;font-size:13px;color:#555;margin-bottom:4px;text-align:left"><input type="checkbox" id="authEmailOpt"> Email me DAOS updates, drops, and event news</label><label style="display:block;font-weight:normal;font-size:13px;color:#555;margin-bottom:8px;text-align:left"><input type="checkbox" id="authSmsOpt"> Text me DAOS updates (msg &amp; data rates may apply)</label><button type="button" onclick="authSignIn()">Log in</button> <button type="button" onclick="authSignUp()">Sign up</button><p id="authMsg" style="font-weight:normal;font-size:13px;color:#555"></p></div></div>
   <div class="card" id="composerForm" style="display:none"><h3>Suggestion for DAOS</h3><textarea id="postText" rows="3" placeholder="Suggest something for DAOS — an event idea, someone to feature, a collab, a class…" style="width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text)"></textarea><br><button class="btn" type="button" onclick="submitPost()">Send suggestion</button> <button class="btn dark" type="button" onclick="authSignOut()">Log out</button><p id="postMsg" class="meta"></p></div>
   <div id="memberFeed"></div>
@@ -467,15 +466,11 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Anthony Arango &mdash; Tournament Record</h3><ul><li>Head instructor, The Martial Arts Institute, Massapequa, NY</li><li>Nationally ranked with the Arango Warriors National Karate Team</li><li>USA Fighting Team (USA vs Puerto Rico, USA vs South Africa)</li><li>USA World W.A.K.O. Fighting Team member, silver medal, World Championships Italy at age 48</li><li>Black Belt Fighting Champion, Ocean State National Karate Tournament, Rhode Island (also at age 55)</li><li>Fighting Black Belt Grand Champion, Island Wide Open Championship, Long Island, NY</li><li>Runs the Arango Karate Championship</li></ul></div>
   <div class="card"><h3>Community Tournaments</h3><div id="communityTournaments"><p class="meta">Loading community tournaments&hellip;</p></div></div>
 </section>
-<section id="community" class="tabpane">
-  <div class="card"><h3>Community</h3><p>Latest Magazine Updates &mdash; the DAOS community channel. Feed, groups and conversation around martial arts, music and culture.</p></div>
-  <div class="card"><h3>Party Vault</h3><p>Photos and videos from the DAOS Party.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
-</section>
 <section id="magazine" class="tabpane">
   <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
   <div class="card"><h3>28th Edition &mdash; Complete <span class="ed-pill">Published</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; every cover is now published.</p><div class="ed-progress" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: complete, all covers published"><div class="ed-track"><div class="ed-fill" style="width:100%"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="done">&#10003; Processing</span><span class="done">&#10003; Published</span></div></div><p class="ed-note">All covers published. &middot; Updated Nov 18, 2026.</p><a class="btn" href="museum.html#magazine" onclick="openMuseum('magazine');return false;">See the Edition Wall</a></div>
   <div class="card"><h3>Apply to be featured — application</h3><p>The application lives on the DAOS site — tap below and it opens the correct application page. Your profile becomes your feature application.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application</a></div>
-  <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Martial Artists</button></div>
+  <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',8)">Martial Artists</button></div>
 </section>
 <section id="photos" class="tabpane">
   <div class="card"><h3>Photos</h3><p>Party Vault photos and DAOS galleries live here.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
@@ -659,12 +654,16 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card shopitem"><div class="shopic">&#128214;</div><div class="shopbody"><h3>Print Magazine Ads</h3><p>Full-page, half-page, and back-cover ads in DAOS Magazine print editions.</p></div><button class="btn dark" type="button" onclick="openExternal('https://deadlyartofsurvival.com/pages/advertise')">See options</button></div>
   <div class="card"><p class="meta">Every ad is reviewed by DAOS before it runs. After you pay, email your ad &mdash; image, text, and link &mdash; to daos@deadlyartofsurvival.com with your order number or receipt.</p></div>
 </section>
+<section id="shop" class="tabpane">
+  <div class="card"><h3>DAOS Shop</h3><p>Buy DAOS Points here — spend them on songs in the app. Tickets, magazine editions, and merch live in the DAOS store.</p><button class="btn dark" type="button" onclick="openExternal('https://deadlyartofsurvival.com')">Visit the DAOS store</button></div>
+  <div id="shopPointsBox"></div>
+</section>
 <section id="cardview" class="tabpane">
   <div id="cardDetail"><div class="card"><p class="meta">Loading card…</p></div></div>
 </section>
 <section id="profile" class="tabpane">
   <div class="profilecover"><img class="script" src="__SCRIPT__" alt="daos"><h2>Deadly Art of Survival</h2><p>Local business &middot; New York, NY, United States &middot; Always open</p><a class="btn" href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a></div>
-  <div class="card"><h3>My DAOS Card</h3><p>Your digital DAOS card with QR code — your ticket and check-in for DAOS events, starting with the Dec 5 Party.</p><button class="btn" type="button" onclick="goTab('network',10)">View my DAOS card</button></div>
+  <div class="card"><h3>My DAOS Card</h3><p>Your digital DAOS card with QR code — your ticket and check-in for DAOS events, starting with the Dec 5 Party.</p><button class="btn" type="button" onclick="goTab('network',9)">View my DAOS card</button></div>
   <div class="card"><h3>Details</h3><div class="detail">&#128205; New York, NY, United States</div><div class="detail">&#128222; +1 917-304-7517</div><div class="detail">&#9993; daosmediagrp@gmail.com</div><div class="detail">&#128279; deadlyartofsurvival.com</div></div>
   <div class="card"><h3>Communities</h3><p>Latest Magazine Updates &mdash; Channel</p></div>
   <div class="card"><h3>Links</h3><p><a href="https://deadlyartofsurvival.com/products/daos-party">DAOS Party tickets</a><br><a href="https://open.spotify.com/artist/6xDnOObztkl0OsrihKaP5C">Jake Northfa$e on Spotify</a><br><a href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">DAOS Party on Bandsintown</a></p></div>
@@ -678,24 +677,24 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="shortcuts">
     <button class="shortcut" onclick="goTab('feed',0)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></span>Feed</button>
     <button class="shortcut" onclick="goTab('events',1)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span>Events</button>
-    <button class="shortcut" onclick="goTab('music',7)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>Music</button>
-    <button class="shortcut" onclick="goTab('magazine',4)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2V4z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7V4z"/></svg></span>Magazine</button>
+    <button class="shortcut" onclick="goTab('music',6)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>Music</button>
+    <button class="shortcut" onclick="goTab('magazine',3)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2V4z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7V4z"/></svg></span>Magazine</button>
   </div>
   <div class="drawer-sec">Menu</div>
   <button class="drawer-row" onclick="goTab('feed',0)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></span>Feed</button>
   <button class="drawer-row" onclick="goTab('events',1)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span>Events</button>
   <button class="drawer-row" onclick="goTab('tournaments',2)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 5H4.5A1.5 1.5 0 0 0 3 6.5C3 8.4 4.6 10 6.5 10H7"/><path d="M17 5h2.5A1.5 1.5 0 0 1 21 6.5C21 8.4 19.4 10 17.5 10H17"/><path d="M12 14v3"/><path d="M8.5 21h7"/><path d="M10 17h4l.6 4H9.4L10 17z"/></svg></span>Tournaments</button>
-  <button class="drawer-row" onclick="goTab('community',3)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.8 14.6c2.2.2 3.8 1.6 4.4 4.4"/></svg></span>Community</button>
-  <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2V4z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7V4z"/></svg></span>Magazine</button>
-  <button class="drawer-row" onclick="goTab('music',7)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>Music</button>
-  <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path d="M8.6 13.4 7 21l5-2.6L17 21l-1.6-7.6"/></svg></span>Martial Artists</button>
-  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></span>DAOS Card</button>
-  <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg></span>Rankings</button>
-  <button class="drawer-row" onclick="goTab('videos',12)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.8v4.4L14.5 12z"/></svg></span>Videos</button>
+  <button class="drawer-row" onclick="goTab('magazine',3)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2V4z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7V4z"/></svg></span>Magazine</button>
+  <button class="drawer-row" onclick="goTab('music',6)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>Music</button>
+  <button class="drawer-row" onclick="goTab('fighters',8)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path d="M8.6 13.4 7 21l5-2.6L17 21l-1.6-7.6"/></svg></span>Martial Artists</button>
+  <button class="drawer-row" onclick="goTab('network',9)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></span>DAOS Card</button>
+  <button class="drawer-row" onclick="goTab('shop',12)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16l-1.5 11a2 2 0 0 1-2 1.7h-9A2 2 0 0 1 5.5 18L4 7z"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></span>Shop</button>
+  <button class="drawer-row" onclick="goTab('rankings',10)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg></span>Rankings</button>
+  <button class="drawer-row" onclick="goTab('videos',11)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.8v4.4L14.5 12z"/></svg></span>Videos</button>
   <div id="drawerMore" style="display:none">
-    <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg></span>Photos</button>
-    <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>Blog</button>
-    <button class="drawer-row" onclick="goTab('profile',8)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span>Profile</button>
+    <button class="drawer-row" onclick="goTab('photos',4)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg></span>Photos</button>
+    <button class="drawer-row" onclick="goTab('blog',5)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>Blog</button>
+    <button class="drawer-row" onclick="goTab('profile',7)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span>Profile</button>
     <a class="drawer-row" href="https://deadlyartofsurvival.com/products/daos-party"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.3a2.7 2.7 0 0 0 0 5.4V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.3a2.7 2.7 0 0 0 0-5.4V8z"/><path d="M13.5 7v2"/><path d="M13.5 11v2"/><path d="M13.5 15v2"/></svg></span>DAOS Party &mdash; Dec 5</a>
     <button class="drawer-row" onclick="goTab('events',1)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg></span>DAOS CON</button>
   </div>
@@ -717,11 +716,11 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </aside>
 <nav class="bottomnav">
   <button class="active" aria-label="Home" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></button>
-  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></button>
+  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[9])"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></button>
   <button class="bn-plus" aria-label="Create a post" onclick="goTab('feed',0);openComposer()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v16"/><path d="M4 12h16"/></svg></button>
   <button aria-label="Scan QR code" onclick="showTab('scan',null)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="13" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="7" y="13" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="8.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="14.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="14.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="13.4" y="13.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="15.9" y="15.9" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="13.4" y="17.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/></svg></button>
   <button aria-label="Notifications" onclick="toggleNotifPanel(event)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5a6 6 0 1 1 12 0c0 4.5 1.8 5.7 1.8 5.7H4.2S6 14 6 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></svg></button>
-  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:32px;height:32px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
+  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[7])"><div class="avatar" style="width:32px;height:32px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
 <div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or martial artist page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2258,7 +2257,7 @@ async function renderMyStampsBox(){
      comments, shares uncapped. One award per item per day. Referral
      points pay only when the friend joins or buys — no referral
      tracking yet, so nothing here pays for an invite.
-   BOUGHT — $1 = 10 points, sold as Shopify gift cards. Spends ONLY
+   BOUGHT — 1 point = $1, sold as Shopify gift cards + Apple IAP. Spends ONLY
      on songs: 10 points per standard track; exclusive/unreleased
      tracks and early access are points-only. Bought points can
      NEVER buy the ladder.
@@ -2411,6 +2410,32 @@ async function saveMyPhone(){
   myProfile.phone = ph; myProfile.sms_opt_in = smsOpt;
   renderMyPhoneBox();
 }
+async function renderShopPoints(){
+  var box = document.getElementById('shopPointsBox');
+  if (!box) return;
+  var packs = POINT_PACKS.map(function(pk, i){
+    return '<div class="packrow">' +
+      '<div class="shopbody"><h3>' + pk.points + ' Points</h3><p>1 point = $1 — spend on songs, 10 points a track. Exclusives are points-only.</p></div>' +
+      '<button class="shopprice" type="button" onclick="buyPoints(' + i + ')">' + (isNativeApp() ? pk.priceApp : pk.priceWeb) + '</button></div>';
+  }).join('');
+  var tiles = '';
+  if (currentUser) {
+    var pts = await fetchMyPoints();
+    tiles = '<div class="baltiles">' +
+      '<div class="baltile"><div class="bnum">' + pts.earned + '</div><div class="blab">Earned</div></div>' +
+      '<div class="baltile"><div class="bnum">' + pts.bought + '</div><div class="blab">Bought</div></div>' +
+      '</div>';
+  } else {
+    tiles = '<p class="meta">Log in so your points land on your DAOS Card.</p>' +
+      '<p><button class="btn" type="button" onclick="openAuthModal()">Log in / Sign up</button></p>';
+  }
+  box.innerHTML = '<div class="card" style="text-align:left"><h3>DAOS Points</h3>' + tiles +
+    '<p class="meta">1 point = $1. Bought points spend on songs only — 10 points per standard track; exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder or a level.</p>' +
+    packs +
+    '<div class="customrow"><input id="customPointsAmt" type="number" min="1" step="1" inputmode="numeric" placeholder="Your own amount — points"><button class="shopprice" type="button" onclick="buyCustomPoints()">Buy</button></div>' +
+    '<p id="pointsBuyMsg" class="meta" style="margin-top:10px"></p>' +
+    '<p class="meta">Points spend only at DAOS — on blog features, print magazine features, and songs. Never tickets, never merch. No cash-out, no cash value.</p></div>';
+}
 async function renderMyPointsBox(){
   var box = document.getElementById('myPointsBox');
   if (!box) return;
@@ -2433,11 +2458,6 @@ async function renderMyPointsBox(){
         : '<b>' + (m.at - pts.earned) + ' to go</b>');
     return '<div class="ptsrow"><span><b>' + m.at + ' earned</b> — ' + escapeHtml(m.name) + '<br><span class="meta">' + escapeHtml(m.detail) + '</span></span>' + right + '</div>';
   }).join('');
-  var packs = POINT_PACKS.map(function(pk, i){
-    return '<div class="packrow"><div class="shopic">&#129689;</div>' +
-      '<div class="shopbody"><h3>' + pk.points + ' Points</h3><p>1 point = $1 — spend on songs, 10 points a track. Exclusives are points-only.</p></div>' +
-      '<button class="shopprice" type="button" onclick="buyPoints(' + i + ')">' + (isNativeApp() ? pk.priceApp : pk.priceWeb) + '</button></div>';
-  }).join('');
   var lv = levelForEarned(pts.earned);
   var lvlPct = lv.next ? Math.min(100, Math.round(100 * (pts.earned - lv.cur.at) / (lv.next.at - lv.cur.at))) : 100;
   var lvlHtml = '<div class="levelbanner"><span class="lvlbig">LEVEL ' + lv.cur.n + '</span>' +
@@ -2452,13 +2472,9 @@ async function renderMyPointsBox(){
     '</div>' + lvlHtml +
     '<p class="meta">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
     '<h3 style="margin-top:14px">The ladder — earned points only</h3>' + rows +
-    '<p id="claimRewardMsg" class="meta"></p></div>' +
-    '<div class="card" style="text-align:left"><h3>Points Shop</h3>' +
-    '<p class="meta">1 point = $1. Bought points spend on songs only — 10 points per standard track; exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder or a level.</p>' +
-    packs +
-    '<div class="customrow"><input id="customPointsAmt" type="number" min="1" step="1" inputmode="numeric" placeholder="Your own amount — points"><button class="shopprice" type="button" onclick="buyCustomPoints()">Buy</button></div>' +
-    '<p id="pointsBuyMsg" class="meta" style="margin-top:10px"></p>' +
-    '<p class="meta">Points spend only at DAOS — on blog features, print magazine features, and songs. Never tickets, never merch. No cash-out, no cash value.</p></div>';
+    '<p id="claimRewardMsg" class="meta"></p>' +
+    '<p style="margin-top:12px"><button class="btn" type="button" onclick="goTab(\'shop\',13)">Buy points in the Shop</button></p></div>';
+  renderShopPoints();
 }
 async function claimLadderReward(key, btn){
   var msg = document.getElementById('claimRewardMsg');
@@ -3829,19 +3845,19 @@ function openDeepLink(){
   var h=window.location.hash||'';
   var blogBtn=document.querySelectorAll('#tabs button')[6];
   if(h==='#blog'){showTab('blog',blogBtn);return;}
-  if(h==='#fighters'){showTab('fighters',document.querySelectorAll('#tabs button')[9]);loadFighters();return;}
-  if(h==='#network'){showTab('network',document.querySelectorAll('#tabs button')[10]);return;}
-  if(h==='#rankings'){showTab('rankings',document.querySelectorAll('#tabs button')[11]);loadRankings();return;}
+  if(h==='#fighters'){showTab('fighters',document.querySelectorAll('#tabs button')[8]);loadFighters();return;}
+  if(h==='#network'){showTab('network',document.querySelectorAll('#tabs button')[9]);return;}
+  if(h==='#rankings'){showTab('rankings',document.querySelectorAll('#tabs button')[10]);loadRankings();return;}
   var rk=h.match(/^#\/rankings\/([a-z]+)$/);
   if(rk){
-    showTab('rankings',document.querySelectorAll('#tabs button')[11]);
+    showTab('rankings',document.querySelectorAll('#tabs button')[10]);
     setRankingCategory(rk[1]);
     loadRankings();
     return;
   }
   var fm=h.match(/^#\/fighter\/([A-Za-z0-9\-_]+)$/);
   if(fm){
-    showTab('fighters',document.querySelectorAll('#tabs button')[9]);
+    showTab('fighters',document.querySelectorAll('#tabs button')[8]);
     setTimeout(function(){openFighter(fm[1]);},50);
     return;
   }
@@ -3856,7 +3872,7 @@ function openDeepLink(){
   }
   var mm=h.match(/^#\/member\/([A-Za-z0-9\-]+)$/);
   if(mm){
-    showTab('network',document.querySelectorAll('#tabs button')[10]);
+    showTab('network',document.querySelectorAll('#tabs button')[9]);
     setTimeout(function(){openMember(mm[1]);},50);
     return;
   }
