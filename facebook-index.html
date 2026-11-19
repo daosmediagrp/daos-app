@@ -91,7 +91,9 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .detail{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border);color:var(--muted)}
 .sidebar{display:none}
 .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px calc(4px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(4px + env(safe-area-inset-left,0px))}
-.bottomnav button{background:none;border:0;color:var(--text);font-size:20px;cursor:pointer;position:relative;padding:4px 10px}
+.bottomnav button{background:none;border:0;color:var(--text);font-size:20px;cursor:pointer;position:relative;padding:6px 12px;display:flex;align-items:center;justify-content:center;min-width:52px;min-height:48px}
+.bottomnav button svg{display:block}
+.bottomnav button.bn-plus{background:#E10600;color:#fff;border-radius:50%;width:46px;height:46px;min-width:46px;min-height:46px;padding:0;font-size:27px;font-weight:800;line-height:1;box-shadow:0 4px 14px rgba(225,6,0,.35)}
 .bottomnav button.active{color:#E10600}
 @media(min-width:900px){
   .layout{max-width:1100px;margin:0 auto;display:flex;gap:16px;align-items:flex-start}
@@ -113,20 +115,20 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 #drawer{position:fixed;top:0;left:0;bottom:0;width:min(85vw,360px);background:var(--card2);z-index:50;transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:2px 0 16px rgba(0,0,0,.4)}
 #drawer.open{transform:translateX(0)}
 .drawer-head{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px}
-.drawer-head img{height:40px;width:auto;flex:none}
-.drawer-head b{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+.drawer-head img{height:46px;width:auto;flex:none}
+.drawer-head b{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:19px;font-weight:800}
 .drawer-close{width:36px;height:36px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;flex:none}
 .drawer-sec{font-weight:bold;margin:14px 4px 8px;text-transform:uppercase;letter-spacing:.5px;font-size:14px}
 .shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.shortcut{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 4px 10px;text-align:center;cursor:pointer;color:var(--text);font-size:12px;font-weight:bold}
-.shortcut span{display:block;font-size:22px;margin-bottom:6px}
-.drawer-row{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--text);font-size:16px;font-weight:bold;padding:12px 8px;cursor:pointer;text-align:left;text-decoration:none}
-.drawer-row span.ic{font-size:22px;width:30px;text-align:center;flex:none}
+.shortcut{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 4px 12px;text-align:center;cursor:pointer;color:var(--text);font-size:13px;font-weight:800}
+.shortcut span{display:block;font-size:27px;margin-bottom:6px}
+.drawer-row{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;color:var(--text);font-size:20px;font-weight:800;padding:15px 10px;cursor:pointer;text-align:left;text-decoration:none;letter-spacing:-.2px}
+.drawer-row span.ic{font-size:26px;width:38px;text-align:center;flex:none}
 .drawer-row:hover{background:var(--card);border-radius:8px}
-.seemore{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:bold;font-size:15px;padding:12px;border-radius:8px;cursor:pointer;margin:8px 0}
+.seemore{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:800;font-size:16px;padding:14px;border-radius:12px;cursor:pointer;margin:8px 0}
 .drawer-group{border-top:1px solid var(--border);margin-top:12px}
-.drawer-group button.ghead{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--text);font-size:16px;font-weight:bold;padding:14px 8px;cursor:pointer;text-align:left}
-.drawer-group button.ghead span.ic{font-size:22px;width:30px;text-align:center;flex:none}
+.drawer-group button.ghead{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;color:var(--text);font-size:19px;font-weight:800;padding:16px 10px;cursor:pointer;text-align:left}
+.drawer-group button.ghead span.ic{font-size:26px;width:38px;text-align:center;flex:none}
 .drawer-group button.ghead .chev{margin-left:auto;display:inline-block;transition:transform .2s}
 .drawer-group .gbody{display:none;padding:0 8px 10px}
 .drawer-group.open .gbody{display:block}
@@ -363,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div id="memberFeed"></div>
   <div class="members-bubble-overlay" id="membersBubble" onclick="hideMembersBubble()"><div class="members-bubble" onclick="event.stopPropagation()">This section is only for DAOS members.<br><button type="button" onclick="hideMembersBubble()">OK</button></div></div>
   <div class="card">
-    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>2h &middot; New York, NY</span></div><span class="follow">Follow</span></div>
+    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival</b><span>2h &middot; New York, NY</span></div><span class="follow">Follow</span></div>
     <div class="hero"><h1>DAOS <span>PARTY</span></h1><p style="color:#fff;font-weight:bold">Saturday, December 5, 2026 &middot; 5:00 PM &ndash; 10:00 PM<br>Row House, 2128 Frederick Douglass Blvd, Harlem, NYC</p><p style="color:#fff">The official pre-party to DAOS CON. Martial arts, music and culture &mdash; live, in Harlem.</p><a class="btn white" href="https://deadlyartofsurvival.com/products/daos-party">Tickets</a><a class="btn dark" href="https://www.bandsintown.com/e/109105174-jake-northfadollare-at-row-house">Bandsintown</a></div>
     <p class="meta">After-party follows the 5&ndash;10 PM event.</p>
   </div>
@@ -374,13 +376,13 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <p class="meta">Ad space on the DAOS feed &middot; Contact daosmediagrp@gmail.com</p>
   </div>
   <div class="card">
-    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>Tournaments</span></div><span class="follow">Follow</span></div>
+    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival</b><span>Tournaments</span></div><span class="follow">Follow</span></div>
     <h3>KTOC Nationals &mdash; Nov 22, 2026</h3>
     <p>Karate Tournament of Champions, Queens College Fitzgerald Gym, Flushing, Queens, NY. Traditional, Creative Extreme, Sync/Demo Teams, Point Fighting, 2 Person Tag Team, Open Weight and Open Rank. Sanctioned NASKA 3A / WKC. Promoters Rick Diaz &amp; Susan Diaz. Promo code KTOC26.</p>
     <p class="meta">Contact: ktocnationals@gmail.com &middot; 718-607-6665</p>
   </div>
   <div class="card">
-    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival Magazine</b><span>Tournaments</span></div><span class="follow">Follow</span></div>
+    <div class="posthead"><div class="avatar"><img src="__CIRCLED__" alt="DAOS"></div><div><b>Deadly Art of Survival</b><span>Tournaments</span></div><span class="follow">Follow</span></div>
     <h3>Anthony Arango &mdash; Tournament Record</h3>
     <p>Head instructor, The Martial Arts Institute, Massapequa, NY. Nationally ranked with the Arango Warriors National Karate Team; USA Fighting Team; USA World W.A.K.O. Fighting Team member, silver medal, World Championships Italy; Black Belt Fighting Champion, Ocean State National Karate Tournament, Rhode Island; Fighting Black Belt Grand Champion, Island Wide Open Championship, Long Island, NY. Runs the Arango Karate Championship.</p>
   </div>
@@ -434,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Party Vault</h3><p>Photos and videos from the DAOS Party.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
 </section>
 <section id="magazine" class="tabpane">
-  <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival Magazine &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
+  <div class="card"><h3>DAOS Magazine</h3><p>Deadly Art of Survival &mdash; martial arts, hip hop and culture. Apply to be featured, and read the latest editions.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Apply to be featured</a></div>
   <div class="card"><h3>28th Edition &mdash; Complete <span class="ed-pill">Published</span></h3><p>Zoltan Bathory leads the 28th Edition &mdash; every cover is now published.</p><div class="ed-progress" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="28th Edition progress: complete, all covers published"><div class="ed-track"><div class="ed-fill" style="width:100%"></div></div><div class="ed-stages"><span class="done">&#10003; Covers designed</span><span class="done">&#10003; Processing</span><span class="done">&#10003; Published</span></div></div><p class="ed-note">All covers published. &middot; Updated Nov 18, 2026.</p><a class="btn" href="museum.html#magazine" onclick="openMuseum('magazine');return false;">See the Edition Wall</a></div>
   <div class="card"><h3>Apply to be featured — application</h3><p>The application lives on the DAOS site — tap below and it opens the correct application page. Your profile becomes your feature application.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/apply-to-be-in-our-magazine">Open the application</a></div>
   <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',9)">Martial Artists</button></div>
@@ -619,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div id="cardDetail"><div class="card"><p class="meta">Loading card…</p></div></div>
 </section>
 <section id="profile" class="tabpane">
-  <div class="profilecover"><img class="script" src="__SCRIPT__" alt="daos"><h2>Deadly Art of Survival Magazine</h2><p>Local business &middot; New York, NY, United States &middot; Always open</p><a class="btn" href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a></div>
+  <div class="profilecover"><img class="script" src="__SCRIPT__" alt="daos"><h2>Deadly Art of Survival</h2><p>Local business &middot; New York, NY, United States &middot; Always open</p><a class="btn" href="https://deadlyartofsurvival.com">deadlyartofsurvival.com</a></div>
   <div class="card"><h3>My DAOS Card</h3><p>Your digital DAOS card with QR code — your ticket and check-in for DAOS events, starting with the Dec 5 Party.</p><button class="btn" type="button" onclick="goTab('network',10)">View my DAOS card</button></div>
   <div class="card"><h3>Details</h3><div class="detail">&#128205; New York, NY, United States</div><div class="detail">&#128222; +1 917-304-7517</div><div class="detail">&#9993; daosmediagrp@gmail.com</div><div class="detail">&#128279; deadlyartofsurvival.com</div></div>
   <div class="card"><h3>Communities</h3><p>Latest Magazine Updates &mdash; Channel</p></div>
@@ -672,12 +674,12 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   </div>
 </aside>
 <nav class="bottomnav">
-  <button class="active" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])">&#8962;</button>
-  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])">&#127915;</button>
-  <button aria-label="Create a post" onclick="goTab('feed',0);openComposer()">+</button>
-  <button aria-label="Scan QR code" onclick="showTab('scan',null)"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="13" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="7" y="13" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="8.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="14.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="14.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="13.4" y="13.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="15.9" y="15.9" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="13.4" y="17.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/></svg></button>
-  <button aria-label="Notifications" onclick="toggleNotifPanel(event)">&#128276;</button>
-  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:30px;height:30px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
+  <button class="active" aria-label="Home" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></button>
+  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></button>
+  <button class="bn-plus" aria-label="Create a post" onclick="goTab('feed',0);openComposer()">+</button>
+  <button aria-label="Scan QR code" onclick="showTab('scan',null)"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="13" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="7" y="13" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="8.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="14.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="14.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="13.4" y="13.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="15.9" y="15.9" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="13.4" y="17.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/></svg></button>
+  <button aria-label="Notifications" onclick="toggleNotifPanel(event)"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5a6 6 0 1 1 12 0c0 4.5 1.8 5.7 1.8 5.7H4.2S6 14 6 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></svg></button>
+  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:34px;height:34px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
 <div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or martial artist page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
