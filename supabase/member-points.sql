@@ -7,7 +7,8 @@
 -- when the friend joins or buys — the 'referral' action exists
 -- here for the server to write when attribution lands; the app
 -- never self-awards it.
--- BOUGHT points ($1 = 10, Shopify gift cards) are a separate
+-- BOUGHT points (1 point = $1, Shopify gift cards + Apple IAP)
+-- are a separate
 -- balance and are NOT stored in point_events — they can never
 -- count toward the ladder.
 -- THE LADDER (earned only), claimed into point_reward_claims for

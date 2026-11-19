@@ -56,6 +56,13 @@ main{max-width:680px;margin:0 auto;padding:12px}
 .packrow .shopbody{flex:1;min-width:0}
 .packrow .shopbody h3{margin:0 0 4px}
 .packrow .shopbody p{margin:0}
+.levelbanner{background:#000;border:2px solid #E10600;border-radius:14px;padding:16px 14px;text-align:center;margin:12px 0}
+.levelbanner .lvlbig{display:block;font-size:32px;font-weight:900;color:#E10600;letter-spacing:3px;line-height:1}
+.levelbanner .lvlname{display:block;color:#fff;font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:13px;margin-top:6px}
+.lvlbar{height:10px;background:#222;border-radius:6px;overflow:hidden;margin-top:12px}
+.lvlfill{height:100%;background:#E10600}
+.customrow{display:flex;gap:10px;align-items:center;padding:12px 0}
+.customrow input{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:12px;font-size:16px;min-width:0}
 .composer{display:flex;gap:10px;align-items:center}
 .avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex:none;border:2px solid #fff}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -2299,12 +2306,36 @@ async function fetchMyPoints(){
   if (earned === null) earned = local.total || 0;
   return {earned: earned, bought: local.bought || 0, claims: claims};
 }
-var POINT_PACKS = [
-  {id: 'com.daosmedia.app.points100', points: 100, name: 'Points Pack', desc: '100 DAOS Points — spend them on songs, 10 points a track.', icon: '&#129689;', priceApp: '$9.99', priceWeb: '$10'},
-  {id: 'com.daosmedia.app.points250', points: 250, name: 'Points Stack', desc: '250 DAOS Points — a real stack for songs and early access.', icon: '&#128176;', priceApp: '$24.99', priceWeb: '$25'},
-  {id: 'com.daosmedia.app.points500', points: 500, name: 'Points Vault', desc: '500 DAOS Points — exclusive and unreleased tracks are points-only.', icon: '&#9889;', priceApp: '$49.99', priceWeb: '$50'},
-  {id: 'com.daosmedia.app.points1000', points: 1000, name: 'Points Empire', desc: '1,000 DAOS Points — the full war chest, only at DAOS.', icon: '&#128081;', priceApp: '$99.99', priceWeb: '$100'}
+var DAOS_LEVELS = [
+  {n: 1, at: 0, name: 'Rookie'},
+  {n: 2, at: 100, name: 'Connector'},
+  {n: 3, at: 250, name: 'Networker'},
+  {n: 4, at: 500, name: 'Ambassador'},
+  {n: 5, at: 1000, name: 'DAOS Legend'}
 ];
+function levelForEarned(earned){
+  var cur = DAOS_LEVELS[0], next = null;
+  for (var i = 0; i < DAOS_LEVELS.length; i++) {
+    if (earned >= DAOS_LEVELS[i].at) cur = DAOS_LEVELS[i];
+    else { next = DAOS_LEVELS[i]; break; }
+  }
+  return {cur: cur, next: next};
+}
+var POINT_PACKS = [
+  {id: 'com.daosmedia.app.points5', points: 5, priceApp: '$4.99', priceWeb: '$5'},
+  {id: 'com.daosmedia.app.points10', points: 10, priceApp: '$9.99', priceWeb: '$10'},
+  {id: 'com.daosmedia.app.points25', points: 25, priceApp: '$24.99', priceWeb: '$25'},
+  {id: 'com.daosmedia.app.points50', points: 50, priceApp: '$49.99', priceWeb: '$50'},
+  {id: 'com.daosmedia.app.points100', points: 100, priceApp: '$99.99', priceWeb: '$100'}
+];
+function buyCustomPoints(){
+  var msg = document.getElementById('pointsBuyMsg');
+  var inp = document.getElementById('customPointsAmt');
+  var amt = parseInt((inp && inp.value) || '', 10);
+  if (!amt || amt < 1) { if (msg) msg.textContent = 'Type how many points you want first — 1 point = $1.'; return; }
+  if (msg) msg.textContent = 'Custom amounts are sold in the DAOS store — opening it now. Check out with the same email as your app account and the points land on this card.';
+  openExternal(POINTS_STORE_URL);
+}
 function buyPoints(idx){
   var pack = POINT_PACKS[idx];
   var msg = document.getElementById('pointsBuyMsg');
@@ -2340,7 +2371,7 @@ async function renderMyPointsBox(){
   if (!box) return;
   if (!currentUser) {
     box.innerHTML = '<div class="card" style="text-align:center"><h3>DAOS Points</h3>' +
-      '<p>Earn points by promoting DAOS — post, like, comment, share. Work your way up the ladder: <b>song exposure at 100</b>, a <b>blog feature at 500</b>, a <b>magazine feature shot at 5,000</b>. Or buy points ($1 = 10) and spend them on songs.</p>' +
+      '<p>Earn points by promoting DAOS — post, like, comment, share. Level up from Level 1 to DAOS Legend, and work the ladder: <b>song exposure at 100</b>, a <b>blog feature at 500</b>, a <b>magazine feature shot at 5,000</b>. Or buy points (1 point = $1) and spend them on songs.</p>' +
       '<button class="btn" type="button" onclick="openAuthModal()">Log in to start earning</button></div>';
     return;
   }
@@ -2358,21 +2389,30 @@ async function renderMyPointsBox(){
     return '<div class="ptsrow"><span><b>' + m.at + ' earned</b> — ' + escapeHtml(m.name) + '<br><span class="meta">' + escapeHtml(m.detail) + '</span></span>' + right + '</div>';
   }).join('');
   var packs = POINT_PACKS.map(function(pk, i){
-    return '<div class="packrow"><div class="shopic">' + pk.icon + '</div>' +
-      '<div class="shopbody"><h3>' + pk.name + '</h3><p>' + pk.desc + '</p></div>' +
+    return '<div class="packrow"><div class="shopic">&#129689;</div>' +
+      '<div class="shopbody"><h3>' + pk.points + ' Points</h3><p>1 point = $1 — spend on songs, 10 points a track. Exclusives are points-only.</p></div>' +
       '<button class="shopprice" type="button" onclick="buyPoints(' + i + ')">' + (isNativeApp() ? pk.priceApp : pk.priceWeb) + '</button></div>';
   }).join('');
+  var lv = levelForEarned(pts.earned);
+  var lvlPct = lv.next ? Math.min(100, Math.round(100 * (pts.earned - lv.cur.at) / (lv.next.at - lv.cur.at))) : 100;
+  var lvlHtml = '<div class="levelbanner"><span class="lvlbig">LEVEL ' + lv.cur.n + '</span>' +
+    '<span class="lvlname">' + lv.cur.name + '</span>' +
+    '<div class="lvlbar"><div class="lvlfill" style="width:' + lvlPct + '%"></div></div>' +
+    '<p class="meta" style="margin-top:8px;color:#bbb">' + (lv.next
+      ? (lv.next.at - pts.earned) + ' earned points to Level ' + lv.next.n + ' — ' + lv.next.name
+      : 'Top level — DAOS Legend status') + '</p></div>';
   box.innerHTML = '<div class="card" style="text-align:left"><h3>DAOS Points</h3>' +
     '<div class="baltiles">' +
     '<div class="baltile"><div class="bnum">' + pts.earned + '</div><div class="blab">Earned</div></div>' +
     '<div class="baltile"><div class="bnum">' + pts.bought + '</div><div class="blab">Bought</div></div>' +
-    '</div>' +
+    '</div>' + lvlHtml +
     '<p class="meta">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
     '<h3 style="margin-top:14px">The ladder — earned points only</h3>' + rows +
     '<p id="claimRewardMsg" class="meta"></p></div>' +
     '<div class="card" style="text-align:left"><h3>Points Shop</h3>' +
-    '<p class="meta">$1 = 10 points. Bought points spend on songs only — 10 points per standard track; exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder.</p>' +
+    '<p class="meta">1 point = $1. Bought points spend on songs only — 10 points per standard track; exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder or a level.</p>' +
     packs +
+    '<div class="customrow"><input id="customPointsAmt" type="number" min="1" step="1" inputmode="numeric" placeholder="Your own amount — points"><button class="shopprice" type="button" onclick="buyCustomPoints()">Buy</button></div>' +
     '<p id="pointsBuyMsg" class="meta" style="margin-top:10px"></p>' +
     '<p class="meta">Points spend only at DAOS — on blog features, print magazine features, and songs. Never tickets, never merch. No cash-out, no cash value.</p></div>';
 }
