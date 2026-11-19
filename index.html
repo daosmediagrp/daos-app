@@ -912,6 +912,7 @@ async function submitPost(){
   var onTopic = isDaosTopic(text);
   var res = await supabaseClient.from('posts').insert({user_id: currentUser.id, content: onTopic ? text : FLAGGED_PREFIX + text});
   if (res.error) { document.getElementById('postMsg').textContent = res.error.message; return; }
+  if (onTopic) awardPoints('post', 'post-' + Date.now());
   document.getElementById('postText').value = '';
   document.getElementById('postMsg').textContent = onTopic
     ? 'Suggestion posted — thank you.'
@@ -1018,6 +1019,7 @@ async function toggleLike(postId, btn){
     ? await supabaseClient.from('post_likes').delete().eq('post_id', postId).eq('user_id', currentUser.id)
     : await supabaseClient.from('post_likes').insert({post_id: postId, user_id: currentUser.id});
   if (res.error) return;
+  if (!liked) awardPoints('like', 'post-' + postId);
   btn.classList.toggle('liked', !liked);
   var fresh = await supabaseClient.from('posts').select('like_count').eq('id', postId).maybeSingle();
   var n = fresh.data ? fresh.data.like_count : 0;
@@ -1055,6 +1057,7 @@ async function submitComment(postId){
   if (!body || !supabaseClient || !currentUser) return;
   var res = await supabaseClient.from('post_comments').insert({post_id: postId, user_id: currentUser.id, body: body});
   if (res.error) return;
+  awardPoints('comment', 'post-' + postId);
   await loadComments(postId);
   var fresh = await supabaseClient.from('posts').select('comment_count').eq('id', postId).maybeSingle();
   var n = fresh.data ? fresh.data.comment_count : 0;
@@ -2209,67 +2212,60 @@ async function renderMyStampsBox(){
     '<div class="stampgrid">' + tiles.join('') + '</div>' +
     '<p class="meta" style="margin-top:10px">Stamps are added at the door when staff check you in — show your DAOS Card QR at each event.</p></div>';
 }
-/* ---- Points + levels (Jake, Nov 19, 2026) -------------------------
-   Members earn points for sharing and for making contacts, and level
-   up as the points grow. At 1,000 points (Level 5, DAOS Legend) they
-   unlock a FREE blog post write-up on DAOS — a Claim button appears
-   in the My Level card; DAOS reviews and writes it, nothing
-   auto-publishes. Jake's numbers (Nov 19, 2026):
-     +5  any share (your card, a post, fighter page, rankings, story)
-     +10 any connect (exchange your info on a member's card, or a
-         contact received on YOUR card, counted from card_contacts)
-   Daily caps so it can't be farmed: only 5 shares and 10 connects
-   a day count, and only one award per item per day. Levels:
-   L1 0 / L2 100 / L3 250 / L4 500 / L5 1,000 (blog post).
-   Points show right away from this
-   device; once supabase/member-points.sql runs, events also land in
-   point_events and the server total takes over. */
-var DAOS_LEVELS = [
-  {name: 'Rookie', at: 0},
-  {name: 'Connector', at: 100},
-  {name: 'Networker', at: 250},
-  {name: 'Ambassador', at: 500},
-  {name: 'DAOS Legend', at: 1000}
+/* ---- DAOS Points (Jake's spec, Nov 19, 2026) ---------------------
+   Full spec: daos-points-spec.md in the app goal files. Two balances
+   on the DAOS Card:
+   EARNED — 1 point per verified action: post, like, comment, share
+     (the app's tracked actions only). Likes capped at 5/day; posts,
+     comments, shares uncapped. One award per item per day. Referral
+     points pay only when the friend joins or buys — no referral
+     tracking yet, so nothing here pays for an invite.
+   BOUGHT — $1 = 10 points, sold as Shopify gift cards. Spends ONLY
+     on songs: 10 points per standard track; exclusive/unreleased
+     tracks and early access are points-only. Bought points can
+     NEVER buy the ladder.
+   LADDER (earned points only) — claims land in point_reward_claims
+     for DAOS to fulfill; nothing auto-publishes:
+     100 song exposure · 500 blog feature · 5,000 magazine shot.
+   Points spend only at DAOS, only on blog features, print magazine
+   features, and songs. Never tickets, never merch. No cash-out,
+   no transfer, no cash value. */
+var LIKE_DAILY_CAP = 5;
+var DAOS_LADDER = [
+  {at: 100, key: 'song_exposure', name: 'Song exposure', detail: 'Your song gets posted on DAOS platforms'},
+  {at: 500, key: 'blog_feature', name: 'Blog feature', detail: 'Guaranteed blog slot — DAOS approves the content first'},
+  {at: 5000, key: 'magazine_feature', name: 'Magazine feature shot', detail: 'Earns the shot — background check, donation, and wholesale (25 copies at $12, shipping + tax separate) still apply'}
 ];
-var DAOS_REWARD_POINTS = 1000;
-var POINT_VALUES = {share_card: 5, share_post: 5, share_page: 5, contact_made: 10};
-var CONTACT_RECEIVED_POINTS = 10;
-var DAILY_CAPS = {share: 5, connect: 10};
-function levelForPoints(total){
-  var cur = DAOS_LEVELS[0], next = null;
-  for (var i = 0; i < DAOS_LEVELS.length; i++) {
-    if (total >= DAOS_LEVELS[i].at) cur = DAOS_LEVELS[i];
-    else { next = DAOS_LEVELS[i]; break; }
-  }
-  return {level: cur, next: next, index: DAOS_LEVELS.indexOf(cur)};
-}
+var POINTS_STORE_URL = 'https://deadlyartofsurvival.com/products/daos-points';
 function localPointsLoad(){
-  try { return JSON.parse(localStorage.getItem('daos-points-v1') || '{}') || {}; }
+  try { return JSON.parse(localStorage.getItem('daos-points-v2') || '{}') || {}; }
   catch (e) { return {}; }
 }
 function localPointsSave(d){
-  try { localStorage.setItem('daos-points-v1', JSON.stringify(d)); } catch (e) {}
+  try { localStorage.setItem('daos-points-v2', JSON.stringify(d)); } catch (e) {}
 }
 async function awardPoints(action, refKey){
-  if (!currentUser || !POINT_VALUES[action]) return;
+  if (!currentUser) return;
+  var act = String(action || '');
+  if (act.indexOf('share') === 0) act = 'share';
+  if (['post', 'like', 'comment', 'share'].indexOf(act) === -1) return;
   var day = new Date().toISOString().slice(0, 10);
-  var key = action + '|' + (refKey || '') + '|' + day;
+  var key = act + '|' + (refKey || '') + '|' + day;
   var d = localPointsLoad();
   d.events = d.events || {};
   if (d.events[key]) return;
-  var cat = action === 'contact_made' ? 'connect' : 'share';
   d.dayCounts = d.dayCounts || {};
-  d.dayCounts[day] = d.dayCounts[day] || {share: 0, connect: 0};
-  if ((d.dayCounts[day][cat] || 0) >= DAILY_CAPS[cat]) return;
-  d.dayCounts[day][cat] = (d.dayCounts[day][cat] || 0) + 1;
+  d.dayCounts[day] = d.dayCounts[day] || {like: 0};
+  if (act === 'like' && (d.dayCounts[day].like || 0) >= LIKE_DAILY_CAP) return;
+  if (act === 'like') d.dayCounts[day].like = (d.dayCounts[day].like || 0) + 1;
   d.events[key] = 1;
-  d.total = (d.total || 0) + POINT_VALUES[action];
+  d.total = (d.total || 0) + 1;
   localPointsSave(d);
   if (supabaseClient) {
     try {
       await supabaseClient.from('point_events').insert({
-        user_id: currentUser.id, action: action,
-        points: POINT_VALUES[action], ref_key: String(refKey || '').slice(0, 200)
+        user_id: currentUser.id, action: act, points: 1,
+        ref_key: String(refKey || '').slice(0, 200)
       });
     } catch (e) { /* table not live yet — local points still count */ }
   }
@@ -2277,68 +2273,56 @@ async function awardPoints(action, refKey){
 }
 async function fetchMyPoints(){
   var local = localPointsLoad();
-  var earned = null, contacts = 0, contactReceivedPoints = 0, claimed = !!local.claimed;
+  var earned = null;
+  var claims = {};
+  (local.claims || []).forEach(function(k){ claims[k] = true; });
   if (supabaseClient && currentUser) {
     try {
-      var r = await supabaseClient.from('point_events').select('points').eq('user_id', currentUser.id).limit(2000);
+      var r = await supabaseClient.from('point_events').select('points').eq('user_id', currentUser.id).limit(10000);
       if (!r.error && r.data) earned = r.data.reduce(function(s, x){ return s + (x.points || 0); }, 0);
     } catch (e) {}
     try {
-      var c = await supabaseClient.from('card_contacts').select('created_at').order('created_at', {ascending: false}).limit(1000);
-      if (!c.error && c.data) {
-        contacts = c.data.length;
-        var byDay = {};
-        c.data.forEach(function(r){ var dy = String(r.created_at || '').slice(0, 10); byDay[dy] = (byDay[dy] || 0) + 1; });
-        contactReceivedPoints = Object.keys(byDay).reduce(function(s, dy){
-          return s + Math.min(byDay[dy], DAILY_CAPS.connect) * CONTACT_RECEIVED_POINTS;
-        }, 0);
-      }
-    } catch (e) {}
-    try {
-      var cl = await supabaseClient.from('point_reward_claims').select('id').eq('user_id', currentUser.id).maybeSingle();
-      if (!cl.error && cl.data) claimed = true;
+      var cl = await supabaseClient.from('point_reward_claims').select('reward').eq('user_id', currentUser.id);
+      if (!cl.error && cl.data) cl.data.forEach(function(x){ claims[x.reward] = true; });
     } catch (e) {}
   }
   if (earned === null) earned = local.total || 0;
-  var contactPoints = contactReceivedPoints;
-  return {earned: earned, contacts: contacts, contactPoints: contactPoints,
-          total: earned + contactPoints, claimed: claimed};
+  return {earned: earned, bought: local.bought || 0, claims: claims};
 }
 async function renderMyPointsBox(){
   var box = document.getElementById('myPointsBox');
   if (!box) return;
   if (!currentUser) {
-    box.innerHTML = '<div class="card" style="text-align:center"><h3>Level up with DAOS</h3>' +
-      '<p>Earn points every time you share and every contact you make. Reach <b>1,000 points</b> (Level 5) and you unlock a <b>free blog post write-up</b> on DAOS.</p>' +
+    box.innerHTML = '<div class="card" style="text-align:center"><h3>DAOS Points</h3>' +
+      '<p>Earn points by promoting DAOS — post, like, comment, share. Work your way up the ladder: <b>song exposure at 100</b>, a <b>blog feature at 500</b>, a <b>magazine feature shot at 5,000</b>. Or buy points ($1 = 10) and spend them on songs.</p>' +
       '<button class="btn" type="button" onclick="openAuthModal()">Log in to start earning</button></div>';
     return;
   }
   var pts = await fetchMyPoints();
-  var lv = levelForPoints(pts.total);
-  var pct = 100, nextLine = 'Top level — you are a DAOS Legend.';
-  if (lv.next) {
-    pct = Math.max(2, Math.min(100, Math.round(100 * (pts.total - lv.level.at) / (lv.next.at - lv.level.at))));
-    nextLine = (lv.next.at - pts.total) + ' points to Level ' + (lv.index + 2) + ' — ' + lv.next.name + '.';
-  }
-  var reward = '';
-  if (pts.total >= DAOS_REWARD_POINTS) {
-    reward = pts.claimed
-      ? '<p class="big" style="color:#2e9e4f">&#10003; Free blog post write-up claimed</p><p class="meta">DAOS has your claim — we will reach out to set up your write-up.</p>'
-      : '<p class="big" style="color:#2e9e4f">&#127942; You unlocked a FREE blog post write-up!</p><p><button class="btn" type="button" onclick="claimBlogReward(this)">Claim my free blog post write-up</button></p><p id="claimRewardMsg" class="meta"></p>';
-  } else {
-    reward = '<p class="meta">' + (DAOS_REWARD_POINTS - pts.total) + ' points to go until your <b>free blog post write-up</b> unlocks at ' + DAOS_REWARD_POINTS + ' points (Level 5 — DAOS Legend).</p>';
-  }
-  box.innerHTML = '<div class="card" style="text-align:left"><h3>My Level &amp; Points</h3>' +
-    '<p style="text-align:center"><span class="lvlchip">Level ' + (lv.index + 1) + ' &middot; ' + escapeHtml(lv.level.name) + '</span></p>' +
-    '<p style="text-align:center" class="big">' + pts.total + ' points</p>' +
-    '<div class="lvlbar"><div class="lvlfill" style="width:' + pct + '%"></div></div>' +
-    '<p class="meta" style="text-align:center">' + nextLine + '</p>' +
-    '<div class="ptsrow"><span>Shares &amp; contacts you made</span><b>' + pts.earned + ' pts</b></div>' +
-    '<div class="ptsrow"><span>Contacts from your card (' + pts.contacts + ' received)</span><b>' + pts.contactPoints + ' pts</b></div>' +
-    '<p class="meta" style="margin-top:10px">How to earn: any share (+5) &middot; any connect (+10) — exchange contacts on a member\'s card, or a contact your card receives. Only 5 shares and 10 connects a day count.</p>' +
-    reward + '</div>';
+  var line = document.getElementById('myCardPointsLine');
+  if (line) line.textContent = ' · DAOS Points: ' + pts.earned + ' earned · ' + pts.bought + ' bought';
+  var rows = DAOS_LADDER.map(function(m){
+    var done = pts.earned >= m.at;
+    var claimed = !!pts.claims[m.key];
+    var right = claimed
+      ? '<b style="color:#2e9e4f">Claimed &#10003;</b>'
+      : (done
+        ? '<button class="btn" type="button" onclick="claimLadderReward(\'' + m.key + '\', this)">Claim</button>'
+        : '<b>' + (m.at - pts.earned) + ' to go</b>');
+    return '<div class="ptsrow"><span><b>' + m.at + ' earned</b> — ' + escapeHtml(m.name) + '<br><span class="meta">' + escapeHtml(m.detail) + '</span></span>' + right + '</div>';
+  }).join('');
+  box.innerHTML = '<div class="card" style="text-align:left"><h3>DAOS Points</h3>' +
+    '<div class="ptsrow"><span>Earned points</span><b>' + pts.earned + ' pts</b></div>' +
+    '<div class="ptsrow"><span>Bought points</span><b>' + pts.bought + ' pts</b></div>' +
+    '<p class="meta" style="margin-top:10px">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
+    '<h3 style="margin-top:14px">The ladder — earned points only</h3>' + rows +
+    '<p id="claimRewardMsg" class="meta"></p>' +
+    '<h3 style="margin-top:14px">Buy points</h3>' +
+    '<p class="meta">$1 = 10 points. Bought points spend on songs only — 10 points per standard track, and exclusive / unreleased tracks and early access are points-only. Bought points cannot buy the ladder. Purchases match your account email and land on this card.</p>' +
+    '<p><button class="btn dark" type="button" onclick="openExternal(\'' + POINTS_STORE_URL + '\')">Buy DAOS Points</button></p>' +
+    '<p class="meta">Points spend only at DAOS — on blog features, print magazine features, and songs. Never tickets, never merch. No cash-out, no cash value.</p></div>';
 }
-async function claimBlogReward(btn){
+async function claimLadderReward(key, btn){
   var msg = document.getElementById('claimRewardMsg');
   function say(t){ if (msg) msg.textContent = t; }
   if (!supabaseClient || !currentUser) { say('Log in first, then claim.'); return; }
@@ -2348,16 +2332,19 @@ async function claimBlogReward(btn){
   var done = false;
   try {
     var res = await supabaseClient.from('point_reward_claims').insert({
-      user_id: currentUser.id, reward: 'blog_writeup', points_at_claim: pts.total
+      user_id: currentUser.id, reward: key, points_at_claim: pts.earned
     });
     done = !res.error;
     if (res.error && /duplicate|unique/i.test(res.error.message || '')) done = true;
     if (res.error && /point_reward_claims/.test(res.error.message || '')) done = false;
   } catch (e) {}
-  var d = localPointsLoad(); d.claimed = true; localPointsSave(d);
+  var d = localPointsLoad();
+  d.claims = d.claims || [];
+  if (d.claims.indexOf(key) === -1) d.claims.push(key);
+  localPointsSave(d);
   if (btn) btn.disabled = false;
   if (done) { renderMyPointsBox(); return; }
-  say('Claim noted on this device — claiming fully switches on with the next DAOS database update, and your points are saved either way.');
+  say('Claim noted on this device — claiming fully switches on with the next DAOS database update, and your earned points are saved either way.');
 }
 var MEMBER_TITLES = ['Partner','V.I.P','Representative First Class','Representative','Supporter','Vendor','Member'];
 function memberTitleOf(p){
@@ -2475,7 +2462,7 @@ function renderMyCardBox(){
   box.innerHTML = '<h3 style="margin-top:16px">My DAOS Card</h3>' +
     '<p class="meta">Show this at the door on Dec 5 — it is your ticket check-in card.</p>' +
     cardBoxHtml(myProfile, {qrId: 'myCardQr', ticketId: 'myCardTicket', showLink: true, mine: true}) +
-    '<p class="meta">' + (myProfile.card_views || 0) + ' card view' + ((myProfile.card_views || 0) === 1 ? '' : 's') + '</p>' +
+    '<p class="meta">' + (myProfile.card_views || 0) + ' card view' + ((myProfile.card_views || 0) === 1 ? '' : 's') + '<span id="myCardPointsLine"></span></p>' +
     '<div class="card" style="text-align:left"><h3>Your DAOS Party ticket</h3>' +
     '<p class="meta">Bought a ticket on deadlyartofsurvival.com with this account\'s email? Your PAID status shows on the card above automatically. Bought with a different email? Claim it with your order number:</p>' +
     '<p><input id="claimOrder" type="text" inputmode="numeric" placeholder="Order number (e.g. 2807)" style="max-width:230px"> <button class="btn" type="button" onclick="claimTicket(this)">Claim ticket</button></p>' +

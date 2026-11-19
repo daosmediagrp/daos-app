@@ -1,22 +1,25 @@
--- Points + levels for the DAOS app (Jake, Nov 19, 2026).
--- Share = 5 points, Connect = 10 points. Daily caps so it can't
--- be farmed: only 5 shares and 10 connects a day count.
--- Members level up: L1 0 / L2 100 / L3 250 / L4 500 / L5 1,000
--- (names in the app: Rookie / Connector / Networker / Ambassador /
--- DAOS Legend).
--- At 1,000 points (Level 5) a member unlocks a FREE blog post
--- write-up; the claim lands in point_reward_claims for DAOS staff
--- to fulfill (nothing auto-publishes).
--- Points for contacts RECEIVED on a member's card are not stored
--- here — the app counts them live from card_contacts (10 pts each,
--- capped at 10 connects per day).
+-- DAOS Points for the DAOS app (Jake's spec, Nov 19, 2026 —
+-- see daos-points-spec.md in the app goal files).
+-- EARNED points: 1 per verified action (post, like, comment,
+-- share). Likes capped at 5/day in the database trigger below;
+-- posts, comments, shares uncapped. One award per member +
+-- action + item per day (unique index). Referral points pay only
+-- when the friend joins or buys — the 'referral' action exists
+-- here for the server to write when attribution lands; the app
+-- never self-awards it.
+-- BOUGHT points ($1 = 10, Shopify gift cards) are a separate
+-- balance and are NOT stored in point_events — they can never
+-- count toward the ladder.
+-- THE LADDER (earned only), claimed into point_reward_claims for
+-- DAOS staff to fulfill (nothing auto-publishes):
+--   100 song_exposure / 500 blog_feature / 5000 magazine_feature.
 -- Additive only — safe to re-run.
 
 create table if not exists public.point_events (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users (id) on delete cascade,
   action text not null check (action in
-    ('share_card','share_post','share_page','contact_made')),
+    ('post','like','comment','share','referral')),
   points int not null check (points > 0 and points <= 100),
   ref_key text,
   created_at timestamptz not null default now()
@@ -25,14 +28,15 @@ create table if not exists public.point_events (
 create index if not exists point_events_user_idx
   on public.point_events (user_id, created_at desc);
 
--- Anti-farm: one award per member + action + item per day.
+-- One award per member + action + item per day.
 create unique index if not exists point_events_daily_unique
   on public.point_events (user_id, action, coalesce(ref_key, ''), ((created_at)::date));
 
--- Server-side daily caps: at most 5 share events and 10 connect
--- (contact_made) events per member per day are stored; inserts
--- beyond the cap are silently skipped.
-create or replace function public.enforce_point_daily_caps()
+-- Server-side cap: at most 5 like points per member per day;
+-- inserts beyond the cap are silently skipped. All other earned
+-- actions are uncapped (the per-item-per-day index above is the
+-- anti-farming guard).
+create or replace function public.enforce_point_like_cap()
 returns trigger
 language plpgsql
 security definer
@@ -40,30 +44,23 @@ set search_path = public
 as $$
 declare
   today_count int;
-  cap int;
 begin
-  if new.action = 'contact_made' then
-    cap := 10;
+  if new.action = 'like' then
     select count(*) into today_count from public.point_events
-      where user_id = new.user_id and action = 'contact_made'
+      where user_id = new.user_id and action = 'like'
         and created_at::date = now()::date;
-  else
-    cap := 5;
-    select count(*) into today_count from public.point_events
-      where user_id = new.user_id
-        and action in ('share_card','share_post','share_page')
-        and created_at::date = now()::date;
-  end if;
-  if today_count >= cap then
-    return null;
+    if today_count >= 5 then
+      return null;
+    end if;
   end if;
   return new;
 end $$;
 
 drop trigger if exists trg_point_daily_caps on public.point_events;
-create trigger trg_point_daily_caps
+drop trigger if exists trg_point_like_cap on public.point_events;
+create trigger trg_point_like_cap
   before insert on public.point_events
-  for each row execute function public.enforce_point_daily_caps();
+  for each row execute function public.enforce_point_like_cap();
 
 alter table public.point_events enable row level security;
 
@@ -85,13 +82,18 @@ create policy "Staff can read all point events"
 
 create table if not exists public.point_reward_claims (
   id bigint generated always as identity primary key,
-  user_id uuid not null unique references auth.users (id) on delete cascade,
-  reward text not null default 'blog_writeup',
+  user_id uuid not null references auth.users (id) on delete cascade,
+  reward text not null default 'blog_feature'
+    check (reward in ('song_exposure','blog_feature','magazine_feature')),
   points_at_claim int,
   status text not null default 'pending'
     check (status in ('pending','fulfilled','declined')),
   created_at timestamptz not null default now()
 );
+
+-- One claim per member per ladder reward.
+create unique index if not exists point_reward_claims_user_reward_unique
+  on public.point_reward_claims (user_id, reward);
 
 alter table public.point_reward_claims enable row level security;
 
