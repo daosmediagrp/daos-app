@@ -428,12 +428,12 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>DAOS CON</h3><p>The DAOS Party is the official pre-party to DAOS CON.</p></div>
   <div class="card">
     <h3>Post your event</h3>
-    <p>Got an event, seminar, or tournament? List it here for the DAOS community &mdash; <strong>$5</strong> per listing. It goes live after DAOS review.</p>
-    <button class="btn" type="button" onclick="openEventForm('event')">Post your event &mdash; $5</button>
+    <p>Got an event, seminar, or tournament? List it here for the DAOS community &mdash; <strong>5 Pts or $5</strong> per listing. It goes live after DAOS review.</p>
+    <button class="btn" type="button" onclick="openEventForm('event')">Post your event &mdash; 5 Pts or $5</button>
   </div>
   <div class="card" id="eventFormCard" style="display:none">
-    <h3>Post your event &mdash; $5</h3>
-    <p class="meta">Your listing goes live after DAOS reviews it. Payment is $5 per listing.</p>
+    <h3>Post your event &mdash; 5 Pts or $5</h3>
+    <p class="meta">Your listing goes live after DAOS reviews it. Payment is 5 points or $5 per listing.</p>
     <input id="evTitle" class="finput" type="text" placeholder="Event title" maxlength="100">
     <select id="evType" class="finput" aria-label="Type">
       <option value="event">Event</option>
@@ -444,10 +444,11 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <input id="evLocation" class="finput" type="text" placeholder="Location — venue, city" maxlength="300">
     <textarea id="evDesc" class="finput" placeholder="What is it? What should people expect?" maxlength="2000"></textarea>
     <input id="evLink" class="finput" type="url" placeholder="Link — tickets or info page (optional)">
-    <button class="btn" type="button" onclick="goEventPayStep()">Continue to payment &mdash; $5</button>
+    <button class="btn" type="button" onclick="goEventPayStep()">Continue to payment</button>
     <p id="evMsg" class="meta"></p>
     <div id="evPayStep" class="paystep" style="display:none">
-      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay at checkout (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
+      <p><strong>Step 2 &mdash; pay 5 points or $5.</strong> Pay with bought points right here, or tap below to pay at checkout (opens in a new tab) and enter the email you paid with, so DAOS can match your payment.</p>
+      <button class="btn dark" type="button" onclick="payEventWithPoints()">Pay with 5 points</button>
       <button class="btn" type="button" onclick="openEventPayLink()">Pay $5 at checkout</button>
       <input id="evPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
       <button class="btn" type="button" onclick="submitEvent()">I&rsquo;ve paid &mdash; submit my listing</button>
@@ -459,8 +460,8 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 <section id="tournaments" class="tabpane">
   <div class="card">
     <h3>Post your tournament</h3>
-    <p>List your tournament for the DAOS community &mdash; <strong>$5</strong> per listing. It goes live after DAOS review.</p>
-    <button class="btn" type="button" onclick="openEventForm('tournament')">Post your tournament &mdash; $5</button>
+    <p>List your tournament for the DAOS community &mdash; <strong>5 Pts or $5</strong> per listing. It goes live after DAOS review.</p>
+    <button class="btn" type="button" onclick="openEventForm('tournament')">Post your tournament &mdash; 5 Pts or $5</button>
   </div>
   <div class="card"><h3>KTOC Nationals &mdash; Karate Tournament of Champions</h3><p>Sunday, November 22, 2026, Queens College Fitzgerald Gym, Flushing, Queens, NY. Divisions: Traditional, Creative Extreme, Sync/Demo Teams, Point Fighting, 2 Person Tag Team, Open Weight, Open Rank. Sanctioned NASKA 3A / WKC. Promoters Rick Diaz &amp; Susan Diaz. Contact ktocnationals@gmail.com, 718-607-6665. Promo code KTOC26.</p></div>
   <div class="card"><h3>Anthony Arango &mdash; Tournament Record</h3><ul><li>Head instructor, The Martial Arts Institute, Massapequa, NY</li><li>Nationally ranked with the Arango Warriors National Karate Team</li><li>USA Fighting Team (USA vs Puerto Rico, USA vs South Africa)</li><li>USA World W.A.K.O. Fighting Team member, silver medal, World Championships Italy at age 48</li><li>Black Belt Fighting Champion, Ocean State National Karate Tournament, Rhode Island (also at age 55)</li><li>Fighting Black Belt Grand Champion, Island Wide Open Championship, Long Island, NY</li><li>Runs the Arango Karate Championship</li></ul></div>
@@ -489,19 +490,20 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card">
     <h3>Add your song</h3>
     <p class="radioquote">&ldquo;Best songs (clean versions only) may get placed on DAOS Radio WPAT 930 AM&rdquo;</p>
-    <p>Submit your song for the DAOS community — <strong>$5</strong> per song. Clean versions only.</p>
-    <button class="btn" type="button" onclick="openSongForm()">Add your song &mdash; $5</button>
+    <p>Submit your song for the DAOS community — <strong>5 Pts or $5</strong> per song. Clean versions only.</p>
+    <button class="btn" type="button" onclick="openSongForm()">Add your song &mdash; 5 Pts or $5</button>
   </div>
   <div class="card" id="songFormCard" style="display:none">
-    <h3>Add your song &mdash; $5</h3>
+    <h3>Add your song &mdash; 5 Pts or $5</h3>
     <p class="meta">Clean versions only. The best songs may get placed on DAOS Radio WPAT 930 AM. Your song shows up here after DAOS picks it.</p>
     <input id="sgTitle" class="finput" type="text" placeholder="Song title" maxlength="100">
     <input id="sgArtist" class="finput" type="text" placeholder="Artist name" maxlength="100">
     <input id="sgLink" class="finput" type="url" placeholder="Streaming link — Spotify, YouTube, or SoundCloud">
-    <button class="btn" type="button" onclick="goSongPayStep()">Continue to payment &mdash; $5</button>
+    <button class="btn" type="button" onclick="goSongPayStep()">Continue to payment</button>
     <p id="sgMsg" class="meta"></p>
     <div id="sgPayStep" class="paystep" style="display:none">
-      <p><strong>Step 2 &mdash; pay $5.</strong> Tap below to pay at checkout (opens in a new tab). Come back here after paying and enter the email you paid with, so DAOS can match your payment.</p>
+      <p><strong>Step 2 &mdash; pay 5 points or $5.</strong> Pay with bought points right here, or tap below to pay at checkout (opens in a new tab) and enter the email you paid with, so DAOS can match your payment.</p>
+      <button class="btn dark" type="button" onclick="paySongWithPoints()">Pay with 5 points</button>
       <button class="btn" type="button" onclick="openSongPayLink()">Pay $5 at checkout</button>
       <input id="sgPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
       <button class="btn" type="button" onclick="submitSong()">I&rsquo;ve paid &mdash; submit my song</button>
@@ -672,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
 </div>
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <aside id="drawer" aria-label="Menu">
-  <div class="drawer-head"><img src="__CIRCLED__" alt="DAOS"><b>Deadly Art of Survival</b><button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">&#10005;</button></div>
+  <div class="drawer-head"><img src="__CIRCLED__" alt="DAOS" style="cursor:pointer" role="button" title="My profile" aria-label="My profile" onclick="closeDrawer();openMyProfile()"><b>Deadly Art of Survival</b><button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">&#10005;</button></div>
   <div class="drawer-sec">Your shortcuts</div>
   <div class="shortcuts">
     <button class="shortcut" onclick="goTab('feed',0)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></span>Feed</button>
@@ -2269,7 +2271,7 @@ async function renderMyStampsBox(){
    no transfer, no cash value. */
 var LIKE_DAILY_CAP = 5;
 var DAOS_LADDER = [
-  {at: 100, key: 'song_exposure', name: 'Song exposure', detail: 'Your song gets posted on DAOS platforms'},
+  {at: 100, key: 'song_exposure', name: 'Exposure', detail: 'Your song gets posted on DAOS platforms'},
   {at: 500, key: 'blog_feature', name: 'Blog feature', detail: 'Guaranteed blog slot — DAOS approves the content first'},
   {at: 5000, key: 'magazine_feature', name: 'Magazine feature shot', detail: 'Earns the shot — background check, donation, and wholesale (25 copies at $12, shipping + tax separate) still apply'}
 ];
@@ -2355,6 +2357,44 @@ function buyCustomPoints(){
   if (!amt || amt < 1) { if (msg) msg.textContent = 'Type how many points you want first — 1 point = $1.'; return; }
   if (msg) msg.textContent = 'Custom amounts are sold in the DAOS store — opening it now. Check out with the same email as your app account and the points land on this card.';
   openExternal(POINTS_STORE_URL);
+}
+function spendBoughtPoints(n, what){
+  if (!currentUser) return false;
+  var d = localPointsLoad();
+  if ((d.bought || 0) < n) return false;
+  d.bought = d.bought - n;
+  d.spends = d.spends || [];
+  d.spends.push({n: n, what: what, at: new Date().toISOString()});
+  localPointsSave(d);
+  return true;
+}
+function paySongWithPoints(){
+  var msg = document.getElementById('sgMsg');
+  if (!currentUser) { openAuthModal(); return; }
+  if (window.__songPaidWithPoints) { if (msg) msg.textContent = 'Already paid with points — submit your song.'; return; }
+  if (!spendBoughtPoints(5, 'song_submission')) {
+    if (msg) msg.textContent = 'Not enough bought points (you have ' + (localPointsLoad().bought || 0) + ') — get points in the Shop tab.';
+    return;
+  }
+  window.__songPaidWithPoints = true;
+  var em = document.getElementById('sgPayerEmail');
+  if (em && currentUser.email) em.value = currentUser.email;
+  if (msg) msg.textContent = 'Paid with 5 points — now tap "I\'ve paid — submit my song".';
+  renderMyPointsBox();
+}
+function payEventWithPoints(){
+  var msg = document.getElementById('evMsg');
+  if (!currentUser) { openAuthModal(); return; }
+  if (window.__eventPaidWithPoints) { if (msg) msg.textContent = 'Already paid with points — submit your listing.'; return; }
+  if (!spendBoughtPoints(5, 'event_submission')) {
+    if (msg) msg.textContent = 'Not enough bought points (you have ' + (localPointsLoad().bought || 0) + ') — get points in the Shop tab.';
+    return;
+  }
+  window.__eventPaidWithPoints = true;
+  var em = document.getElementById('evPayerEmail');
+  if (em && currentUser.email) em.value = currentUser.email;
+  if (msg) msg.textContent = 'Paid with 5 points — now tap "I\'ve paid — submit my listing".';
+  renderMyPointsBox();
 }
 function buyPoints(idx){
   var pack = POINT_PACKS[idx];
@@ -2447,7 +2487,7 @@ async function renderMyPointsBox(){
   }
   var pts = await fetchMyPoints();
   var line = document.getElementById('myCardPointsLine');
-  if (line) line.textContent = ' · DAOS Points: ' + pts.earned + ' earned · ' + pts.bought + ' bought';
+  if (line) line.textContent = ' · DAOS Points: ' + pts.earned + ' earned · ' + pts.bought + ' bought' + (pts.earned < 100 ? ' · ' + (100 - pts.earned) + ' to Exposure' : ' · Exposure unlocked');
   var rows = DAOS_LADDER.map(function(m){
     var done = pts.earned >= m.at;
     var claimed = !!pts.claims[m.key];
@@ -3576,10 +3616,11 @@ async function submitEvent(){
     link: document.getElementById('evLink').value.trim() || null,
     status: 'submitted',
     payer_email: email,
-    payment_ref: null
+    payment_ref: window.__eventPaidWithPoints ? 'points-5' : null
   };
   var res = await supabaseClient.from('community_events').insert(row);
   if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  window.__eventPaidWithPoints = false;
   if (msg) msg.textContent = 'Submitted — DAOS will review your listing. It goes live after approval.';
   document.getElementById('evTitle').value = '';
   document.getElementById('evDate').value = '';
@@ -3672,10 +3713,11 @@ async function submitSong(){
     stream_url: link,
     status: 'submitted',
     payer_email: email,
-    payment_ref: null
+    payment_ref: window.__songPaidWithPoints ? 'points-5' : null
   };
   var res = await supabaseClient.from('song_submissions').insert(row);
   if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  window.__songPaidWithPoints = false;
   if (msg) msg.textContent = 'Submitted — DAOS will review your song. Clean versions only; the best songs may get placed on DAOS Radio WPAT 930 AM.';
   document.getElementById('sgTitle').value = '';
   document.getElementById('sgArtist').value = '';
