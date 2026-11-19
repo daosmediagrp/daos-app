@@ -17,8 +17,9 @@ a{color:var(--text)}.red{color:#E10600}
 header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 10px calc(12px + env(safe-area-inset-left,0px));display:flex;align-items:center;gap:10px;max-width:100vw}
 header .logos{display:flex;align-items:center;gap:2px;flex:1;min-width:0}
 header .logos img{height:38px;width:auto;display:block}
-header .logos img.script{height:24px}
+header .logos img.script{height:28px}
 .iconbtn{width:38px;height:38px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:18px;cursor:pointer;position:relative;flex:none}
+.iconbtn svg{display:block;margin:auto}
 .badge{position:absolute;top:-2px;right:-2px;background:#E10600;color:#fff;font-size:11px;font-weight:bold;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
 #notifPanel{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));right:10px;width:min(92vw,370px);max-height:72vh;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:14px;z-index:60;padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.45)}
 .notif-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -91,9 +92,9 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .detail{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border);color:var(--muted)}
 .sidebar{display:none}
 .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px calc(4px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(4px + env(safe-area-inset-left,0px))}
-.bottomnav button{background:none;border:0;color:var(--text);font-size:20px;cursor:pointer;position:relative;padding:6px 12px;display:flex;align-items:center;justify-content:center;min-width:52px;min-height:48px}
+.bottomnav button{background:none;border:0;color:var(--text);font-size:20px;cursor:pointer;position:relative;padding:6px 12px;display:flex;align-items:center;justify-content:center;min-width:48px;min-height:45px}
 .bottomnav button svg{display:block}
-.bottomnav button.bn-plus{background:#E10600;color:#fff;border-radius:50%;width:46px;height:46px;min-width:46px;min-height:46px;padding:0;font-size:27px;font-weight:800;line-height:1;box-shadow:0 4px 14px rgba(225,6,0,.35)}
+.bottomnav button.bn-plus{background:#E10600;color:#fff;border-radius:50%;width:42px;height:42px;min-width:42px;min-height:42px;padding:0;font-size:24px;font-weight:800;line-height:1;box-shadow:0 4px 14px rgba(225,6,0,.35)}
 .bottomnav button.active{color:#E10600}
 @media(min-width:900px){
   .layout{max-width:1100px;margin:0 auto;display:flex;gap:16px;align-items:flex-start}
@@ -105,7 +106,7 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 /* Narrow phones (the app): slim the header so every button fits on screen. */
 @media(max-width:560px){
   header{gap:6px;padding-left:calc(8px + env(safe-area-inset-left,0px));padding-right:calc(8px + env(safe-area-inset-right,0px))}
-  header .logos img.script{height:20px}
+  header .logos img.script{height:23px}
   #authBtn{padding:8px 10px !important}
   nav.tabs button{padding:8px 10px;font-size:13px}
   .hero h1{font-size:32px}
@@ -122,7 +123,9 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 .shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .shortcut{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 4px 12px;text-align:center;cursor:pointer;color:var(--text);font-size:13px;font-weight:800}
 .shortcut span{display:block;font-size:27px;margin-bottom:6px}
-.drawer-row{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;color:var(--text);font-size:20px;font-weight:800;padding:15px 10px;cursor:pointer;text-align:left;text-decoration:none;letter-spacing:-.2px}
+.drawer-row{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;color:var(--text);font-size:19px;font-weight:800;padding:14px 10px;cursor:pointer;text-align:left;text-decoration:none;letter-spacing:-.2px}
+.drawer-row span.ic svg,.drawer-group button.ghead span.ic svg{display:block;margin:0 auto}
+.shortcut span svg{display:block;margin:0 auto}
 .drawer-row span.ic{font-size:26px;width:38px;text-align:center;flex:none}
 .drawer-row:hover{background:var(--card);border-radius:8px}
 .seemore{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:800;font-size:16px;padding:14px;border-radius:12px;cursor:pointer;margin:8px 0}
@@ -316,11 +319,11 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   </div>
 </div>
 <header>
-  <button class="iconbtn" onclick="openDrawer()" aria-label="Menu">&#9776;</button>
+  <button class="iconbtn" onclick="openDrawer()" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg></button>
   <div class="logos"><img class="script" src="__SCRIPT__" alt="daos"></div>
-  <button class="iconbtn" aria-label="Search" onclick="showTab('search',null)">&#128269;</button>
-  <button class="iconbtn" id="notifBtn" aria-label="Notifications" onclick="toggleNotifPanel(event)">&#128276;<span class="badge" id="notifBadge" style="display:none"></span></button>
-  <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode">&#9790;</button>
+  <button class="iconbtn" aria-label="Search" onclick="showTab('search',null)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5 16.7 16.7"/></svg></button>
+  <button class="iconbtn" id="notifBtn" aria-label="Notifications" onclick="toggleNotifPanel(event)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5a6 6 0 1 1 12 0c0 4.5 1.8 5.7 1.8 5.7H4.2S6 14 6 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></svg><span class="badge" id="notifBadge" style="display:none"></span></button>
+  <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle light and dark mode"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13.6A8.5 8.5 0 1 1 10.4 4a6.8 6.8 0 0 0 9.6 9.6z"/></svg></button>
   <button class="btn" id="authBtn" type="button" onclick="openAuthModal()" style="margin:0;padding:9px 14px">Log in</button>
   <div class="avatar" style="width:38px;height:38px;font-size:18px"><img src="__CIRCLED__" alt="DAOS"></div>
 </header>
@@ -634,32 +637,32 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="drawer-head"><img src="__CIRCLED__" alt="DAOS"><b>Deadly Art of Survival</b><button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">&#10005;</button></div>
   <div class="drawer-sec">Your shortcuts</div>
   <div class="shortcuts">
-    <button class="shortcut" onclick="goTab('feed',0)"><span>&#8962;</span>Feed</button>
-    <button class="shortcut" onclick="goTab('events',1)"><span>&#127915;</span>Events</button>
-    <button class="shortcut" onclick="goTab('music',7)"><span>&#127925;</span>Music</button>
-    <button class="shortcut" onclick="goTab('magazine',4)"><span>&#128214;</span>Magazine</button>
+    <button class="shortcut" onclick="goTab('feed',0)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></span>Feed</button>
+    <button class="shortcut" onclick="goTab('events',1)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span>Events</button>
+    <button class="shortcut" onclick="goTab('music',7)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>Music</button>
+    <button class="shortcut" onclick="goTab('magazine',4)"><span><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2V4z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7V4z"/></svg></span>Magazine</button>
   </div>
   <div class="drawer-sec">Menu</div>
-  <button class="drawer-row" onclick="goTab('feed',0)"><span class="ic">&#8962;</span>Feed</button>
-  <button class="drawer-row" onclick="goTab('events',1)"><span class="ic">&#127915;</span>Events</button>
-  <button class="drawer-row" onclick="goTab('tournaments',2)"><span class="ic">&#127942;</span>Tournaments</button>
-  <button class="drawer-row" onclick="goTab('community',3)"><span class="ic">&#128101;</span>Community</button>
-  <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic">&#128214;</span>Magazine</button>
-  <button class="drawer-row" onclick="goTab('music',7)"><span class="ic">&#127925;</span>Music</button>
-  <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic">&#129354;</span>Martial Artists</button>
-  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic">&#128101;</span>DAOS Card</button>
-  <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic">&#127942;</span>Rankings</button>
-  <button class="drawer-row" onclick="goTab('videos',12)"><span class="ic">&#127916;</span>Videos</button>
+  <button class="drawer-row" onclick="goTab('feed',0)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></span>Feed</button>
+  <button class="drawer-row" onclick="goTab('events',1)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></span>Events</button>
+  <button class="drawer-row" onclick="goTab('tournaments',2)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 5H4.5A1.5 1.5 0 0 0 3 6.5C3 8.4 4.6 10 6.5 10H7"/><path d="M17 5h2.5A1.5 1.5 0 0 1 21 6.5C21 8.4 19.4 10 17.5 10H17"/><path d="M12 14v3"/><path d="M8.5 21h7"/><path d="M10 17h4l.6 4H9.4L10 17z"/></svg></span>Tournaments</button>
+  <button class="drawer-row" onclick="goTab('community',3)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.8 14.6c2.2.2 3.8 1.6 4.4 4.4"/></svg></span>Community</button>
+  <button class="drawer-row" onclick="goTab('magazine',4)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2V4z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7V4z"/></svg></span>Magazine</button>
+  <button class="drawer-row" onclick="goTab('music',7)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span>Music</button>
+  <button class="drawer-row" onclick="goTab('fighters',9)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path d="M8.6 13.4 7 21l5-2.6L17 21l-1.6-7.6"/></svg></span>Martial Artists</button>
+  <button class="drawer-row" onclick="goTab('network',10)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></span>DAOS Card</button>
+  <button class="drawer-row" onclick="goTab('rankings',11)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg></span>Rankings</button>
+  <button class="drawer-row" onclick="goTab('videos',12)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.8v4.4L14.5 12z"/></svg></span>Videos</button>
   <div id="drawerMore" style="display:none">
-    <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic">&#128444;</span>Photos</button>
-    <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic">&#128240;</span>Blog</button>
-    <button class="drawer-row" onclick="goTab('profile',8)"><span class="ic">&#128100;</span>Profile</button>
-    <a class="drawer-row" href="https://deadlyartofsurvival.com/products/daos-party"><span class="ic">&#127881;</span>DAOS Party &mdash; Dec 5</a>
-    <button class="drawer-row" onclick="goTab('events',1)"><span class="ic">&#129354;</span>DAOS CON</button>
+    <button class="drawer-row" onclick="goTab('photos',5)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg></span>Photos</button>
+    <button class="drawer-row" onclick="goTab('blog',6)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>Blog</button>
+    <button class="drawer-row" onclick="goTab('profile',8)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span>Profile</button>
+    <a class="drawer-row" href="https://deadlyartofsurvival.com/products/daos-party"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.3a2.7 2.7 0 0 0 0 5.4V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.3a2.7 2.7 0 0 0 0-5.4V8z"/><path d="M13.5 7v2"/><path d="M13.5 11v2"/><path d="M13.5 15v2"/></svg></span>DAOS Party &mdash; Dec 5</a>
+    <button class="drawer-row" onclick="goTab('events',1)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg></span>DAOS CON</button>
   </div>
   <button class="seemore" id="seeMoreBtn" onclick="toggleSeeMore()">See more</button>
   <div class="drawer-group">
-    <button class="ghead" onclick="toggleGroup(this)"><span class="ic">&#10067;</span>Help and support<span class="chev">&#8964;</span></button>
+    <button class="ghead" onclick="toggleGroup(this)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4A2.6 2.6 0 1 1 12 12.3v.7"/><path d="M12 16.8h.01"/></svg></span>Help and support<span class="chev">&#8964;</span></button>
     <div class="gbody">
       <a href="mailto:daosmediagrp@gmail.com">Contact DAOS</a>
       <a href="https://deadlyartofsurvival.com/pages/book-a-call">Book a Call</a>
@@ -667,19 +670,19 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     </div>
   </div>
   <div class="drawer-group">
-    <button class="ghead" onclick="toggleGroup(this)"><span class="ic">&#9881;</span>Settings and privacy<span class="chev">&#8964;</span></button>
+    <button class="ghead" onclick="toggleGroup(this)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9"/><path d="M19 7h1"/><path d="M4 17h3"/><path d="M13 17h7"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></span>Settings and privacy<span class="chev">&#8964;</span></button>
     <div class="gbody">
       <button class="glink" onclick="toggleTheme()">Toggle light / dark mode</button>
     </div>
   </div>
 </aside>
 <nav class="bottomnav">
-  <button class="active" aria-label="Home" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></button>
-  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></button>
+  <button class="active" aria-label="Home" onclick="showTab('feed',document.querySelectorAll('#tabs button')[0])"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.3V21h13V9.3"/><path d="M9.8 21v-6.2h4.4V21"/></svg></button>
+  <button aria-label="My DAOS Card" onclick="showTab('network',document.querySelectorAll('#tabs button')[10])"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.2" cy="11" r="2.1"/><path d="M5.2 16.6c.6-1.7 1.7-2.5 3-2.5s2.4.8 3 2.5"/><path d="M15.5 9.5h4"/><path d="M15.5 13h4"/></svg></button>
   <button class="bn-plus" aria-label="Create a post" onclick="goTab('feed',0);openComposer()">+</button>
-  <button aria-label="Scan QR code" onclick="showTab('scan',null)"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="13" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="7" y="13" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="8.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="14.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="14.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="13.4" y="13.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="15.9" y="15.9" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="13.4" y="17.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/></svg></button>
-  <button aria-label="Notifications" onclick="toggleNotifPanel(event)"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5a6 6 0 1 1 12 0c0 4.5 1.8 5.7 1.8 5.7H4.2S6 14 6 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></svg></button>
-  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:34px;height:34px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
+  <button aria-label="Scan QR code" onclick="showTab('scan',null)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="13" y="7" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="7" y="13" width="4" height="4" rx="1" stroke-width="1.6"/><rect x="8.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="14.6" y="8.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="14.6" width="0.9" height="0.9" fill="currentColor" stroke="none"/><rect x="13.4" y="13.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="15.9" y="15.9" width="1.5" height="1.5" fill="currentColor" stroke="none"/><rect x="13.4" y="17.4" width="1.5" height="1.5" fill="currentColor" stroke="none"/></svg></button>
+  <button aria-label="Notifications" onclick="toggleNotifPanel(event)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5a6 6 0 1 1 12 0c0 4.5 1.8 5.7 1.8 5.7H4.2S6 14 6 9.5"/><path d="M10.2 19a2 2 0 0 0 3.6 0"/></svg></button>
+  <button onclick="showTab('profile',document.querySelectorAll('#tabs button')[8])"><div class="avatar" style="width:32px;height:32px;font-size:15px"><img src="__CIRCLED__" alt="DAOS"></div></button>
 </nav>
 <div class="members-bubble-overlay" id="shareSheet" onclick="closeShareSheet()"><div class="members-bubble" onclick="event.stopPropagation()"><div id="shareSheetTitle">Share</div><p style="font-weight:normal;font-size:14px;color:#555">Share this ranking or martial artist page.</p><p><a class="btn" id="shareWa" href="#" target="_blank" rel="noopener">WhatsApp</a> <a class="btn" id="shareFb" href="#" target="_blank" rel="noopener">Facebook</a></p><p><button type="button" id="shareIg">Instagram — copy link &amp; open Instagram</button> <button type="button" id="shareCopy">Copy link</button></p><p style="font-weight:normal;font-size:13px;color:#555">Instagram has no direct web share — the Instagram button copies the link, then opens Instagram so you can paste it in a post or story.</p><button type="button" onclick="closeShareSheet()">Close</button></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
