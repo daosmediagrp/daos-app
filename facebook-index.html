@@ -253,10 +253,35 @@ select.finput{appearance:auto}
 </style>
 </head>
 <body class="gated">
+<script>
+/* Early gate skip: the page ships gated, which made returning
+   members watch the login page during the session check. If this
+   is the (never-gated) website, or a stored Supabase session
+   exists on this device, lift the gate before first paint and let
+   refreshAuth verify behind it. */
+window.__daosGateHint = false;
+window.__daosGateChecked = false;
+try {
+  var __isNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+  var __hasSession = false;
+  try {
+    var __raw = localStorage.getItem('sb-hsgbmrtpwnyqkmfnveaz-auth-token');
+    if (__raw) {
+      var __sess = JSON.parse(__raw);
+      if (__sess && (__sess.access_token || __sess.refresh_token)) __hasSession = true;
+    }
+  } catch (e) {}
+  if (!__isNative || __hasSession) {
+    document.body.classList.remove('gated');
+    window.__daosGateHint = true;
+  }
+} catch (e) {}
+</script>
 <div id="splash"><img src="__CIRCLED__" alt="DAOS"><b>Deadly Art of Survival</b><span>Martial arts &middot; Music &amp; Culture</span></div>
 <script>
+document.addEventListener('DOMContentLoaded', function(){ var s=document.getElementById('splash'); if(s) s.classList.add('hide'); });
 window.addEventListener('load', function(){ var s=document.getElementById('splash'); if(s) s.classList.add('hide'); });
-setTimeout(function(){ var s=document.getElementById('splash'); if(s) s.classList.add('hide'); }, 2500);
+setTimeout(function(){ var s=document.getElementById('splash'); if(s) s.classList.add('hide'); }, 1500);
 document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.getItem('daos-welcome-seen')){ var w=document.getElementById('welcomeCard'); if(w) w.style.display='block'; } }catch(e){} });
 </script>
 <div id="loginGate">
@@ -700,6 +725,7 @@ async function refreshAuth(){
     return;
   }
   var res = await supabaseClient.auth.getSession();
+  window.__daosGateChecked = true;
   var user = res.data && res.data.session && res.data.session.user;
   currentUser = user || null;
   if (user) {
@@ -768,6 +794,7 @@ function applyGate(){
   /* Forced log in is APP-ONLY (Jake, Nov 18, 2026): on the website the
      gate never engages — visitors browse publicly, login is optional. */
   if (!isNativeApp()) { document.body.classList.remove('gated'); return; }
+  if (window.__daosGateHint && !window.__daosGateChecked) { document.body.classList.remove('gated'); return; }
   var stepLogin = document.getElementById('gateLoginStep');
   var stepProfile = document.getElementById('gateProfileStep');
   if (currentUser && myProfile) {
