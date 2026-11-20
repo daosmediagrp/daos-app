@@ -447,12 +447,13 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <button class="btn" type="button" onclick="goEventPayStep()">Continue to payment</button>
     <p id="evMsg" class="meta"></p>
     <div id="evPayStep" class="paystep" style="display:none">
-      <p><strong>Step 2 &mdash; pay 5 points or $5.</strong> Pay with bought points right here, or tap below to pay at checkout (opens in a new tab) and enter the email you paid with, so DAOS can match your payment.</p>
+      <p><strong id="evPayHead">Step 2 &mdash; pay 5 points or $5.</strong> <span class="cashpay">Pay with bought points right here, or tap below to pay at checkout (opens in a new tab) and enter the email you paid with, so DAOS can match your payment.</span><span class="apppay-note" style="display:none">In the app, submissions are paid with points.</span></p>
       <button class="btn dark" type="button" onclick="payEventWithPoints()">Pay with 5 points</button>
-      <button class="btn" type="button" onclick="openEventPayLink()">Pay $5 at checkout</button>
-      <input id="evPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
+      <button class="btn cashpay" type="button" onclick="openEventPayLink()">Pay $5 at checkout</button>
+      <input id="evPayerEmail" class="finput cashpay" type="email" placeholder="Email you paid with" style="margin-top:8px">
       <button class="btn" type="button" onclick="submitEvent()">I&rsquo;ve paid &mdash; submit my listing</button>
-      <p class="meta">DAOS checks the email against your order before your listing goes live.</p>
+      <p class="meta cashpay">DAOS checks the email against your order before your listing goes live.</p>
+      <p class="meta apppay-note" style="display:none">No points yet? Get them in the Shop tab.</p>
     </div>
   </div>
   <div class="card"><h3>Community Events</h3><div id="communityEvents"><p class="meta">Loading community events&hellip;</p></div></div>
@@ -502,12 +503,13 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <button class="btn" type="button" onclick="goSongPayStep()">Continue to payment</button>
     <p id="sgMsg" class="meta"></p>
     <div id="sgPayStep" class="paystep" style="display:none">
-      <p><strong>Step 2 &mdash; pay 5 points or $5.</strong> Pay with bought points right here, or tap below to pay at checkout (opens in a new tab) and enter the email you paid with, so DAOS can match your payment.</p>
+      <p><strong id="sgPayHead">Step 2 &mdash; pay 5 points or $5.</strong> <span class="cashpay">Pay with bought points right here, or tap below to pay at checkout (opens in a new tab) and enter the email you paid with, so DAOS can match your payment.</span><span class="apppay-note" style="display:none">In the app, submissions are paid with points.</span></p>
       <button class="btn dark" type="button" onclick="paySongWithPoints()">Pay with 5 points</button>
-      <button class="btn" type="button" onclick="openSongPayLink()">Pay $5 at checkout</button>
-      <input id="sgPayerEmail" class="finput" type="email" placeholder="Email you paid with" style="margin-top:8px">
+      <button class="btn cashpay" type="button" onclick="openSongPayLink()">Pay $5 at checkout</button>
+      <input id="sgPayerEmail" class="finput cashpay" type="email" placeholder="Email you paid with" style="margin-top:8px">
       <button class="btn" type="button" onclick="submitSong()">I&rsquo;ve paid &mdash; submit my song</button>
-      <p class="meta">DAOS checks the email against your order before your song is picked.</p>
+      <p class="meta cashpay">DAOS checks the email against your order before your song is picked.</p>
+      <p class="meta apppay-note" style="display:none">No points yet? Get them in the Shop tab.</p>
     </div>
   </div>
   <div class="card"><h3>Selected songs</h3><div id="selectedSongs"><p class="meta">Songs picked by DAOS show up here.</p></div></div>
@@ -2355,8 +2357,20 @@ function buyCustomPoints(){
   var inp = document.getElementById('customPointsAmt');
   var amt = parseInt((inp && inp.value) || '', 10);
   if (!amt || amt < 1) { if (msg) msg.textContent = 'Type how many points you want first — 1 point = $1.'; return; }
+  if (isNativeApp()) { if (msg) msg.textContent = 'In the app, points come in the packs above — custom amounts are available on the DAOS website.'; return; }
   if (msg) msg.textContent = 'Custom amounts are sold in the DAOS store — opening it now. Check out with the same email as your app account and the points land on this card.';
   openExternal(POINTS_STORE_URL);
+}
+function applyNativePayRules(){
+  if (typeof isNativeApp !== 'function' || !isNativeApp()) return;
+  var cash = document.querySelectorAll('.cashpay');
+  for (var i = 0; i < cash.length; i++) cash[i].style.display = 'none';
+  var notes = document.querySelectorAll('.apppay-note');
+  for (var j = 0; j < notes.length; j++) notes[j].style.display = '';
+  var sh = document.getElementById('sgPayHead');
+  if (sh) sh.textContent = 'Step 2 — pay 5 points.';
+  var eh = document.getElementById('evPayHead');
+  if (eh) eh.textContent = 'Step 2 — pay 5 points.';
 }
 function spendBoughtPoints(n, what){
   if (!currentUser) return false;
@@ -3239,6 +3253,7 @@ function isHttpUrl(s){
   return /^https?:\/\/[^\/\s]+\.[^\/\s]+/.test(s || '');
 }
 function goEventPayStep(){
+  applyNativePayRules();
   var msg = document.getElementById('evMsg');
   var title = document.getElementById('evTitle').value.trim();
   var dateVal = document.getElementById('evDate').value;
@@ -3677,6 +3692,7 @@ function openSongForm(){
   if (card.scrollIntoView) card.scrollIntoView({behavior: 'smooth'});
 }
 function goSongPayStep(){
+  applyNativePayRules();
   var msg = document.getElementById('sgMsg');
   var title = document.getElementById('sgTitle').value.trim();
   var artist = document.getElementById('sgArtist').value.trim();
