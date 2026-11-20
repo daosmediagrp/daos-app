@@ -172,6 +172,21 @@ textarea.finput{resize:vertical;min-height:90px}
 .fstatus{font-weight:bold;color:#E10600}
 /* ---- Social layer: login gate, posts, network, rankings ---- */
 body.gated header,body.gated nav.tabs,body.gated .layout,body.gated .bottomnav,body.gated #drawer,body.gated .drawer-overlay{display:none}
+:root{--appbanner-h:calc(66px + env(safe-area-inset-top,0px))}
+body{transition:padding-top .45s ease}
+#appDlBanner{position:fixed;top:0;left:0;right:0;height:var(--appbanner-h);z-index:90;background:#0d0d0d;border-bottom:2px solid #E10600;display:flex;align-items:center;gap:10px;padding:env(safe-area-inset-top,0px) 8px 0 12px;transform:translateY(-106%);transition:transform .45s ease;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+body.appbanner-open #appDlBanner{transform:translateY(0)}
+body.appbanner-open{padding-top:var(--appbanner-h)}
+body.appbanner-open header{top:var(--appbanner-h)}
+body.appbanner-open nav.tabs{top:calc(58px + var(--appbanner-h))}
+body.appbanner-open .sidebar{top:calc(118px + var(--appbanner-h))}
+body.appbanner-open #notifPanel{top:calc(64px + var(--appbanner-h))}
+#appDlBanner img{width:40px;height:40px;border-radius:10px;flex:0 0 auto}
+#appDlBanner .ab-txt{flex:1;min-width:0;line-height:1.25}
+#appDlBanner .ab-title{font-weight:800;font-size:15px;color:#fff;letter-spacing:.01em}
+#appDlBanner .ab-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#appDlBanner .ab-btn{flex:0 0 auto;background:#E10600;color:#fff;font-weight:800;font-size:14px;text-decoration:none;padding:9px 16px;border-radius:999px}
+#appDlBanner .ab-x{flex:0 0 auto;background:none;border:none;color:var(--muted);font-size:20px;line-height:1;padding:6px;cursor:pointer}
 #loginGate{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);align-items:center;justify-content:center;padding:28px 18px;overflow-y:auto}
 body.gated #loginGate{display:flex}
 .logingate-inner{max-width:380px;width:100%;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:34px 28px 26px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
@@ -291,6 +306,7 @@ select.finput{appearance:auto}
 </style>
 </head>
 <body class="gated">
+<div id="appDlBanner" role="banner"><img src="__CIRCLED__" alt="DAOS"><div class="ab-txt"><div class="ab-title">Get The DAOS App</div><div class="ab-sub">You scanned a DAOS Card — connect, vote &amp; collect cards in the app.</div></div><a class="ab-btn" href="https://apps.apple.com/app/id6831335186" target="_blank" rel="noopener">Download</a><button class="ab-x" type="button" aria-label="Dismiss" onclick="closeAppBanner()">&times;</button></div>
 <script>
 /* Early gate skip: the page ships gated, which made returning
    members watch the login page during the session check. If this
@@ -2959,6 +2975,7 @@ async function loadMyCardContacts(){
    logged-in staff viewer additionally sees ticket status + check-in. */
 async function openCard(token){
   window.__lastCardToken = token;
+  maybeShowAppBanner();
   showTab('cardview', null);
   var box = document.getElementById('cardDetail');
   if (!box) return;
@@ -2987,6 +3004,21 @@ async function openCard(token){
   }
   if (myIsStaff) loadTicketIntoBox('cardViewTicket', {token: p.card_token});
   if (box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
+}
+function showAppBanner(){
+  if (document.body.classList.contains('appbanner-open')) return;
+  document.body.classList.add('appbanner-open');
+}
+function closeAppBanner(){
+  try{ sessionStorage.setItem('daosAppBannerOff','1'); }catch(e){}
+  document.body.classList.remove('appbanner-open');
+}
+function maybeShowAppBanner(){
+  try{
+    if (typeof isNativeApp === 'function' && isNativeApp()) return;
+    if (sessionStorage.getItem('daosAppBannerOff')) return;
+    setTimeout(showAppBanner, 700);
+  }catch(e){}
 }
 function closeCard(){
   var box = document.getElementById('cardDetail'); if (box) box.innerHTML = '';
