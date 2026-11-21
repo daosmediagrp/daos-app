@@ -134,22 +134,22 @@ section.tabpane{display:none}section.tabpane.active{display:block}
 #drawer{position:fixed;top:0;left:0;bottom:0;width:min(85vw,360px);background:var(--card2);z-index:50;transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:2px 0 16px rgba(0,0,0,.4)}
 #drawer.open{transform:translateX(0)}
 .drawer-head{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px}
-.drawer-head img{height:46px;width:auto;flex:none}
-.drawer-head b{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:19px;font-weight:800}
+.drawer-head img{height:38px;width:auto;flex:none}
+.drawer-head b{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:800}
 .drawer-close{width:36px;height:36px;border-radius:50%;background:var(--card2);border:0;color:var(--text);font-size:18px;cursor:pointer;flex:none}
-.drawer-sec{font-weight:bold;margin:14px 4px 8px;text-transform:uppercase;letter-spacing:.5px;font-size:14px}
+.drawer-sec{font-weight:bold;margin:12px 4px 6px;text-transform:uppercase;letter-spacing:.5px;font-size:12px}
 .shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .shortcut{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 4px 12px;text-align:center;cursor:pointer;color:var(--text);font-size:13px;font-weight:800}
 .shortcut span{display:block;font-size:27px;margin-bottom:6px}
-.drawer-row{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;color:var(--text);font-size:19px;font-weight:800;padding:14px 10px;cursor:pointer;text-align:left;text-decoration:none;letter-spacing:-.2px}
-.drawer-row span.ic svg,.drawer-group button.ghead span.ic svg{display:block;margin:0 auto}
+.drawer-row{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--text);font-size:16px;font-weight:700;padding:10px;cursor:pointer;text-align:left;text-decoration:none;letter-spacing:-.2px}
+.drawer-row span.ic svg,.drawer-group button.ghead span.ic svg{display:block;margin:0 auto;width:20px;height:20px}
 .shortcut span svg{display:block;margin:0 auto}
-.drawer-row span.ic{font-size:26px;width:38px;text-align:center;flex:none}
+.drawer-row span.ic{font-size:20px;width:30px;text-align:center;flex:none}
 .drawer-row:hover{background:var(--card);border-radius:8px}
 .seemore{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:800;font-size:16px;padding:14px;border-radius:12px;cursor:pointer;margin:8px 0}
 .drawer-group{border-top:1px solid var(--border);margin-top:12px}
-.drawer-group button.ghead{display:flex;align-items:center;gap:16px;width:100%;background:none;border:0;color:var(--text);font-size:19px;font-weight:800;padding:16px 10px;cursor:pointer;text-align:left}
-.drawer-group button.ghead span.ic{font-size:26px;width:38px;text-align:center;flex:none}
+.drawer-group button.ghead{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--text);font-size:16px;font-weight:700;padding:12px 10px;cursor:pointer;text-align:left}
+.drawer-group button.ghead span.ic{font-size:20px;width:30px;text-align:center;flex:none}
 .drawer-group button.ghead .chev{margin-left:auto;display:inline-block;transition:transform .2s}
 .drawer-group .gbody{display:none;padding:0 8px 10px}
 .drawer-group.open .gbody{display:block}
@@ -2289,9 +2289,9 @@ async function renderMyStampsBox(){
    no transfer, no cash value. */
 var LIKE_DAILY_CAP = 5;
 var DAOS_LADDER = [
-  {at: 100, key: 'song_exposure', name: 'Exposure', detail: 'Your song gets posted on DAOS platforms'},
-  {at: 500, key: 'blog_feature', name: 'Blog feature', detail: 'Guaranteed blog slot — DAOS approves the content first'},
-  {at: 5000, key: 'magazine_feature', name: 'Magazine feature shot', detail: 'Earns the shot — background check, donation, and wholesale (25 copies at $12, shipping + tax separate) still apply'}
+  {at: 100, key: 'song_exposure', name: 'Exposure', detail: 'Your choice: a free digital magazine, a discount code for any event, or a business or song promo'},
+  {at: 500, key: 'blog_feature', name: 'Blog feature', detail: 'Guaranteed blog slot — DAOS approves the content first. Plus everything at 100: your choice of a free digital magazine, a discount code for any event, or a business or song promo'},
+  {at: 5000, key: 'magazine_feature', name: 'Magazine feature shot', detail: 'Earns the shot — background check, donation, and wholesale (25 copies at $12, shipping + tax separate) still apply. Plus everything at 500 and 100: the blog feature, and your choice of a free digital magazine, a discount code for any event, or a business or song promo'}
 ];
 var POINTS_STORE_URL = 'https://deadlyartofsurvival.com/products/daos-points';
 function localPointsLoad(){
@@ -2540,7 +2540,7 @@ async function renderMyPointsBox(){
     '<div class="baltile"><div class="bnum">' + pts.earned + '</div><div class="blab">Earned</div></div>' +
     '<div class="baltile"><div class="bnum">' + pts.bought + '</div><div class="blab">Bought</div></div>' +
     '</div>' + lvlHtml +
-    '<p class="meta">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
+    '<p class="meta">Earn: a post, like, comment, or share = <b>1 point</b> each (likes max ' + LIKE_DAILY_CAP + '/day). Attending DAOS events earns points too. Referrals pay when your friend joins or buys — never for the invite alone.</p>' +
     '<h3 style="margin-top:14px">The ladder — earned points only</h3>' + rows +
     '<p id="claimRewardMsg" class="meta"></p>' +
     '<p style="margin-top:12px"><button class="btn" type="button" onclick="goTab(\'shop\',13)">Buy points in the Shop</button></p></div>';
