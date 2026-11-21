@@ -3038,7 +3038,7 @@ function renderScanPage(){
   // Auto-start only when the camera library is already loaded
   // (returning visits); first visit waits for the Start tap so the
   // browser camera prompt is expected, not a surprise.
-  if (typeof Html5QrcodeScanner !== 'undefined') startScanCamera();
+  if (typeof Html5Qrcode !== 'undefined') startScanCamera();
 }
 async function startScanCamera(){
   var msg = document.getElementById('scanMsg');
@@ -3046,16 +3046,20 @@ async function startScanCamera(){
   if (!supabaseClient) { if (msg) msg.textContent = 'Scanner is not connected yet.'; return; }
   var ok = false;
   try {
-    if (typeof Html5QrcodeScanner === 'undefined') ok = await loadScriptOnce(SCANNER_LIB_URL);
+    if (typeof Html5Qrcode === 'undefined') ok = await loadScriptOnce(SCANNER_LIB_URL);
     else ok = true;
-    if (!ok || typeof Html5QrcodeScanner === 'undefined') throw new Error('scanner library failed to load');
+    if (!ok || typeof Html5Qrcode === 'undefined') throw new Error('scanner library failed to load');
     var reader = document.getElementById('scanReader');
     if (!reader) return;
     reader.innerHTML = '';
-    scanScanner = new Html5QrcodeScanner('scanReader', {fps: 10, qrbox: 250}, false);
+    // Low-level API with facingMode: the Html5QrcodeScanner wrapper
+    // enumerates cameras first (getCameras) and fails with "Unable
+    // to query supported devices" inside the iOS app webview.
+    scanScanner = new Html5Qrcode('scanReader');
     scanScannerOn = true;
-    if (msg) msg.textContent = '';
-    scanScanner.render(
+    await scanScanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: 250 },
       function(decodedText){
         stopScanCamera();
         var key = parseCardScan(decodedText);
@@ -3068,6 +3072,7 @@ async function startScanCamera(){
       },
       function(_err){ /* no QR in frame — routine, ignore */ }
     );
+    if (msg) msg.textContent = '';
   } catch (e) {
     scanScannerOn = false;
     if (msg) msg.textContent = 'Camera scanner could not load — type the short code instead. (' + (e && e.message ? e.message : 'scanner unavailable') + ')';
@@ -3075,7 +3080,8 @@ async function startScanCamera(){
 }
 async function stopScanCamera(){
   if (scanScanner) {
-    try { await scanScanner.clear(); } catch (e) {}
+    try { await scanScanner.stop(); } catch (e) {}
+    try { scanScanner.clear(); } catch (e) {}
     scanScanner = null;
   }
   scanScannerOn = false;
@@ -3145,7 +3151,7 @@ function renderCheckinPage(){
   // Auto-start the scanner only when the camera library is already
   // loaded (returning visits); first visit waits for the tap above so
   // the browser camera prompt is expected, not a surprise.
-  if (typeof Html5QrcodeScanner !== 'undefined') startCheckinScanner();
+  if (typeof Html5Qrcode !== 'undefined') startCheckinScanner();
 }
 async function startCheckinScanner(){
   var msg = document.getElementById('scannerMsg');
@@ -3153,16 +3159,19 @@ async function startCheckinScanner(){
   if (checkinScannerOn) return;
   var ok = false;
   try {
-    if (typeof Html5QrcodeScanner === 'undefined') ok = await loadScriptOnce(SCANNER_LIB_URL);
+    if (typeof Html5Qrcode === 'undefined') ok = await loadScriptOnce(SCANNER_LIB_URL);
     else ok = true;
-    if (!ok || typeof Html5QrcodeScanner === 'undefined') throw new Error('scanner library failed to load');
+    if (!ok || typeof Html5Qrcode === 'undefined') throw new Error('scanner library failed to load');
     var reader = document.getElementById('checkinReader');
     if (!reader) return;
     reader.innerHTML = '';
-    checkinScanner = new Html5QrcodeScanner('checkinReader', {fps: 10, qrbox: 250}, false);
+    // Low-level API with facingMode (see startScanCamera note):
+    // avoids the camera-enumeration failure in the app webview.
+    checkinScanner = new Html5Qrcode('checkinReader');
     checkinScannerOn = true;
-    if (msg) msg.textContent = '';
-    checkinScanner.render(
+    await checkinScanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: 250 },
       function(decodedText){
         stopCheckinScanner();
         var key = parseCardScan(decodedText);
@@ -3175,6 +3184,7 @@ async function startCheckinScanner(){
       },
       function(_err){ /* scan errors are routine (no QR in frame) — ignore */ }
     );
+    if (msg) msg.textContent = '';
   } catch (e) {
     checkinScannerOn = false;
     if (msg) msg.textContent = 'Camera scanner could not load — use the short code below. (' + (e && e.message ? e.message : 'scanner unavailable') + ')';
@@ -3182,7 +3192,8 @@ async function startCheckinScanner(){
 }
 async function stopCheckinScanner(){
   if (checkinScanner) {
-    try { await checkinScanner.clear(); } catch (e) {}
+    try { await checkinScanner.stop(); } catch (e) {}
+    try { checkinScanner.clear(); } catch (e) {}
     checkinScanner = null;
   }
   checkinScannerOn = false;
