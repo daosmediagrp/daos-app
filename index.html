@@ -1682,10 +1682,7 @@ async function loadRankings(){
     else {
       allRankedArtists = rankedArtists;
       ra.innerHTML = rankedArtists.slice(0, 10).map(function(a, i){
-        return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml({display_name: a.name}) +
-          '<div class="who"><b><a href="#/artist/' + escapeHtml(a.slug) + '">' + escapeHtml(a.name) + '</a> &mdash; ' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + '</b></div>' +
-          '<button class="btn" type="button" onclick="openArtist(\'' + escapeHtml(a.slug) + '\')">Vote</button> ' +
-          '<button class="btn dark" type="button" onclick="shareArtist(\'' + escapeHtml(a.slug) + '\',this)">Share</button></div>';
+        return '<div style="padding:8px 0;border-top:1px solid var(--border)"><strong>' + (i + 1) + '. ' + escapeHtml(a.name) + '</strong> &mdash; ' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + ' <button class="btn" type="button" onclick="openArtist(\'' + escapeHtml(a.slug) + '\')">Vote</button></div>';
       }).join('');
     }
   }
