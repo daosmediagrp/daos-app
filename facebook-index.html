@@ -1682,10 +1682,8 @@ async function loadRankings(){
     else {
       allRankedArtists = rankedArtists;
       ra.innerHTML = rankedArtists.slice(0, 10).map(function(a, i){
-        var sub = a.latest ? 'Latest: ' + escapeHtml(a.latest) : '';
         return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml({display_name: a.name}) +
-          '<div class="who"><b><a href="#/artist/' + escapeHtml(a.slug) + '">' + escapeHtml(a.name) + '</a></b><span>' + sub + '</span></div>' +
-          '<span class="fighter-votes">' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + '</span> ' +
+          '<div class="who"><b><a href="#/artist/' + escapeHtml(a.slug) + '">' + escapeHtml(a.name) + '</a> &mdash; ' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + '</b></div>' +
           '<button class="btn" type="button" onclick="openArtist(\'' + escapeHtml(a.slug) + '\')">Vote</button> ' +
           '<button class="btn dark" type="button" onclick="shareArtist(\'' + escapeHtml(a.slug) + '\',this)">Share</button></div>';
       }).join('');
