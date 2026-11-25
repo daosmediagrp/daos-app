@@ -608,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Newest members</h3><div id="memberDirectory"><p class="meta">Loading members&hellip;</p></div></div>
 </section>
 <section id="rankings" class="tabpane">
-  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top martial artists by votes, top artists by selected songs, and top members by followers. Pick a category, then narrow it by style, weight, region, or age.</p></div>
+  <div class="card"><h3>Rankings</h3><p>The DAOS leaderboards &mdash; top martial artists by votes, top artists by votes, and top members by followers. Pick a category, then narrow it by style, weight, region, or age.</p></div>
   <div class="card">
     <h3 id="rankFightersTitle">Top Martial Artists</h3>
     <div class="catpills" id="rankCatPills"></div>
@@ -622,6 +622,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
     <div id="rankFighters"><p class="meta">Loading&hellip;</p></div>
     <div class="rank-share"><button class="btn dark" type="button" onclick="shareRankings(this)">Share these rankings</button></div>
   </div>
+  <div id="artistDetail" style="display:none"></div>
   <div class="card"><h3>Top Artists</h3><div id="rankArtists"><p class="meta">Loading&hellip;</p></div></div>
   <div class="card"><h3>Top Members</h3><div id="rankMembers"><p class="meta">Loading&hellip;</p></div></div>
 </section>
@@ -1468,6 +1469,7 @@ var FIGHTER_BASE_COLS = 'id,slug,display_name,style_rank,bio,photo_url,votes_cou
 var rankingCategory = 'all';
 var rankingFilters = {style: '', weight: '', region: '', age: ''};
 var allRankedFighters = [];
+var allRankedArtists = [];
 function rankingCategoryDef(key){
   for (var i = 0; i < RANKING_CATEGORIES.length; i++) if (RANKING_CATEGORIES[i].key === key) return RANKING_CATEGORIES[i];
   return RANKING_CATEGORIES[0];
@@ -1675,25 +1677,17 @@ async function loadRankings(){
   if (!supabaseClient) return;
   var ra = document.getElementById('rankArtists');
   if (ra) {
-    var ares = await supabaseClient.from('song_submissions').select('artist_name,song_title,created_at').eq('status', 'selected').order('created_at', {ascending: false}).limit(50);
-    if (ares.error || !ares.data || !ares.data.length) { ra.innerHTML = '<p class="meta">No artists ranked yet — selected songs will appear here.</p>'; }
+    var rankedArtists = await fetchRankedArtists();
+    if (!rankedArtists || !rankedArtists.length) { ra.innerHTML = '<p class="meta">No artists ranked yet — selected songs will appear here.</p>'; }
     else {
-      var byArtist = {};
-      ares.data.forEach(function(s){
-        var name = (s.artist_name || 'Unknown Artist').trim() || 'Unknown Artist';
-        if (!byArtist[name]) byArtist[name] = {name: name, count: 0, latest: null, latestAt: ''};
-        byArtist[name].count++;
-        if (!byArtist[name].latestAt || (s.created_at || '') > byArtist[name].latestAt) { byArtist[name].latest = s.song_title; byArtist[name].latestAt = s.created_at || ''; }
-      });
-      var artists = Object.keys(byArtist).map(function(k){ return byArtist[k]; });
-      artists.sort(function(a, b){ return b.count - a.count || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0); });
-      artists = artists.slice(0, 10);
-      ra.innerHTML = artists.map(function(a, i){
-        var sub = a.count + ' selected song' + (a.count === 1 ? '' : 's');
-        if (a.latest) sub += ' · Latest: ' + escapeHtml(a.latest);
+      allRankedArtists = rankedArtists;
+      ra.innerHTML = rankedArtists.slice(0, 10).map(function(a, i){
+        var sub = a.latest ? 'Latest: ' + escapeHtml(a.latest) : '';
         return '<div class="rank-row"><div class="rank-num">' + (i + 1) + '</div>' + fighterPhotoHtml({display_name: a.name}) +
-          '<div class="who"><b>' + escapeHtml(a.name) + '</b><span>' + sub + '</span></div>' +
-          '<span class="fighter-votes">' + a.count + ' song' + (a.count === 1 ? '' : 's') + '</span></div>';
+          '<div class="who"><b><a href="#/artist/' + escapeHtml(a.slug) + '">' + escapeHtml(a.name) + '</a></b><span>' + sub + '</span></div>' +
+          '<span class="fighter-votes">' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + '</span> ' +
+          '<button class="btn" type="button" onclick="openArtist(\'' + escapeHtml(a.slug) + '\')">Vote</button> ' +
+          '<button class="btn dark" type="button" onclick="shareArtist(\'' + escapeHtml(a.slug) + '\',this)">Share</button></div>';
       }).join('');
     }
   }
@@ -1939,6 +1933,131 @@ async function castVote(fighterId, slug){
 }
 function shareFighter(slug, btn){
   shareLink('DAOS Fighter', 'Vote for this martial artist on DAOS:', fighterUrl(slug), btn);
+}
+/* ---- Top Artists voting (Jake, Nov 25, 2026) -------------------------
+   Mirrors the fighter flow: Vote button on the rankings row opens the
+   artist page (#/artist/<slug>) with the email + phone vote form and a
+   Share button. Votes decide the order; selected-song count breaks ties.
+   Backend: supabase/artist-votes.sql (cast_artist_vote /
+   get_artist_vote_counts). In the app, voting is for verified DAOS Card
+   holders, same gate as fighters. */
+function artistSlug(name){
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist';
+}
+function artistUrl(slug){ return 'https://daosmedia.com/#/artist/' + slug; }
+function findRankedArtist(slug){
+  for (var i = 0; i < allRankedArtists.length; i++) { if (allRankedArtists[i].slug === slug) return allRankedArtists[i]; }
+  return null;
+}
+async function fetchRankedArtists(){
+  var ares = await supabaseClient.from('song_submissions').select('artist_name,song_title,stream_url,created_at').eq('status', 'selected').order('created_at', {ascending: false}).limit(200);
+  if (ares.error || !ares.data) return null;
+  var byArtist = {};
+  ares.data.forEach(function(s){
+    var name = (s.artist_name || 'Unknown Artist').trim() || 'Unknown Artist';
+    if (!byArtist[name]) byArtist[name] = {name: name, slug: artistSlug(name), count: 0, votes: 0, latest: null, latestUrl: null, latestAt: '', songs: []};
+    byArtist[name].count++;
+    byArtist[name].songs.push(s);
+    if (!byArtist[name].latestAt || (s.created_at || '') > byArtist[name].latestAt) { byArtist[name].latest = s.song_title; byArtist[name].latestUrl = s.stream_url; byArtist[name].latestAt = s.created_at || ''; }
+  });
+  var vres = await supabaseClient.rpc('get_artist_vote_counts');
+  if (!vres.error && vres.data) vres.data.forEach(function(v){ if (byArtist[v.artist_name]) byArtist[v.artist_name].votes = Number(v.votes) || 0; });
+  var artists = Object.keys(byArtist).map(function(k){ return byArtist[k]; });
+  artists.sort(function(a, b){ return b.votes - a.votes || b.count - a.count || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0); });
+  return artists;
+}
+async function openArtist(slug){
+  showTab('rankings', document.querySelectorAll('#tabs button')[10]);
+  var box = document.getElementById('artistDetail'); if (!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '<div class="card"><p class="meta">Loading artist&hellip;</p></div>';
+  if (!supabaseClient) { box.innerHTML = '<div class="card"><p class="meta">This artist page is not available yet.</p></div>'; return; }
+  if (!allRankedArtists.length) { var fresh = await fetchRankedArtists(); if (fresh) allRankedArtists = fresh; }
+  var a = findRankedArtist(slug);
+  if (!a) { box.innerHTML = '<div class="card"><p>This artist is not ranked yet.</p><button class="btn dark" type="button" onclick="closeArtist()">Back to the leaderboard</button></div>'; return; }
+  var d = document.createElement('div'); d.className = 'card';
+  var songList = a.songs.map(function(s){
+    return '<p>' + escapeHtml(s.song_title) + (s.stream_url ? ' &mdash; <a href="' + escapeHtml(s.stream_url) + '" target="_blank" rel="noopener">Listen</a>' : '') + '</p>';
+  }).join('');
+  d.innerHTML = fighterPhotoHtml({display_name: a.name}, true) +
+    '<h2>' + escapeHtml(a.name) + '</h2>' +
+    '<p><span class="fighter-votes">' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + '</span></p>' +
+    songList +
+    '<input id="artistVoteEmail" class="finput" type="email" placeholder="Your email — one vote per email">' +
+    '<input id="artistVotePhone" class="finput" type="tel" placeholder="Your phone number — one vote per phone number">' +
+    '<button class="btn" type="button" onclick="castArtistVote(\'' + escapeHtml(a.slug) + '\')">Vote for ' + escapeHtml(a.name) + '</button>' +
+    '<button class="btn dark" type="button" onclick="shareArtist(\'' + escapeHtml(a.slug) + '\',this)">Share this page</button> ' +
+    '<button class="btn dark" type="button" onclick="closeArtist()">Back to the leaderboard</button>' +
+    '<p id="artistVoteMsg" class="meta"></p>';
+  box.innerHTML = ''; box.appendChild(d);
+  applyArtistVoteGate(d);
+  if (box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
+}
+function closeArtist(){
+  var box = document.getElementById('artistDetail'); if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  if (window.location.hash && window.location.hash.indexOf('#/artist/') === 0) history.replaceState(null, '', '#rankings');
+}
+function applyArtistVoteGate(d){
+  if (!isNativeApp()) return;
+  var em = d.querySelector('#artistVoteEmail');
+  var ph = d.querySelector('#artistVotePhone');
+  if (isVerifiedCardHolder()) {
+    if (em && currentUser.email && !em.value) em.value = currentUser.email;
+    var note = document.createElement('p');
+    note.className = 'meta';
+    note.innerHTML = '&#10003; Voting as a verified DAOS Card holder.';
+    if (em) em.parentNode.insertBefore(note, em);
+    return;
+  }
+  var btns = d.querySelectorAll('button');
+  for (var i = 0; i < btns.length; i++) {
+    if ((btns[i].getAttribute('onclick') || '').indexOf('castArtistVote') === 0) btns[i].style.display = 'none';
+  }
+  if (em) em.style.display = 'none';
+  if (ph) ph.style.display = 'none';
+  var panel = document.createElement('div');
+  panel.className = 'card';
+  panel.style.textAlign = 'center';
+  panel.style.margin = '10px 0';
+  panel.innerHTML = '<h3>Best of the Best — card holders vote</h3>' +
+    '<p>In the app, only verified DAOS Card holders vote in the Best of the Best awards and the app rankings. Your card is your ballot — free to get, and yours even if you never attend an event.</p>' +
+    '<button class="btn" type="button" onclick="openMyProfile()">Get my DAOS Card</button>';
+  var msg = d.querySelector('#artistVoteMsg');
+  if (msg && msg.parentNode) msg.parentNode.insertBefore(panel, msg);
+  else d.appendChild(panel);
+}
+async function castArtistVote(slug){
+  var em = document.getElementById('artistVoteEmail');
+  var ph = document.getElementById('artistVotePhone');
+  var msg = document.getElementById('artistVoteMsg');
+  if (isNativeApp() && !isVerifiedCardHolder()) {
+    if (msg) msg.textContent = 'App voting is for verified DAOS Card holders — get your free DAOS Card to vote.';
+    return;
+  }
+  var email = em ? em.value.trim() : '';
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (msg) msg.textContent = 'Enter a valid email to vote.'; return; }
+  var phone = ph ? ph.value.replace(/\D/g, '') : '';
+  if (phone.length < 7 || phone.length > 15) { if (msg) msg.textContent = 'Enter a valid phone number to vote.'; return; }
+  if (!supabaseClient) { if (msg) msg.textContent = 'Voting is not connected yet.'; return; }
+  var a = findRankedArtist(slug);
+  if (!a) { if (msg) msg.textContent = 'Artist not found.'; return; }
+  var res = await supabaseClient.rpc('cast_artist_vote', {p_artist_name: a.name, p_voter_email: email, p_voter_phone: phone});
+  if (res.error) {
+    if (msg) msg.textContent = res.error.message || 'Could not count your vote — try again.';
+    return;
+  }
+  if (msg) msg.textContent = 'Vote counted — thank you.';
+  if (em) em.value = '';
+  if (ph) ph.value = '';
+  allRankedArtists = [];
+  loadRankings();
+  await openArtist(slug);
+  var fresh = document.getElementById('artistVoteMsg');
+  if (fresh) fresh.textContent = 'Vote counted — thank you.';
+}
+function shareArtist(slug, btn){
+  var a = findRankedArtist(slug);
+  shareLink('DAOS Artist', 'Vote for ' + (a ? a.name : 'this artist') + ' in the DAOS Top Artists rankings:', artistUrl(slug), btn);
 }
 var myProfileId = null;
 var myProfilePhotoUrl = null;
@@ -3967,6 +4086,12 @@ function openDeepLink(){
   if(fm){
     showTab('fighters',document.querySelectorAll('#tabs button')[8]);
     setTimeout(function(){openFighter(fm[1]);},50);
+    return;
+  }
+  var am=h.match(/^#\/artist\/([A-Za-z0-9\-_]+)$/);
+  if(am){
+    showTab('rankings',document.querySelectorAll('#tabs button')[10]);
+    setTimeout(function(){openArtist(am[1]);},50);
     return;
   }
   var cm=h.match(/^#\/card\/([0-9a-fA-F-]{36})$/);
