@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',8)">Martial Artists</button></div>
 </section>
 <section id="photos" class="tabpane">
-  <div class="card"><h3>Party Vault</h3><p>Photos &amp; videos from DAOS events, shot by DAOS photographers. Find yours, buy it, download the full-size original. Photos $10 &middot; Videos $25 (DAOS Points).</p><div id="vaultUploadBox"></div><p id="vaultMsg" class="meta"></p><div id="vaultGrid"></div><div id="vaultMine"></div><p class="meta" style="margin-top:14px">More galleries: <a href="https://deadlyartofsurvival.com/pages/party-vault" target="_blank" rel="noopener">deadlyartofsurvival.com</a></p></div>
+  <div class="card"><h3>Party Vault</h3><p>Photos &amp; videos from DAOS events, shot by DAOS photographers. Find yours, buy it, download the full-size original. Photos $10 &middot; Videos $25 (DAOS Points).</p><div id="vaultUploadBox"></div><div id="vaultOptInBox"></div><p id="vaultMsg" class="meta"></p><div id="vaultGrid"></div><div id="vaultMine"></div><p class="meta" style="margin-top:14px">More galleries: <a href="https://deadlyartofsurvival.com/pages/party-vault" target="_blank" rel="noopener">deadlyartofsurvival.com</a></p></div>
 </section>
 <section id="blog" class="tabpane">
   <div class="card" id="blog-i-play-rocky-the-underdog-story-behind-the-underdog-story"><h3>I Play Rocky: The Fight Before the Fight</h3><p class="meta">DAOS Magazine &middot; November 3, 2026</p><p>Long before the bell ever rang for Rocky Balboa, Sylvester Stallone was already in the fight of his life &mdash; and it was not in a ring. It was in a room full of studio executives who wanted his script and did not want him in it.</p><p>That is the story Peter Farrelly's <em>I Play Rocky</em> tells. A broke, unknown actor writes a script about a Philly club fighter, then refuses a fortune to hand it over unless he gets to play the lead himself. Anthony Ippolito &mdash; who taped his audition in his grandmother's basement after playing Al Pacino in <em>The Offer</em> &mdash; plays the young Stallone, alongside Stephan James as Carl Weathers and Matt Dillon as Stallone's father.</p><p>The film opens in select theaters November 6 and everywhere November 20, nearly 50 years after the original <em>Rocky</em> debuted. And the spirit is already in the gym: RDX's #MyFirstRound campaign, shared with DAOS by Karen Apablaza of Hudson West PR, is built around <em>I Play Rocky</em>-inspired gear for your first round.</p><p>Stallone did not win by knocking anybody out in that meeting. He won by refusing to move. That is the lesson.</p><a class="btn" href="https://deadlyartofsurvival.com/blogs/news/i-play-rocky-the-underdog-story-behind-the-underdog-story">Read the full story</a><button class="btn dark" onclick="sharePost('i-play-rocky-the-underdog-story-behind-the-underdog-story',this)">&#128279; Share</button></div>
@@ -718,6 +718,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <button class="drawer-row" onclick="goTab('shop',12)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16l-1.5 11a2 2 0 0 1-2 1.7h-9A2 2 0 0 1 5.5 18L4 7z"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></span>Shop</button>
   <button class="drawer-row" onclick="goTab('rankings',10)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg></span>Rankings</button>
   <button class="drawer-row" onclick="goTab('videos',11)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.8v4.4L14.5 12z"/></svg></span>Videos</button>
+  <button class="drawer-row" onclick="openMediaOptIn()"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.2"/></svg></span>Media Opt In</button>
   <div id="drawerMore" style="display:none">
     <button class="drawer-row" onclick="goTab('photos',4)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg></span>Photos</button>
     <button class="drawer-row" onclick="goTab('blog',5)"><span class="ic"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>Blog</button>
@@ -805,6 +806,8 @@ async function refreshAuth(){
     document.getElementById('composerForm').style.display = 'block';
     accountDeleted = false;
     await loadMyMemberProfile();
+    if (typeof renderVaultUploadBox === 'function') renderVaultUploadBox();
+    if (typeof renderVaultOptIn === 'function') renderVaultOptIn();
     await loadMyFollows();
     await loadMyBlocks();
     var delBox = document.getElementById('deleteAccountBox');
@@ -825,6 +828,8 @@ async function refreshAuth(){
     btn.onclick = openAuthModal;
     document.getElementById('composerForm').style.display = 'none';
     myProfile = null; myFollowIds = {}; myBlockedIds = {}; myIsStaff = false;
+    if (typeof renderVaultUploadBox === 'function') renderVaultUploadBox();
+    if (typeof renderVaultOptIn === 'function') renderVaultOptIn();
     /* After an account deletion the success state stays visible in the
        Network tab card — do not hide the delete box in that case. */
     if (!accountDeleted) {
@@ -2647,6 +2652,7 @@ async function loadVault(){
   var grid = document.getElementById('vaultGrid');
   if (!grid) return;
   renderVaultUploadBox();
+  renderVaultOptIn();
   if (!supabaseClient) { grid.innerHTML = '<p class="meta">Party Vault is being connected — check back soon.</p>'; return; }
   grid.innerHTML = '<p class="meta">Loading Party Vault…</p>';
   vaultPurchasedIds = {};
@@ -2705,6 +2711,80 @@ function renderVaultUploadBox(){
     '<input id="vaultFiles" type="file" accept="image/*,video/*" multiple>' +
     '<button class="btn" type="button" onclick="vaultUpload()">Upload to Party Vault</button>' +
     '<p id="vaultUpMsg" class="meta"></p></div>';
+}
+/* ---- Photographer/videographer opt-in (Jake, Nov 27, 2026) ----
+   Fully automatic: a signed-in member fills the form, agrees to
+   the terms, and instantly becomes an approved photographer
+   (profiles.is_photographer = true via the opt_in_photographer
+   RPC — see supabase/photographer-opt-in.sql). No approval step. */
+var VAULT_OPTIN_TERMS = 'I keep the copyright to my photos and videos. I grant DAOS the right to sell downloads of my work in the DAOS Party Vault. I earn 70% of each sale, paid out by DAOS. Previews are watermarked. I can report stolen copies through the Vault. I agree to these terms.';
+function renderVaultOptIn(forceForm){
+  var box = document.getElementById('vaultOptInBox');
+  if (!box) return;
+  if (currentUser && myProfile && myProfile.is_photographer && !forceForm) { box.innerHTML = ''; return; }
+  if (!currentUser) {
+    box.innerHTML = '<div class="card" style="text-align:left"><h3>Media Opt In</h3>' +
+      '<p class="meta">Shoot DAOS events? Sell your photos and videos in the Party Vault and keep 70% of every sale. Log in to opt in — it takes a minute and you can upload right away.</p>' +
+      '<button class="btn" type="button" onclick="openAuthModal()">Log in to opt in</button></div>';
+    return;
+  }
+  var alreadyIn = !!(myProfile && myProfile.is_photographer);
+  box.innerHTML = '<div class="card" style="text-align:left"><h3>Media Opt In</h3>' +
+    '<p class="meta">' + (alreadyIn ? 'You\'re already opted in as a photographer — update your info below if anything changed.' : 'Shoot DAOS events? Sell your photos and videos in the Party Vault and keep 70% of every sale. Opt in below — no waiting, you can upload right away.') + '</p>' +
+    '<button class="btn" type="button" id="vaultOptInToggle" onclick="toggleVaultOptInForm()">Media Opt In</button>' +
+    '<div id="vaultOptInForm" style="display:none">' +
+    '<input id="voName" class="finput" type="text" placeholder="Display name" maxlength="100">' +
+    '<input id="voPhone" class="finput" type="tel" placeholder="Phone number">' +
+    '<input id="voPortfolio" class="finput" type="url" placeholder="Portfolio or Instagram link">' +
+    '<select id="voMedia" class="finput"><option value="photo">Photos</option><option value="video">Videos</option><option value="both">Both photos &amp; videos</option></select>' +
+    '<label style="display:block;font-size:13px;margin-bottom:8px;text-align:left"><input type="checkbox" id="voTerms"> ' + VAULT_OPTIN_TERMS + '</label>' +
+    '<button class="btn" type="button" onclick="submitVaultOptIn()">Agree &amp; opt in</button>' +
+    '<p id="voMsg" class="meta"></p></div></div>';
+  var nameEl = document.getElementById('voName');
+  if (nameEl && myProfile && myProfile.display_name) nameEl.value = myProfile.display_name;
+  var phoneEl = document.getElementById('voPhone');
+  if (phoneEl && myProfile) phoneEl.value = myProfile.phone || myProfile.contact_phone || '';
+  var portEl = document.getElementById('voPortfolio');
+  if (portEl && myProfile) portEl.value = myProfile.website || (myProfile.instagram ? 'https://instagram.com/' + myProfile.instagram : '');
+}
+function toggleVaultOptInForm(){
+  var form = document.getElementById('vaultOptInForm');
+  if (!form) return;
+  var show = form.style.display === 'none';
+  form.style.display = show ? 'block' : 'none';
+  if (show && form.scrollIntoView) form.scrollIntoView({behavior: 'smooth'});
+}
+async function submitVaultOptIn(){
+  var msg = document.getElementById('voMsg');
+  if (!supabaseClient || !currentUser) { openAuthModal(); return; }
+  var name = document.getElementById('voName').value.trim();
+  var phone = document.getElementById('voPhone').value.trim();
+  var portfolio = document.getElementById('voPortfolio').value.trim();
+  var media = document.getElementById('voMedia').value;
+  var agreed = document.getElementById('voTerms').checked;
+  if (!name) { if (msg) msg.textContent = 'Add your display name first.'; return; }
+  if (!agreed) { if (msg) msg.textContent = 'Please check the terms box to opt in.'; return; }
+  if (msg) msg.textContent = 'Opting you in…';
+  var res = await supabaseClient.rpc('opt_in_photographer', {
+    p_display_name: name,
+    p_phone: phone || null,
+    p_portfolio_url: portfolio || null,
+    p_media_types: media
+  });
+  if (res.error) { if (msg) msg.textContent = res.error.message; return; }
+  if (myProfile) myProfile.is_photographer = true;
+  renderVaultOptIn();
+  renderVaultUploadBox();
+  vaultMsg('You\'re in — you can now upload to the Party Vault.');
+}
+function openMediaOptIn(){
+  if (!currentUser) { closeDrawer(); openAuthModal(); return; }
+  goTab('photos', 4);
+  renderVaultOptIn(true);
+  var form = document.getElementById('vaultOptInForm');
+  if (form) form.style.display = 'block';
+  var box = document.getElementById('vaultOptInBox');
+  if (box && box.scrollIntoView) box.scrollIntoView({behavior: 'smooth'});
 }
 function vaultHandle(){
   if (myProfile && myProfile.instagram) return '@' + myProfile.instagram;
