@@ -267,6 +267,10 @@ select.finput{appearance:auto}
 .cardcode{font-family:monospace,monospace;font-size:22px;font-weight:bold;letter-spacing:3px;margin:8px 0 2px}
 .mtitle{text-align:center;margin:2px 0 14px;font-size:13px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)}
 .mtitle.partner{color:#F5B301}
+#vaultGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px}
+.vaultitem{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card)}
+.vaultitem img{width:100%;height:180px;object-fit:cover;display:block}
+.vaultmeta{display:flex;flex-direction:column;gap:6px;padding:10px;font-size:13px}
 .mtitle svg{vertical-align:-2px;margin-right:6px}
 .lvlchip{display:inline-block;background:#E10600;color:#fff;font-weight:800;border-radius:99px;padding:5px 14px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase}
 .lvlbar{height:10px;background:var(--card2);border:1px solid var(--border);border-radius:99px;overflow:hidden;margin:10px 0 4px}
@@ -493,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function(){ try{ if(!localStorage.
   <div class="card"><h3>Martial Artist Vote</h3><p>See the martial artists, vote for your favorite, or create your own martial artist profile and share your page to gather votes.</p><button class="btn" type="button" onclick="goTab('fighters',8)">Martial Artists</button></div>
 </section>
 <section id="photos" class="tabpane">
-  <div class="card"><h3>Photos</h3><p>Party Vault photos and DAOS galleries live here.</p><a class="btn" href="https://deadlyartofsurvival.com/pages/party-vault">Party Vault</a></div>
+  <div class="card"><h3>Party Vault</h3><p>Photos &amp; videos from DAOS events, shot by DAOS photographers. Find yours, buy it, download the full-size original. Photos $10 &middot; Videos $25 (DAOS Points).</p><div id="vaultUploadBox"></div><p id="vaultMsg" class="meta"></p><div id="vaultGrid"></div><div id="vaultMine"></div><p class="meta" style="margin-top:14px">More galleries: <a href="https://deadlyartofsurvival.com/pages/party-vault" target="_blank" rel="noopener">deadlyartofsurvival.com</a></p></div>
 </section>
 <section id="blog" class="tabpane">
   <div class="card" id="blog-i-play-rocky-the-underdog-story-behind-the-underdog-story"><h3>I Play Rocky: The Fight Before the Fight</h3><p class="meta">DAOS Magazine &middot; November 3, 2026</p><p>Long before the bell ever rang for Rocky Balboa, Sylvester Stallone was already in the fight of his life &mdash; and it was not in a ring. It was in a room full of studio executives who wanted his script and did not want him in it.</p><p>That is the story Peter Farrelly's <em>I Play Rocky</em> tells. A broke, unknown actor writes a script about a Philly club fighter, then refuses a fortune to hand it over unless he gets to play the lead himself. Anthony Ippolito &mdash; who taped his audition in his grandmother's basement after playing Al Pacino in <em>The Offer</em> &mdash; plays the young Stallone, alongside Stephan James as Carl Weathers and Matt Dillon as Stallone's father.</p><p>The film opens in select theaters November 6 and everywhere November 20, nearly 50 years after the original <em>Rocky</em> debuted. And the spirit is already in the gym: RDX's #MyFirstRound campaign, shared with DAOS by Karen Apablaza of Hudson West PR, is built around <em>I Play Rocky</em>-inspired gear for your first round.</p><p>Stallone did not win by knocking anybody out in that meeting. He won by refusing to move. That is the lesson.</p><a class="btn" href="https://deadlyartofsurvival.com/blogs/news/i-play-rocky-the-underdog-story-behind-the-underdog-story">Read the full story</a><button class="btn dark" onclick="sharePost('i-play-rocky-the-underdog-story-behind-the-underdog-story',this)">&#128279; Share</button></div>
@@ -1371,6 +1375,10 @@ async function loadMyMemberProfile(){
   if (myProfile) {
     var cxr = await supabaseClient.from('profiles').select('contact_email,contact_phone').eq('id', currentUser.id).maybeSingle();
     if (!cxr.error && cxr.data) { myProfile.contact_email = cxr.data.contact_email; myProfile.contact_phone = cxr.data.contact_phone; }
+    try {
+      var pxr = await supabaseClient.from('profiles').select('is_photographer').eq('id', currentUser.id).maybeSingle();
+      if (!pxr.error && pxr.data) myProfile.is_photographer = !!pxr.data.is_photographer;
+    } catch (e) {}
     try {
       var mxr = await supabaseClient.from('profiles').select('phone,email_opt_in,sms_opt_in').eq('id', currentUser.id).maybeSingle();
       if (!mxr.error && mxr.data) {
@@ -2611,6 +2619,287 @@ function creditBoughtPoints(points){
   d.bought = (d.bought || 0) + points;
   localPointsSave(d);
 }
+/* ---- Party Vault photo/video marketplace (Jake, Nov 26, 2026) ----
+   Photographers (profiles.is_photographer) upload event media:
+   originals -> private bucket vault-originals, watermarked previews
+   -> public bucket vault-previews. Members buy with bought DAOS
+   Points (photo 10, video 25); a photo_purchases row unlocks a
+   signed download of the original (storage RLS). Backend tables +
+   buckets: supabase/party-vault.sql. */
+var VAULT_PHOTO_POINTS = 10;
+var VAULT_VIDEO_POINTS = 25;
+var VAULT_PHOTOGRAPHER_SHARE = 0.70;
+var vaultPhotosCache = [];
+var vaultPurchasedIds = {};
+
+function vaultMsg(t){ var m = document.getElementById('vaultMsg'); if (m) m.textContent = t || ''; }
+function vaultPreviewUrl(key){
+  if (!supabaseClient || !key) return '';
+  var r = supabaseClient.storage.from('vault-previews').getPublicUrl(key);
+  return (r.data && r.data.publicUrl) || '';
+}
+function vaultEventLabel(slug){
+  if (slug === 'daos-party-dec-5') return 'DAOS Party — Dec 5';
+  if (slug === 'daos-con-7') return 'DAOS CON 7 — Mar 7';
+  return slug || '';
+}
+async function loadVault(){
+  var grid = document.getElementById('vaultGrid');
+  if (!grid) return;
+  renderVaultUploadBox();
+  if (!supabaseClient) { grid.innerHTML = '<p class="meta">Party Vault is being connected — check back soon.</p>'; return; }
+  grid.innerHTML = '<p class="meta">Loading Party Vault…</p>';
+  vaultPurchasedIds = {};
+  if (currentUser) {
+    try {
+      var pr = await supabaseClient.from('photo_purchases').select('photo_id').eq('buyer_id', currentUser.id).limit(1000);
+      if (!pr.error && pr.data) pr.data.forEach(function(x){ vaultPurchasedIds[x.photo_id] = true; });
+    } catch (e) {}
+  }
+  var res = await supabaseClient.from('photos')
+    .select('id,owner_id,event_slug,media_type,original_key,preview_key,price_points,caption,tags,created_at')
+    .eq('status','live').order('created_at',{ascending:false}).limit(200);
+  if (res.error) { grid.innerHTML = '<p class="meta">Party Vault opens soon — photos from the Dec 5 Party will be here.</p>'; return; }
+  vaultPhotosCache = res.data || [];
+  var ownerIds = [];
+  vaultPhotosCache.forEach(function(p){ if (ownerIds.indexOf(p.owner_id) === -1) ownerIds.push(p.owner_id); });
+  var names = {};
+  if (ownerIds.length) {
+    try {
+      var nr = await supabaseClient.from('profiles').select('id,display_name,instagram').in('id', ownerIds);
+      if (!nr.error && nr.data) nr.data.forEach(function(x){ names[x.id] = x; });
+    } catch (e) {}
+  }
+  if (!vaultPhotosCache.length) {
+    grid.innerHTML = '<p class="meta">No photos yet — Party Vault fills up after the Dec 5 Party. Photographers: log in to upload.</p>';
+  } else {
+    grid.innerHTML = vaultPhotosCache.map(function(p){ return vaultCardHtml(p, names[p.owner_id]); }).join('');
+  }
+  renderVaultMine();
+}
+function vaultCardHtml(p, owner){
+  var mine = currentUser && p.owner_id === currentUser.id;
+  var bought = !!vaultPurchasedIds[p.id];
+  var who = owner ? (owner.display_name || 'DAOS photographer') : 'DAOS photographer';
+  var btn;
+  if (mine) btn = '<button class="btn dark" type="button" onclick="vaultDownload(\'' + p.id + '\')">Download original</button>';
+  else if (bought) btn = '<button class="btn" type="button" onclick="vaultDownload(\'' + p.id + '\')">Download</button>';
+  else btn = '<button class="btn" type="button" onclick="vaultBuy(\'' + p.id + '\',' + p.price_points + ')">Buy — ' + p.price_points + ' pts</button>';
+  return '<div class="vaultitem"><img src="' + escapeHtml(vaultPreviewUrl(p.preview_key)) + '" alt="Party Vault ' + p.media_type + '" loading="lazy">' +
+    '<div class="vaultmeta"><span>' + escapeHtml(vaultEventLabel(p.event_slug)) + (p.media_type === 'video' ? ' · VIDEO' : '') + '</span>' +
+    '<span>by ' + escapeHtml(who) + '</span>' +
+    (p.caption ? '<span>' + escapeHtml(p.caption) + '</span>' : '') +
+    btn +
+    '<button class="btn dark" type="button" onclick="vaultReport(\'' + p.id + '\')">Report stolen</button>' +
+    '</div></div>';
+}
+function renderVaultUploadBox(){
+  var box = document.getElementById('vaultUploadBox');
+  if (!box) return;
+  if (!currentUser || !myProfile || !myProfile.is_photographer) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="card" style="text-align:left"><h3>Photographer upload</h3>' +
+    '<p class="meta">Originals stay private. A watermarked preview is created automatically. Photos sell for ' + VAULT_PHOTO_POINTS + ' pts, videos ' + VAULT_VIDEO_POINTS + ' pts.</p>' +
+    '<select id="vaultEvent" class="finput"><option value="daos-party-dec-5">DAOS Party — Dec 5</option><option value="daos-con-7">DAOS CON 7 — Mar 7</option></select>' +
+    '<input id="vaultCaption" class="finput" type="text" placeholder="Caption (optional)" maxlength="200">' +
+    '<input id="vaultTags" class="finput" type="text" placeholder="Names in the photo (optional, helps people find themselves)" maxlength="300">' +
+    '<input id="vaultFiles" type="file" accept="image/*,video/*" multiple>' +
+    '<button class="btn" type="button" onclick="vaultUpload()">Upload to Party Vault</button>' +
+    '<p id="vaultUpMsg" class="meta"></p></div>';
+}
+function vaultHandle(){
+  if (myProfile && myProfile.instagram) return '@' + myProfile.instagram;
+  if (myProfile && myProfile.display_name) return myProfile.display_name;
+  return 'DAOS';
+}
+function vaultWatermarkCanvas(canvas, isVideo){
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  var label = 'DAOS · ' + vaultHandle();
+  ctx.save();
+  ctx.globalAlpha = 0.28;
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 ' + Math.max(16, Math.round(w / 18)) + 'px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  var stepX = Math.max(180, Math.round(w / 2.2));
+  var stepY = Math.max(120, Math.round(h / 3));
+  for (var y = stepY / 2; y < h + stepY; y += stepY) {
+    for (var x = stepX / 2; x < w + stepX; x += stepX) {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(-0.35); ctx.fillText(label, 0, 0); ctx.restore();
+    }
+  }
+  ctx.restore();
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  ctx.fillRect(0, h - 34, w, 34);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 15px Arial, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText((isVideo ? 'VIDEO · ' : '') + label + ' · daosmedia.com', 10, h - 12);
+  return canvas;
+}
+function vaultPhotoPreview(file){
+  return new Promise(function(resolve, reject){
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function(){
+      URL.revokeObjectURL(url);
+      var max = 1200;
+      var scale = Math.min(1, max / Math.max(img.width, img.height));
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      vaultWatermarkCanvas(canvas, false);
+      canvas.toBlob(function(b){ if (b) resolve({blob: b, canvas: canvas}); else reject(new Error('preview failed')); }, 'image/jpeg', 0.82);
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('could not read image')); };
+    img.src = url;
+  });
+}
+function vaultVideoPreview(file){
+  return new Promise(function(resolve, reject){
+    var v = document.createElement('video');
+    v.muted = true; v.playsInline = true; v.preload = 'metadata';
+    var url = URL.createObjectURL(file);
+    var done = false;
+    function fallbackCanvas(){
+      var c = document.createElement('canvas'); c.width = 800; c.height = 450;
+      var x = c.getContext('2d'); x.fillStyle = '#111111'; x.fillRect(0, 0, 800, 450);
+      return c;
+    }
+    function finish(canvas){
+      if (done) return; done = true; URL.revokeObjectURL(url);
+      vaultWatermarkCanvas(canvas, true);
+      canvas.toBlob(function(b){ if (b) resolve({blob: b, canvas: canvas}); else reject(new Error('preview failed')); }, 'image/jpeg', 0.82);
+    }
+    v.onloadedmetadata = function(){ try { v.currentTime = Math.min(1, (v.duration || 2) / 4); } catch (e) {} };
+    v.onseeked = function(){
+      var max = 1200;
+      var vw = v.videoWidth || 640, vh = v.videoHeight || 360;
+      var scale = Math.min(1, max / Math.max(vw, vh));
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(vw * scale));
+      canvas.height = Math.max(1, Math.round(vh * scale));
+      canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+      finish(canvas);
+    };
+    v.onerror = function(){ finish(fallbackCanvas()); };
+    setTimeout(function(){ if (!done) finish(fallbackCanvas()); }, 8000);
+    v.src = url;
+  });
+}
+async function vaultSha256(file){
+  try {
+    var buf = await file.arrayBuffer();
+    var hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).map(function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+  } catch (e) { return null; }
+}
+function vaultPhash(canvas){
+  try {
+    var c = document.createElement('canvas'); c.width = 8; c.height = 8;
+    var ctx = c.getContext('2d'); ctx.drawImage(canvas, 0, 0, 8, 8);
+    var d = ctx.getImageData(0, 0, 8, 8).data;
+    var gray = [];
+    for (var i = 0; i < d.length; i += 4) gray.push(0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2]);
+    var avg = gray.reduce(function(s, x){ return s + x; }, 0) / gray.length;
+    return gray.map(function(g){ return g >= avg ? '1' : '0'; }).join('');
+  } catch (e) { return null; }
+}
+async function vaultUpload(){
+  var msg = document.getElementById('vaultUpMsg');
+  var input = document.getElementById('vaultFiles');
+  if (!currentUser || !myProfile || !myProfile.is_photographer) { if (msg) msg.textContent = 'Photographer account required.'; return; }
+  var files = input && input.files ? Array.from(input.files) : [];
+  if (!files.length) { if (msg) msg.textContent = 'Pick at least one photo or video.'; return; }
+  var eventSlug = document.getElementById('vaultEvent').value;
+  var caption = document.getElementById('vaultCaption').value.trim();
+  var tags = document.getElementById('vaultTags').value.trim();
+  var ok = 0, failed = 0;
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var isVideo = (file.type || '').indexOf('video') === 0;
+    if (msg) msg.textContent = 'Uploading ' + (i + 1) + ' of ' + files.length + ': ' + file.name + '…';
+    try {
+      var photoId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '-' + i);
+      var cleanName = file.name.replace(/[^A-Za-z0-9._-]+/g, '_');
+      var originalKey = currentUser.id + '/' + photoId + '-' + cleanName;
+      var previewKey = currentUser.id + '/' + photoId + '-preview.jpg';
+      var up1 = await supabaseClient.storage.from('vault-originals').upload(originalKey, file, {upsert: false});
+      if (up1.error) throw up1.error;
+      var prev = isVideo ? await vaultVideoPreview(file) : await vaultPhotoPreview(file);
+      var up2 = await supabaseClient.storage.from('vault-previews').upload(previewKey, prev.blob, {upsert: false, contentType: 'image/jpeg'});
+      if (up2.error) throw up2.error;
+      var ins = await supabaseClient.from('photos').insert({
+        id: photoId, owner_id: currentUser.id, event_slug: eventSlug,
+        media_type: isVideo ? 'video' : 'photo', original_key: originalKey,
+        preview_key: previewKey, price_points: isVideo ? VAULT_VIDEO_POINTS : VAULT_PHOTO_POINTS,
+        caption: caption || null, tags: tags || null, status: 'live'
+      });
+      if (ins.error) throw ins.error;
+      var sha = await vaultSha256(file);
+      var ph = vaultPhash(prev.canvas);
+      await supabaseClient.from('photo_fingerprints').insert({photo_id: photoId, sha256: sha, phash: ph});
+      ok++;
+    } catch (e) {
+      failed++;
+      if (msg) msg.textContent = 'Failed on ' + file.name + ': ' + (e.message || e);
+    }
+  }
+  if (msg) msg.textContent = 'Done — ' + ok + ' uploaded' + (failed ? ', ' + failed + ' failed' : '') + '.';
+  loadVault();
+}
+async function vaultBuy(photoId, price){
+  if (!currentUser) { openAuthModal(); return; }
+  if (vaultPurchasedIds[photoId]) { vaultDownload(photoId); return; }
+  var bal = (localPointsLoad().bought || 0);
+  if (bal < price) { vaultMsg('Not enough bought points (you have ' + bal + ') — get points in the Shop tab.'); return; }
+  var ins = await supabaseClient.from('photo_purchases').insert({photo_id: photoId, buyer_id: currentUser.id, points_paid: price});
+  if (ins.error) { vaultMsg('Purchase failed: ' + ins.error.message); return; }
+  if (!spendBoughtPoints(price, 'vault_' + photoId)) { vaultMsg('Points changed — try again.'); return; }
+  vaultPurchasedIds[photoId] = true;
+  vaultMsg('Purchased — your download is ready.');
+  renderMyPointsBox();
+  loadVault();
+  vaultDownload(photoId);
+}
+async function vaultDownload(photoId){
+  var p = vaultPhotosCache.filter(function(x){ return x.id === photoId; })[0];
+  if (!p) { vaultMsg('Photo not found — refresh the Vault.'); return; }
+  var r = await supabaseClient.storage.from('vault-originals').createSignedUrl(p.original_key, 3600);
+  if (r.error || !r.data) { vaultMsg('Download failed: ' + (r.error ? r.error.message : 'try again')); return; }
+  openExternal(r.data.signedUrl);
+}
+async function vaultReport(photoId){
+  if (!currentUser) { openAuthModal(); return; }
+  var url = window.prompt('Paste the link where this photo was reposted without permission:');
+  if (!url) return;
+  var ins = await supabaseClient.from('copyright_reports').insert({photo_id: photoId, reporter_id: currentUser.id, suspected_url: url.slice(0, 500)});
+  vaultMsg(ins.error ? ('Report failed: ' + ins.error.message) : 'Report filed — DAOS will review it. Thank you.');
+}
+async function renderVaultMine(){
+  var box = document.getElementById('vaultMine');
+  if (!box) return;
+  if (!currentUser) { box.innerHTML = ''; return; }
+  var html = '';
+  var mine = vaultPhotosCache.filter(function(p){ return vaultPurchasedIds[p.id]; });
+  if (mine.length) {
+    html += '<h4>Your downloads</h4>' + mine.map(function(p){
+      return '<p class="meta">' + escapeHtml(vaultEventLabel(p.event_slug)) + ' · ' + p.media_type + ' <button class="btn dark" type="button" onclick="vaultDownload(\'' + p.id + '\')">Download</button></p>';
+    }).join('');
+  }
+  if (myProfile && myProfile.is_photographer) {
+    try {
+      var sr = await supabaseClient.from('photo_purchases').select('points_paid,photo_id').limit(1000);
+      var myIds = {};
+      vaultPhotosCache.forEach(function(p){ if (p.owner_id === currentUser.id) myIds[p.id] = true; });
+      var sales = (sr.data || []).filter(function(s){ return myIds[s.photo_id]; });
+      var gross = sales.reduce(function(s, x){ return s + (x.points_paid || 0); }, 0);
+      html += '<h4>Your sales</h4><p class="meta">' + sales.length + ' sold · ' + gross + ' pts gross · your share (' + Math.round(VAULT_PHOTOGRAPHER_SHARE * 100) + '%): ' + Math.round(gross * VAULT_PHOTOGRAPHER_SHARE) + ' pts. Payouts are handled by DAOS.</p>';
+    } catch (e) {}
+  }
+  box.innerHTML = html;
+}
+
 async function renderMyPhoneBox(){
   var box = document.getElementById('myPhoneBox');
   if (!box) return;
@@ -4050,6 +4339,7 @@ function showTab(id,btn){
   document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b===btn)});
   if (id === 'scan' && typeof renderScanPage === 'function') renderScanPage();
   if (id === 'videos' && typeof loadVideosTab === 'function') loadVideosTab();
+  if (id === 'photos' && typeof loadVault === 'function') loadVault();
   if (id !== 'scan' && typeof stopScanCamera === 'function') stopScanCamera();
   if (id !== 'checkin' && typeof stopCheckinScanner === 'function') stopCheckinScanner();
   window.scrollTo(0,0);
