@@ -2725,7 +2725,7 @@ async function claimLadderReward(key, btn){
   if (done) { renderMyPointsBox(); return; }
   say('Claim noted on this device — claiming fully switches on with the next DAOS database update, and your earned points are saved either way.');
 }
-var MEMBER_TITLES = ['Partner','V.I.P','Representative First Class','Representative','Supporter','Vendor','Member'];
+var MEMBER_TITLES = ['Owner','DAOS STAFF','Partner','V.I.P','Representative First Class','Representative','Supporter','Vendor','Member'];
 function memberTitleOf(p){
   var t = (p && p.member_title) || 'Member';
   return MEMBER_TITLES.indexOf(t) !== -1 ? t : 'Member';
@@ -2735,7 +2735,7 @@ function memberTitleHtml(p){
   var star = t === 'Partner'
     ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="#F5B301" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
     : '';
-  return '<div class="mtitle' + (t === 'Partner' ? ' partner' : '') + '">' + star + escapeHtml(t) + '</div>';
+  return '<div class="mtitle' + ((t === 'Partner' || t === 'Owner') ? ' partner' : '') + '">' + star + escapeHtml(t) + '</div>';
 }
 async function fetchMemberTitle(id){
   if (!supabaseClient || !id) return;
