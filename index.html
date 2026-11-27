@@ -1735,7 +1735,7 @@ async function loadRankings(){
     if (!rankedArtists || !rankedArtists.length) { ra.innerHTML = '<p class="meta">No artists ranked yet — selected songs will appear here.</p>'; }
     else {
       allRankedArtists = rankedArtists;
-      ra.innerHTML = rankedArtists.slice(0, 10).map(function(a, i){
+      ra.innerHTML = rankedArtists.map(function(a, i){
         return '<div style="padding:8px 0;border-top:1px solid var(--border)"><strong>' + (i + 1) + '. ' + escapeHtml(a.name) + '</strong> &mdash; ' + a.votes + ' vote' + (a.votes === 1 ? '' : 's') + ' <button class="btn" type="button" onclick="openArtist(\'' + escapeHtml(a.slug) + '\')">Vote</button></div>';
       }).join('');
     }
